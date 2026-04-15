@@ -1,7 +1,7 @@
 // API_BASE logic để hỗ trợ cả Local và Production (Google/Vercel)
 const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? "http://localhost:3000/api"
-    : "https://shopthoitrang-backend.onrender.com/api"; // Thay link này khi bạn deploy backend thực tế
+    : "https://fashion-modern-backend.onrender.com/api";
 
 async function register() {
     const mode = document.body.dataset.authMode || 'login';
