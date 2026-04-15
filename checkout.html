@@ -421,7 +421,14 @@
             .payment-grid { grid-template-columns: 1fr; }
             .summary-card { position: static; }
         }
-    </style>
+    <!-- Google Analytics (GA4) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
 </head>
 <body>
 
@@ -1049,6 +1056,21 @@ async function placeOrder() {
         const order = await res.json();
 
         if (res.ok) {
+            // Track event: Purchase (GA4)
+            if (typeof gtag === 'function') {
+                gtag('event', 'purchase', {
+                    transaction_id: order.readableId || order._id,
+                    value: total,
+                    currency: 'VND',
+                    items: cartItems.map(item => ({
+                        item_id: item.id || item.productId,
+                        item_name: item.name,
+                        price: item.price,
+                        quantity: item.quantity
+                    }))
+                });
+            }
+
             localStorage.removeItem('cart');
             if (selectedPayment === 'bank') {
                 showVietQRModal(order);
@@ -1150,6 +1172,22 @@ function showPaymentSuccess() {
 document.addEventListener('DOMContentLoaded', () => {
     loadCart();
     loadCheckoutSettings();
+
+    // Track event: Begin Checkout (GA4)
+    if (typeof gtag === 'function') {
+        const cartData = JSON.parse(localStorage.getItem('cart')) || [];
+        const subtotal = cartData.reduce((s, i) => s + (i.price * (i.quantity || i.qty || 1)), 0);
+        gtag('event', 'begin_checkout', {
+            currency: 'VND',
+            value: subtotal,
+            items: cartData.map(item => ({
+                item_id: item.id,
+                item_name: item.name,
+                price: item.price,
+                quantity: item.quantity || item.qty || 1
+            }))
+        });
+    }
 });
 
 async function loadCheckoutSettings() {

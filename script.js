@@ -439,6 +439,21 @@ function checkout() {
 function openProductModal(id) {
   const product = products.find(p => p.id === id);
   if (!product) return;
+
+  // Track event: View Item Detail (GA4)
+  if (typeof gtag === 'function') {
+    gtag('event', 'view_item', {
+      currency: 'VND',
+      value: product.price,
+      items: [{
+        item_id: product.id,
+        item_name: product.name,
+        price: product.price,
+        item_category: product.category
+      }]
+    });
+  }
+
   currentModalProductId = id;
   selectedSize = null; // reset — khach phai chon lai
 
@@ -749,6 +764,22 @@ function addToCartWithSize(id, button) {
     qty: quantity,
     totalPrice: product.price * quantity
   };
+
+  // Track event: Add to Cart (GA4)
+  if (typeof gtag === 'function') {
+    gtag('event', 'add_to_cart', {
+      currency: 'VND',
+      value: product.price * quantity,
+      items: [{
+        item_id: product.id,
+        item_name: product.name,
+        price: product.price,
+        item_category: product.category,
+        quantity: quantity,
+        item_variant: `${selectedColor} - ${selectedSize}`
+      }]
+    });
+  }
 
   if (buyNowMode) {
     cart = [cartItem];
