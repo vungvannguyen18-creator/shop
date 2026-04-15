@@ -1,0 +1,94 @@
+[
+  {
+    "id": "p1",
+    "_id": "p1",
+    "name": "Áo thun oversize",
+    "price": 150000,
+    "cost": 95000,
+    "image": "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80",
+    "category": "Áo",
+    "rating": 4.8,
+    "description": "Chất liệu mềm mịn, form oversize phong cách tối giản."
+  },
+  {
+    "id": "p2",
+    "_id": "p2",
+    "name": "Quần jeans xanh",
+    "price": 300000,
+    "cost": 210000,
+    "image": "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=600&q=80",
+    "category": "Quần",
+    "rating": 4.7,
+    "description": "Denim co giãn, thiết kế cắt may tinh tế phù hợp mọi hoàn cảnh."
+  },
+  {
+    "id": "p3",
+    "_id": "p3",
+    "name": "Sneaker trắng",
+    "price": 650000,
+    "cost": 420000,
+    "image": "https://images.unsplash.com/photo-1515542622106-78bda8ba0e92?auto=format&fit=crop&w=600&q=80",
+    "category": "Giày",
+    "rating": 4.9,
+    "description": "Sneaker trắng thanh lịch, đệm lót êm ái và chống trượt tối ưu."
+  },
+  {
+    "id": "p1776144109981",
+    "name": "Áo polo",
+    "price": 233332,
+    "image": "http://localhost:5001/uploads/1776144109963-942318729.jpg",
+    "stock": 10,
+    "category": "Áo",
+    "description": "ffsdf",
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "colors": [
+      "Den",
+      "Trang"
+    ],
+    "features": [
+      "sdfsdf"
+    ],
+    "variants": [
+      {
+        "color": "Den",
+        "size": "S",
+        "stock": 10,
+        "inStock": true
+      },
+      {
+        "color": "Den",
+        "size": "M",
+        "stock": 10,
+        "inStock": true
+      },
+      {
+        "color": "Den",
+        "size": "L",
+        "stock": 10,
+        "inStock": true
+      },
+      {
+        "color": "Trang",
+        "size": "S",
+        "stock": 10,
+        "inStock": true
+      },
+      {
+        "color": "Trang",
+        "size": "M",
+        "stock": 10,
+        "inStock": true
+      },
+      {
+        "color": "Trang",
+        "size": "L",
+        "stock": 10,
+        "inStock": true
+      }
+    ]
+  }
+]

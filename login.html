@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập & Đăng ký — Fashion Modern</title>
+    <meta name="description" content="Đăng nhập hoặc đăng ký tài khoản Fashion Modern để trải nghiệm mua sắm thời trang cao cấp và nhận nhiều ưu đãi độc quyền dành riêng cho thành viên.">
+    <meta name="keywords" content="đăng nhập, đăng ký, thành viên, fashion modern">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase SDK (Compat form for simple vanilla JS inclusion) -->
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+</head>
+<body data-auth-mode="login">
+<div class="login-page">
+    <div class="login-layout fade-in">
+        <div class="login-left">
+            <div class="left-overlay"></div>
+            <div class="left-copy">
+                <p class="eyebrow">NEW COLLECTION 2026</p>
+                <h1>Minimal Luxury</h1>
+                <p>Ảnh model thời trang, tông màu đen sang trọng và cảm giác app-like.</p>
+            </div>
+        </div>
+
+        <div class="login-right">
+            <div class="login-card">
+                <div class="brand-row">
+                    <div class="brand-logo">F</div>
+                    <div>
+                        <p class="brand-name">Fashion Modern</p>
+                        <p class="brand-note">Sang xịn</p>
+                    </div>
+                </div>
+
+                <div class="auth-switch">
+                    <button class="auth-tab active" data-mode="login" onclick="switchAuthMode('login')">Đăng nhập</button>
+                    <button class="auth-tab" data-mode="register" onclick="switchAuthMode('register')">Đăng ký</button>
+                </div>
+
+                <div class="title-group">
+                    <h2 class="auth-title">Chào mừng trở lại 👋</h2>
+                    <p class="subtitle">Đăng nhập để mua sắm</p>
+                </div>
+
+                <div class="form-group login-form">
+                    <label class="field">
+                        <span class="field-icon">👤</span>
+                        <input id="user" type="text" placeholder="Tên đăng nhập" autocomplete="username" autofocus>
+                    </label>
+
+                    <label class="field password-field">
+                        <span class="field-icon">🔒</span>
+                        <input id="pass" type="password" placeholder="Mật khẩu" autocomplete="current-password">
+                        <button type="button" class="show-pass" onclick="togglePassword()">👁</button>
+                    </label>
+
+                    <div class="extra-row">
+                        <a href="#" class="text-link">Quên mật khẩu?</a>
+                    </div>
+
+                    <button class="btn-primary ripple" id="submit-button" onclick="login()">ĐĂNG NHẬP</button>
+                </div>
+
+                <div class="form-group register-form">
+                    <label class="field">
+                        <span class="field-icon">👤</span>
+                        <input id="register-user" type="text" placeholder="Tên đăng nhập" autocomplete="username">
+                    </label>
+
+                    <label class="field password-field">
+                        <span class="field-icon">🔒</span>
+                        <input id="register-pass" type="password" placeholder="Mật khẩu" autocomplete="new-password">
+                        <button type="button" class="show-pass" onclick="togglePassword('register-pass')">👁</button>
+                    </label>
+
+                    <label class="field password-field">
+                        <span class="field-icon">🔒</span>
+                        <input id="confirm-pass" type="password" placeholder="Xác nhận mật khẩu" autocomplete="new-password">
+                    </label>
+
+                    <button class="btn-primary ripple" onclick="register()">ĐĂNG KÝ</button>
+                </div>
+
+                <div class="or-divider"><span>OR</span></div>
+
+                <div class="social-buttons">
+                    <button class="btn-social google ripple" onclick="socialLogin('google')">Google</button>
+                    <button class="btn-social facebook ripple" onclick="socialLogin('facebook')">Facebook</button>
+                </div>
+
+                <p class="register-note">
+                    <span class="note-login">Chưa có tài khoản?</span>
+                    <button class="link-button show-register" onclick="switchAuthMode('register')">Đăng ký</button>
+                    <span class="note-register">Đã có tài khoản?</span>
+                    <button class="link-button show-login" onclick="switchAuthMode('login')">Đăng nhập</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="auth.js"></script>
+<script>
+    function togglePassword(fieldId = 'pass') {
+        const pass = document.getElementById(fieldId);
+        if (!pass) return;
+        pass.type = pass.type === 'password' ? 'text' : 'password';
+    }
+
+    function redirectIfAuthenticated() {
+        const user = getCurrentUser();
+        if (!user) return;
+        if (user.role === 'admin') {
+            window.location.href = 'admin.html';
+        } else {
+            window.location.href = 'index.html';
+        }
+    }
+
+    function switchAuthMode(mode) {
+        const body = document.body;
+        body.dataset.authMode = mode;
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.mode === mode);
+        });
+        const title = document.querySelector('.auth-title');
+        const subtitle = document.querySelector('.subtitle');
+        if (mode === 'register') {
+            title.innerText = 'Tạo tài khoản mới';
+            subtitle.innerText = 'Bắt đầu hành trình mua sắm sang xịn';
+        } else {
+            title.innerText = 'Chào mừng trở lại 👋';
+            subtitle.innerText = 'Đăng nhập để mua sắm';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        redirectIfAuthenticated();
+        switchAuthMode('login');
+        document.querySelectorAll('.ripple').forEach(button => {
+            button.addEventListener('click', function (e) {
+                const circle = document.createElement('span');
+                const diameter = Math.max(this.clientWidth, this.clientHeight);
+                const radius = diameter / 2;
+                circle.style.width = circle.style.height = `${diameter}px`;
+                circle.style.left = `${e.clientX - this.getBoundingClientRect().left - radius}px`;
+                circle.style.top = `${e.clientY - this.getBoundingClientRect().top - radius}px`;
+                circle.classList.add('ripple-effect');
+                const ripple = this.getElementsByClassName('ripple-effect')[0];
+                if (ripple) ripple.remove();
+                this.appendChild(circle);
+            });
+        });
+    });
+</script>
+</body>
+</html>
