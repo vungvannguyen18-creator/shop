@@ -50,7 +50,7 @@
         <div class="admin-overlay" id="admin-overlay" onclick="toggleAdminSidebar()"></div>
 
         <section id="dashboard" class="admin-section">
-            <div class="admin-cards">
+            <div class="admin-cards admin-stats-grid">
                 <div class="admin-card">
                     <div class="card-icon">💵</div>
                     <h3>Doanh thu</h3>
@@ -109,10 +109,10 @@
             <div class="table-card product-list-card">
                 <div class="product-banner" style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
                     <h3 class="banner-title" style="margin:0; font-size: 1.1rem; color: #fff;">Danh sách sản phẩm</h3>
-                    <div class="mini-stats" style="display:flex; gap: 16px;">
-                        <div class="m-stat" style="background:#2a2a2a; padding:10px 16px; border-radius:12px; font-size:0.85rem;"><span style="color:#a0a0a0">Tổng sản phẩm</span><br><b id="m-stat-total" style="font-size:1.1rem; color:#fff;">0</b></div>
-                        <div class="m-stat" style="background:#2a2a2a; padding:10px 16px; border-radius:12px; font-size:0.85rem;"><span style="color:#a0a0a0">Tổng giá trị kho</span><br><b id="m-stat-value" class="text-warning" style="font-size:1.1rem; color:#ffb74d;">0 VNĐ</b></div>
-                        <div class="m-stat" style="background:#2a2a2a; padding:10px 16px; border-radius:12px; font-size:0.85rem;"><span style="color:#a0a0a0">Đơn hàng chờ</span><br><b id="m-stat-pending" style="font-size:1.1rem; color:#fff;">0</b></div>
+                    <div class="mini-stats">
+                        <div class="m-stat"><span style="color:#a0a0a0">Tổng sản phẩm</span><br><b id="m-stat-total" style="font-size:1.1rem; color:#fff;">0</b></div>
+                        <div class="m-stat"><span style="color:#a0a0a0">Tổng giá trị kho</span><br><b id="m-stat-value" class="text-warning" style="font-size:1.1rem; color:#ffb74d;">0 VNĐ</b></div>
+                        <div class="m-stat"><span style="color:#a0a0a0">Đơn hàng chờ</span><br><b id="m-stat-pending" style="font-size:1.1rem; color:#fff;">0</b></div>
                     </div>
                 </div>
                 
@@ -139,30 +139,30 @@
                     <h3 class="banner-title" style="text-transform: uppercase; margin:0; font-size: 0.95rem; color: #fff; letter-spacing: 1px;">Thêm sản phẩm mới</h3>
                 </div>
                 
-                <div class="add-product-grid" style="display: grid; grid-template-columns: 1fr 280px; gap: 30px;">
+                <div class="add-product-grid product-form-layout">
                     <div class="left-form">
-                        <div class="form-row" style="display: flex; gap: 16px;">
-                            <div class="form-group" style="flex:1">
+                        <div class="form-row">
+                            <div class="form-group">
                                 <label style="display:block; margin-bottom:8px; color:#a0a0a0; font-size: 0.9rem;">Tên sản phẩm</label>
-                                <input id="new-name" class="dark-input" placeholder="Tên sản phẩm" style="width:100%; padding:14px; background:#121212; border:1px solid #333; color:#fff; border-radius:12px; margin-bottom:16px; box-sizing: border-box;">
+                                <input id="new-name" class="dark-input" placeholder="Tên sản phẩm">
                             </div>
-                            <div class="form-group" style="flex:1">
+                            <div class="form-group">
                                 <label style="display:block; margin-bottom:8px; color:#a0a0a0; font-size: 0.9rem;">Giá bán</label>
-                                <input id="new-price" class="dark-input" type="number" placeholder="Giá bán" style="width:100%; padding:14px; background:#121212; border:1px solid #333; color:#fff; border-radius:12px; margin-bottom:16px; box-sizing: border-box;">
+                                <input id="new-price" class="dark-input" type="number" placeholder="Giá bán">
                             </div>
-                            <div class="form-group super-admin-only" style="flex:1; display:none;">
+                            <div class="form-group super-admin-only" style="display:none;">
                                 <label style="display:block; margin-bottom:8px; color:#10b981; font-size: 0.9rem; font-weight:bold;">Giá nhập (Vốn) 🔒</label>
-                                <input id="new-cost" class="dark-input" type="number" placeholder="Giá nhập" style="width:100%; padding:14px; background:#121212; border:1px solid rgba(16,185,129,0.3); color:#fff; border-radius:12px; margin-bottom:16px; box-sizing: border-box;">
+                                <input id="new-cost" class="dark-input" type="number" placeholder="Giá nhập" style="border-color: rgba(16,185,129,0.3);">
                             </div>
                         </div>
-                        <div class="form-row" style="display: flex; gap: 16px;">
-                            <div class="form-group" style="flex:1">
+                        <div class="form-row">
+                            <div class="form-group">
                                 <label style="display:block; margin-bottom:8px; color:#a0a0a0; font-size: 0.9rem;">Kho</label>
-                                <input id="new-stock" class="dark-input" type="number" placeholder="Số lượng kho" style="width:100%; padding:14px; background:#121212; border:1px solid #333; color:#fff; border-radius:12px; margin-bottom:16px; box-sizing: border-box;">
+                                <input id="new-stock" class="dark-input" type="number" placeholder="Số lượng kho">
                             </div>
-                            <div class="form-group" style="flex:1">
+                            <div class="form-group">
                                 <label style="display:block; margin-bottom:8px; color:#a0a0a0; font-size: 0.9rem;">Category (Danh mục)</label>
-                                <select id="new-category" class="dark-input" style="width:100%; padding:14px; background:#121212; border:1px solid #333; color:#fff; border-radius:12px; margin-bottom:16px; box-sizing: border-box;">
+                                <select id="new-category" class="dark-input">
                                     <option value="Thời trang nam">Thời trang nam</option>
                                     <option value="Thời trang nữ">Thời trang nữ</option>
                                     <option value="Quần áo">Quần áo</option>
@@ -208,10 +208,10 @@
 
                         <div class="form-group" style="margin-bottom:16px;">
                             <label style="display:block; margin-bottom:8px; color:#a0a0a0; font-size: 0.9rem;">Mô tả sản phẩm</label>
-                            <textarea id="new-description" class="dark-input" placeholder="Nhập mô tả chi tiết sản phẩm..." style="width:100%; height:100px; padding:14px; background:#121212; border:1px solid #333; color:#fff; border-radius:12px; resize: vertical; box-sizing: border-box; margin-bottom:10px;"></textarea>
+                            <textarea id="new-description" class="dark-input" placeholder="Nhập mô tả chi tiết sản phẩm..." style="height:100px; resize: vertical; margin-bottom:10px;"></textarea>
 
                             <label style="display:block; margin-bottom:8px; color:#a0a0a0; font-size: 0.9rem;">Chi tiết ưu điểm (Mỗi dòng một ưu điểm)</label>
-                            <textarea id="new-features" class="dark-input" placeholder="VD: Chất liệu thoáng mát&#10;Form dáng trẻ trung&#10;Bền màu khi giặt" style="width:100%; height:80px; padding:14px; background:#121212; border:1px solid #333; color:#fff; border-radius:12px; resize: none; box-sizing: border-box;"></textarea>
+                            <textarea id="new-features" class="dark-input" placeholder="VD: Chất liệu thoáng mát&#10;Form dáng trẻ trung&#10;Bền màu khi giặt" style="height:80px; resize: none;"></textarea>
                         </div>
                     
                     <div class="right-form" style="display:flex; flex-direction:column;">
@@ -267,7 +267,7 @@
             </div>
 
             <!-- MASTER-DETAIL WORKSPACE -->
-            <div class="master-detail-grid" style="display: grid; grid-template-columns: 1fr 400px; gap: 20px; align-items: start; height: calc(100vh - 180px);">
+            <div class="master-detail-grid order-split-layout">
                 <!-- COLUMN 1: KHO LƯU TRỮ VẬN ĐƠN (MASTER) -->
                 <div class="table-card" style="height: 100%; overflow-y: auto;">
                     <div class="table-wrapper">
@@ -315,12 +315,12 @@
                 </div>
             </div>
 
-            <div class="mini-stats" style="display:flex; gap: 24px; margin-bottom: 24px;">
-                <div class="m-stat" style="background:#1a1a1a; padding:12px 20px; border-radius:16px;">
+            <div class="mini-stats" style="margin-bottom: 24px;">
+                <div class="m-stat">
                     <span style="color:#777; font-size:0.75rem; text-transform:uppercase; font-weight:700;">Tổng người dùng</span><br>
                     <b id="rbac-total-users" style="font-size:1.4rem; color:#fff;">0</b>
                 </div>
-                <div class="m-stat" style="background:#1a1a1a; padding:12px 20px; border-radius:16px;">
+                <div class="m-stat">
                     <span style="color:#777; font-size:0.75rem; text-transform:uppercase; font-weight:700;">Tổng Admin</span><br>
                     <b id="rbac-total-admins" style="font-size:1.4rem; color:#10b981;">0</b>
                 </div>
@@ -370,7 +370,7 @@
                     <span style="background:rgba(59,130,246,0.1); width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; border-radius:8px;">➕</span>
                     TẠO VOUCHER MỚI
                 </h3>
-                <form id="voucher-form" onsubmit="saveVoucherAdmin(event)" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:16px;">
+                <form id="voucher-form" class="voucher-form-layout" onsubmit="saveVoucherAdmin(event)">
                     <div class="form-group">
                         <label style="display:block; margin-bottom:8px; color:#777; font-size:0.8rem;">Mã Code (VD: HE2024)</label>
                         <input id="v-code" required class="dark-input" style="width:100%; padding:10px; background:#000; border:1px solid #333; color:#fff; border-radius:8px; text-transform:uppercase;">
@@ -393,7 +393,7 @@
                     </div>
                     <div class="form-group" style="grid-column: span 2;">
                         <label style="display:block; margin-bottom:8px; color:#777; font-size:0.8rem;">Mô tả chi tiết</label>
-                        <input id="v-desc" required class="dark-input" style="width:100%; padding:10px; background:#000; border:1px solid #333; color:#fff; border-radius:8px;" placeholder="VD: Giảm 50k cho đơn từ 200k...">
+                        <input id="v-desc" required class="dark-input" placeholder="VD: Giảm 50k cho đơn từ 200k...">
                     </div>
                     <div class="form-group" style="display:flex; align-items:center; gap:10px;">
                          <input type="checkbox" id="v-is-public" style="width:20px; height:20px;">
@@ -438,7 +438,7 @@
                 </div>
             </div>
 
-            <div class="settings-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+            <div class="settings-grid settings-split-layout">
                 <!-- CỘT TRÁI: THÔNG TIN & VẬN CHUYỂN -->
                 <div class="settings-col-left" style="display:flex; flex-direction:column; gap:24px;">
                     <div class="table-card" style="padding:24px;">
