@@ -36,14 +36,18 @@
 
     <main class="admin-main">
         <header class="admin-header">
-            <div>
-                <h1>Dashboard</h1>
-                <p>Quản lý sản phẩm, đơn hàng và người dùng.</p>
+            <div style="display:flex; align-items:center; gap:16px;">
+                <button class="hamburger-admin" id="admin-hamburger" onclick="toggleAdminSidebar()" style="display:none; background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">☰</button>
+                <div>
+                    <h1 id="admin-section-title">Dashboard</h1>
+                    <p id="admin-section-subtitle">Quản lý sản phẩm, đơn hàng và người dùng.</p>
+                </div>
             </div>
             <div class="header-actions">
                 <button class="btn-outline" onclick="logout()">Đăng xuất</button>
             </div>
         </header>
+        <div class="admin-overlay" id="admin-overlay" onclick="toggleAdminSidebar()"></div>
 
         <section id="dashboard" class="admin-section">
             <div class="admin-cards">
@@ -387,9 +391,13 @@
                         <label style="display:block; margin-bottom:8px; color:#777; font-size:0.8rem;">Đơn tối thiểu (VNĐ)</label>
                         <input id="v-min" type="number" required class="dark-input" style="width:100%; padding:10px; background:#000; border:1px solid #333; color:#fff; border-radius:8px;">
                     </div>
-                    <div class="form-group" style="grid-column: span 3;">
+                    <div class="form-group" style="grid-column: span 2;">
                         <label style="display:block; margin-bottom:8px; color:#777; font-size:0.8rem;">Mô tả chi tiết</label>
                         <input id="v-desc" required class="dark-input" style="width:100%; padding:10px; background:#000; border:1px solid #333; color:#fff; border-radius:8px;" placeholder="VD: Giảm 50k cho đơn từ 200k...">
+                    </div>
+                    <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+                         <input type="checkbox" id="v-is-public" style="width:20px; height:20px;">
+                         <label style="color:#fff; font-size:0.85rem;">Hiện trên Trang chủ</label>
                     </div>
                     <div class="form-group" style="display:flex; align-items:flex-end;">
                         <button type="submit" class="btn-primary" style="width:100%; padding:11px; font-weight:700;">LƯU VOUCHER</button>
@@ -579,6 +587,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="auth.js"></script>
 <script src="admin.js"></script>
+<script src="admin-mobile.js"></script>
 <script>
     function previewUpload(input) {
         if (input.files && input.files[0]) {

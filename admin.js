@@ -634,7 +634,10 @@ function renderVoucherTable() {
         <td style="font-weight: bold; color: #a0c4ff;">${v.code}</td>
         <td style="padding: 12px;">
             <div style="font-weight:600; font-size:0.9rem;">${v.description}</div>
-            <div style="font-size:0.75rem; color:#666;">Loại: ${v.type === 'fixed' ? 'Giảm tiền' : v.type === 'percent' ? 'Giảm %' : 'Freeship'}</div>
+            <div style="font-size:0.75rem; color:#666;">
+              Loại: ${v.type === 'fixed' ? 'Giảm tiền' : v.type === 'percent' ? 'Giảm %' : 'Freeship'} 
+              ${v.isPublic ? '<span style="color:#facc15; font-weight:bold; margin-left:8px;">★ Hiện trang chủ</span>' : ''}
+            </div>
         </td>
         <td style="font-size: 0.9rem; color: #888;">${v.minOrder.toLocaleString()} VNĐ</td>
         <td>
@@ -661,7 +664,8 @@ async function saveVoucherAdmin(e) {
     type: document.getElementById('v-type').value,
     value: document.getElementById('v-value').value,
     minOrder: document.getElementById('v-min').value,
-    description: document.getElementById('v-desc').value.trim()
+    description: document.getElementById('v-desc').value.trim(),
+    isPublic: document.getElementById('v-is-public').checked
   };
 
   try {
