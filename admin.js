@@ -17,13 +17,49 @@ let currentOrderFilter = 'Tất cả';
 let currentChartView = 'revenue'; // 'revenue' or 'profit'
 let adminSettings = {};
 
+/**
+ * Hàm helper gọi API an toàn, xử lý các lỗi Unexpected token < (HTML response)
+ * @param {string} url 
+ * @param {object} options 
+ * @returns {Promise<any>}
+ */
+async function apiCall(url, options = {}) {
+    try {
+        const res = await fetch(url, options);
+        const contentType = res.headers.get("content-type");
+        
+        if (contentType && contentType.includes("application/json")) {
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.message || `Lỗi server (${res.status})`);
+            }
+            return data;
+        } else {
+            // Server trả về HTML (Lỗ 404, 500 hoặc trang Render đang khởi động)
+            const text = await res.text();
+            if (text.includes("<!DOCTYPE") || text.includes("<html")) {
+                throw new Error("SERVER_STARTING");
+            }
+            throw new Error(`Server phản hồi không đúng định dạng (${res.status})`);
+        }
+    } catch (err) {
+        if (err.message === "SERVER_STARTING") {
+            alert("⏳ Hệ thống đang khởi động (Cold Start trên Render). Vui lòng đợi khoảng 30-60 giây và tải lại trang (F5).");
+        } else if (err.message.includes("Unexpected token '<'")) {
+            alert("⏳ Phản hồi từ Server bị lỗi định dạng. Có thể Server đang quá tải hoặc đang khởi động lại. Vui lòng thử lại sau ít phút.");
+        } else {
+            console.error("API Call Error:", err);
+            throw err;
+        }
+    }
+}
+
 async function loadProductsAdmin() {
     try {
-        const res = await fetch(`${API_BASE}/products`);
-        products = await res.json();
+        products = await apiCall(`${API_BASE}/products`);
         renderProductTable();
         renderStockAlerts();
-        renderDashboardStats(); // Gọi lại render sau khi product về
+        renderDashboardStats(); 
     } catch (err) {
         console.error("Lỗi tải sản phẩm cho admin:", err);
     }
@@ -31,15 +67,13 @@ async function loadProductsAdmin() {
 
 async function loadOrdersAdmin() {
     try {
-        const res = await fetch(`${API_BASE}/orders`, {
+        ordersAdmin = await apiCall(`${API_BASE}/orders`, {
             headers: {
                 Authorization: `Bearer ${getAuthToken()}`
             }
         });
-        if (!res.ok) throw new Error("Chưa đăng nhập quyền Admin");
-        ordersAdmin = await res.json();
         renderOrderTable();
-        renderDashboardStats(); // Tính toán lại doanh thu theo dữ liệu order mới
+        renderDashboardStats(); 
     } catch (err) {
         console.error("Lỗi tải đơn hàng:", err);
     }
@@ -47,15 +81,13 @@ async function loadOrdersAdmin() {
 
 async function loadUsersAdmin() {
     try {
-        const res = await fetch(`${API_BASE}/users`, {
+        usersAdmin = await apiCall(`${API_BASE}/users`, {
             headers: {
                 Authorization: `Bearer ${getAuthToken()}`
             }
         });
-        if (!res.ok) throw new Error("Chưa đăng nhập quyền Admin");
-        usersAdmin = await res.json();
         renderUserTable();
-        renderDashboardStats(); // Tính toán lại số người dùng
+        renderDashboardStats(); 
     } catch (err) {
         console.error("Lỗi tải khách hàng:", err);
     }
@@ -597,17 +629,12 @@ let vouchersAdmin = [];
 async function loadVouchersAdmin() {
   try {
     const url = `${API_BASE}/vouchers/admin`;
-    const res = await fetch(url, {
+    vouchersAdmin = await apiCall(url, {
       headers: { Authorization: `Bearer ${getAuthToken()}` }
     });
     
-    if (!res.ok) {
-        const text = await res.text();
-        console.error("Server returned error:", text);
-        throw new Error(`Server báo lỗi ${res.status}. Vui lòng kiểm tra lại quyền Admin.`);
-    }
+    if (!vouchersAdmin) return; // Silent return if html alert already shown in apiCall
 
-    vouchersAdmin = await res.json();
     renderVoucherTable();
     
     // Cập nhật stats
@@ -617,10 +644,8 @@ async function loadVouchersAdmin() {
     if (document.getElementById('v-stat-active')) document.getElementById('v-stat-active').innerText = active;
   } catch(e) {
     console.error("Lỗi tải voucher:", e);
-    // Nếu gặp lỗi JSON "Unexpected token <", thông báo sẽ rõ ràng hơn
-    if (e.message.includes("Unexpected token '<'")) {
-        alert("Lỗi: Server Render đang trả về trang HTML thay vì dữ liệu JSON. Có thể API /vouchers/admin chưa tồn tại hoặc bị lỗi trên Server.");
-    } else {
+    // Thông báo lỗi thô nếu không phải lỗi SERVER_STARTING đã được xử lý trong apiCall
+    if (!e.message.includes("SERVER_STARTING")) {
         alert("Lỗi tải Voucher: " + e.message);
     }
   }
@@ -669,7 +694,7 @@ async function saveVoucherAdmin(e) {
   };
 
   try {
-    const res = await fetch(`${API_BASE}/vouchers/create`, {
+    const data = await apiCall(`${API_BASE}/vouchers/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -677,8 +702,8 @@ async function saveVoucherAdmin(e) {
       },
       body: JSON.stringify(formData)
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
+    
+    if (!data) return;
     
     alert("✅ " + data.message);
     document.getElementById('voucher-form').reset();
@@ -1429,6 +1454,7 @@ async function simulateWebhook(readableId, amount) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    wakeUpServer(); // Đánh thức server khi vào dashboard
     checkSettingsAccess();
 });
 
