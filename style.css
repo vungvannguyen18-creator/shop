@@ -2489,3 +2489,27 @@ tbody tr:hover {
     text-align: right;
   }
 }
+
+/* Button Loading & Disabled State */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed !important;
+  position: relative;
+  overflow: hidden;
+}
+
+button:disabled::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(50%); }
+}

@@ -9,8 +9,10 @@ const router = express.Router();
 // Giới hạn cho các luồng xác thực: 5 lần thử/10 phút
 const authLimiter = rateLimit({
   windowMs: 10 * 60 * 1000, 
-  max: 5,
-  message: "Quá nhiều lần thử đăng nhập thất bại. Vui lòng quay lại sau 10 phút."
+  max: 20, // Nới lỏng chút để tránh chặn nhầm người dùng thật
+  message: { message: "Quá nhiều lần thử đăng nhập thất bại. Vui lòng quay lại sau 10 phút." },
+  standardHeaders: true, 
+  legacyHeaders: false,
 });
 
 router.post("/register", authLimiter, async (req, res) => {

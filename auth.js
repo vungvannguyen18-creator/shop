@@ -22,13 +22,27 @@ async function register() {
         return;
     }
 
+    const submitBtn = mode === 'register' ? document.querySelector('.register-form .btn-primary') : document.getElementById("submit-button");
+    const originalText = submitBtn ? submitBtn.innerText : "";
+
     try {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Đang xử lý...";
+        }
+
         const res = await fetch(`${API_BASE}/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password })
         });
-        const data = await res.json();
+        
+        let data;
+        try {
+            data = await res.json();
+        } catch (e) {
+            throw new Error("SERVER_INIT_ERROR");
+        }
 
         if (!res.ok) {
             alert(data.message || "Đăng ký thất bại.");
@@ -40,7 +54,16 @@ async function register() {
         if (loginTab) loginTab.click();
     } catch (error) {
         console.error(error);
-        alert("Lỗi kết nối server. Vui lòng thử lại.");
+        if (error.message === "SERVER_INIT_ERROR" || error.message.includes("fetch")) {
+            alert("⚠️ Máy chủ đang khởi động hoặc kết nối bị gián đoạn. Vui lòng đợi 10-20 giây và thử lại nhé!");
+        } else {
+            alert("Lỗi kết nối server. Vui lòng thử lại sau.");
+        }
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+        }
     }
 }
 
@@ -53,13 +76,28 @@ async function login() {
         return;
     }
 
+    const submitBtn = document.getElementById("submit-button");
+    const originalText = submitBtn ? submitBtn.innerText : "ĐĂNG NHẬP";
+
     try {
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Đang kết nối...";
+        }
+
         const res = await fetch(`${API_BASE}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password })
         });
-        const data = await res.json();
+
+        let data;
+        try {
+            data = await res.json();
+        } catch (e) {
+            // Nếu không phải JSON, có thể server đang trả về lỗi HTML hoặc đang khởi động
+            throw new Error("SERVER_INIT_ERROR");
+        }
 
         if (!res.ok) {
             alert(data.message || "Đăng nhập thất bại.");
@@ -73,7 +111,16 @@ async function login() {
         handleAuthRedirect(data);
     } catch (error) {
         console.error(error);
-        alert("Lỗi kết nối server. Vui lòng thử lại.");
+        if (error.message === "SERVER_INIT_ERROR" || error.message.includes("fetch")) {
+            alert("🚀 Máy chủ đang được đánh thức. Vui lòng chờ vài giây để hệ thống sẵn sàng và thử lại nhé!");
+        } else {
+            alert("Lỗi kết nối server. Vui lòng kiểm tra lại đường truyền.");
+        }
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalText;
+        }
     }
 }
 
@@ -184,7 +231,12 @@ async function socialLogin(providerName) {
             body: JSON.stringify(firebaseUserObj)
         });
 
-        const data = await res.json();
+        let data;
+        try {
+            data = await res.json();
+        } catch (e) {
+            throw new Error("SERVER_INIT_ERROR");
+        }
 
         if (!res.ok) {
             alert(data.message || "Đăng nhập Backend thất bại.");
@@ -203,8 +255,27 @@ async function socialLogin(providerName) {
             alert(`Lỗi: Bạn chưa bật phương thức đăng nhập ${providerName} trên Firebase Console. Vui lòng bật nó lên!`);
         } else if (error.code === 'auth/popup-closed-by-user') {
             console.log("Người dùng tắt popup.");
+        } else if (error.message === "SERVER_INIT_ERROR") {
+            alert("🚀 Firebase OK nhưng Backend đang khởi động. Vui lòng đợi xíu và thử lại đăng nhập Social nhé!");
         } else {
             alert("Lỗi kết nối khi đăng nhập Mạng Xã Hội: " + error.message);
         }
     }
 }
+
+// ============================================
+// SERVER WAKE-UP (RENDER PIN)
+// ============================================
+async function wakeUpServer() {
+    console.log("📡 Đang gửi tín hiệu đánh thức Server Render...");
+    try {
+        // Gửi một yêu cầu nhẹ nhàng đến root API
+        fetch(API_BASE.replace('/api', '/')).catch(() => {});
+    } catch(e) {}
+}
+
+// Tự động đánh thức khi vào trang auth
+if (window.location.pathname.includes('login.html')) {
+    document.addEventListener('DOMContentLoaded', wakeUpServer);
+}
+

@@ -36,9 +36,11 @@ app.use(hpp());
 
 // 5. Rate Limiting toàn cục
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 phút
-  max: 100, // Tối đa 100 yêu cầu mỗi IP
-  message: "Quá nhiều yêu cầu từ IP này, vui lòng thử lại sau 15 phút."
+  windowMs: 15 * 60 * 1000, 
+  max: 200, // Tăng nhẹ cho toàn cục
+  message: { message: "Quá nhiều yêu cầu từ IP này, vui lòng thử lại sau 15 phút." },
+  standardHeaders: true, 
+  legacyHeaders: false,
 });
 app.use("/api", limiter);
 
