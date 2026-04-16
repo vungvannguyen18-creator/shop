@@ -596,9 +596,17 @@ function switchSection(section, btn) {
 let vouchersAdmin = [];
 async function loadVouchersAdmin() {
   try {
-    const res = await fetch(`${API_BASE}/vouchers/admin`, {
+    const url = `${API_BASE}/vouchers/admin`;
+    const res = await fetch(url, {
       headers: { Authorization: `Bearer ${getAuthToken()}` }
     });
+    
+    if (!res.ok) {
+        const text = await res.text();
+        console.error("Server returned error:", text);
+        throw new Error(`Server báo lỗi ${res.status}. Vui lòng kiểm tra lại quyền Admin.`);
+    }
+
     vouchersAdmin = await res.json();
     renderVoucherTable();
     
@@ -609,6 +617,12 @@ async function loadVouchersAdmin() {
     if (document.getElementById('v-stat-active')) document.getElementById('v-stat-active').innerText = active;
   } catch(e) {
     console.error("Lỗi tải voucher:", e);
+    // Nếu gặp lỗi JSON "Unexpected token <", thông báo sẽ rõ ràng hơn
+    if (e.message.includes("Unexpected token '<'")) {
+        alert("Lỗi: Server Render đang trả về trang HTML thay vì dữ liệu JSON. Có thể API /vouchers/admin chưa tồn tại hoặc bị lỗi trên Server.");
+    } else {
+        alert("Lỗi tải Voucher: " + e.message);
+    }
   }
 }
 
