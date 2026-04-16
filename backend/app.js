@@ -46,7 +46,7 @@ app.use("/api", limiter);
 app.use(express.json({ limit: "10kb" }));
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "*",
+  origin: "*",
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
