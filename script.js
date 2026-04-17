@@ -261,18 +261,17 @@ function renderProducts() {
         <div class="product-card" onclick="openProductModal('${p.id}')">
             ${badgeHtml}
             <div class="img-wrapper">
-                <img src="${p.img}" alt="${p.name}">
+                <img src="${p.img}" alt="${p.name}" loading="lazy">
             </div>
             <div>
                 <h3>${p.name}</h3>
                 <p class="price">${p.price.toLocaleString()} VND</p>
                 ${smartBadgeHtml}
-                ${hasSizes ? `<div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:8px;">${p.sizes.slice(0,4).map(s=>`<span style="font-size:0.72rem; padding:2px 7px; border:1px solid #ddd; border-radius:4px; color:#888;">${s}</span>`).join('')}</div>` : ''}
-                <div class="rating">⭐ ${p.rating || '4.5'} <span>(${Math.floor(20 + Math.random() * 80)} đánh giá)</span></div>
+                <div class="rating">⭐ ${p.rating || '4.8'} <span>(${Math.floor(20 + Math.random() * 80)} đánh giá)</span></div>
             </div>
-            <div class="actions">
-                <button class="btn-outline" onclick="event.stopPropagation(); openProductModal('${p.id}')">${addBtnLabel}</button>
-                <button class="btn-primary" onclick="event.stopPropagation(); buyNow('${p.id}')">${hasSizes ? 'Mua ngay' : 'Mua ngay'}</button>
+            <div class="actions" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:auto;">
+                <button class="btn-outline" style="border-radius:12px; font-weight:700; border-color:var(--primary-gold); color:var(--primary-gold);" onclick="event.stopPropagation(); openProductModal('${p.id}')">${addBtnLabel}</button>
+                <button class="btn-primary" style="border-radius:12px; font-weight:700; background:var(--gold-gradient); border:none;" onclick="event.stopPropagation(); buyNow('${p.id}')">MUA NGAY</button>
             </div>
         </div>
         `;
@@ -990,10 +989,10 @@ async function loadVoucherBanner() {
             savedCodes = myVouchers.map(v => v.code);
         }
 
-        list.innerHTML = vouchers.map(v => {
+        list.innerHTML = vouchers.map((v, index) => {
             const isSaved = savedCodes.includes(v.code);
             return `
-                <div class="voucher-ticket">
+                <div class="voucher-ticket" style="animation: slideInUp 0.6s ease forwards ${index * 0.15}s; opacity:0; transform:translateY(30px);">
                     <div class="v-content">
                         <h4>${v.code}</h4>
                         <p>${v.description}</p>
