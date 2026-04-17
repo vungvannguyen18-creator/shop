@@ -14,6 +14,100 @@ let activeSort = "default";
 let activeMinPrice = null;
 let activeMaxPrice = null;
 
+// --- PREMIUM FILTER DRAWER LOGIC ---
+function toggleFilterDrawer() {
+    const drawer = document.getElementById('filter-drawer');
+    const overlay = document.getElementById('filter-overlay');
+    if (!drawer || !overlay) return;
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('open');
+    if (drawer.classList.contains('open')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
+}
+
+function selectFilterChip(el) {
+    const type = el.getAttribute('data-type');
+    const value = el.getAttribute('data-value');
+    
+    // Deactivate others in the same group
+    const parent = el.parentElement;
+    parent.querySelectorAll('.chip, .pill, .color-chip').forEach(c => c.classList.remove('active'));
+    
+    // Activate current
+    el.classList.add('active');
+    
+    // Update state
+    if (type === 'category') activeCategory = value;
+    if (type === 'color') activeColorFilter = value;
+    if (type === 'sort') activeSort = value;
+}
+
+function applyFiltersFromDrawer() {
+    activeMinPrice = document.getElementById('drawer-min-price').value ? parseInt(document.getElementById('drawer-min-price').value) : null;
+    activeMaxPrice = document.getElementById('drawer-max-price').value ? parseInt(document.getElementById('drawer-max-price').value) : null;
+    
+    renderProducts();
+    toggleFilterDrawer();
+    
+    // Show active filter bar if search/filter is active
+    updateActiveFilterBar();
+}
+
+function resetAllFilters() {
+    activeCategory = "Tất cả";
+    activeColorFilter = "";
+    activeMinPrice = null;
+    activeMaxPrice = null;
+    activeSort = "default";
+    
+    // Reset UI
+    document.querySelectorAll('.filter-drawer .active').forEach(el => el.classList.remove('active'));
+    document.querySelector('[data-value="Tất cả"]').classList.add('active');
+    document.querySelector('[data-value="default"]').classList.add('active');
+    document.getElementById('drawer-min-price').value = '';
+    document.getElementById('drawer-max-price').value = '';
+    
+    renderProducts();
+    updateActiveFilterBar();
+}
+
+function updateActiveFilterBar() {
+    const bar = document.getElementById('active-filters-display');
+    if (!bar) return;
+    
+    if (activeCategory === "Tất cả" && !activeColorFilter && !activeMinPrice && !activeMaxPrice && activeSort === "default") {
+        bar.style.display = 'none';
+        return;
+    }
+    
+    bar.style.display = 'flex';
+    bar.innerHTML = `
+        <span style="font-size: 0.8rem; font-weight: 700; color: #888; text-transform: uppercase;">Bộ lọc đang áp dụng:</span>
+        ${activeCategory !== "Tất cả" ? `<button class="chip" onclick="resetSingleFilter('category')">${activeCategory} <i class="fas fa-times"></i></button>` : ''}
+        ${activeColorFilter ? `<button class="chip" onclick="resetSingleFilter('color')">Màu: ${activeColorFilter} <i class="fas fa-times"></i></button>` : ''}
+        <button class="chip" onclick="resetAllFilters()" style="background:transparent; border:1px dashed #ddd; color:#888;">Xóa hết</button>
+    `;
+}
+
+function resetSingleFilter(type) {
+    if (type === 'category') activeCategory = "Tất cả";
+    if (type === 'color') activeColorFilter = "";
+    renderProducts();
+    updateActiveFilterBar();
+}
+
+function toggleSearch() {
+    const term = prompt("Tìm kiếm sản phẩm:");
+    if (term !== null) {
+        currentSearch = term.trim().toLowerCase();
+        loadProducts();
+    }
+}
+
+
 let globalFreeShipThreshold = 500000;
 
 const COLOR_MAP = {

@@ -12,10 +12,11 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="#">
+    <meta property="og:url" content="https://shop-omega-nine-23.vercel.app">
     <meta property="og:title" content="Fashion Modern - Thời trang tối giản, sang trọng">
     <meta property="og:description" content="Khám phá bộ sưu tập thời trang mới nhất, đặt hàng nhanh chóng và nhận ưu đãi đặc biệt ngay hôm nay.">
-    <meta property="og:image" content="https://res.cloudinary.com/dvrtr4lpc/image/upload/v1/shopthoitrang/brand-cover.jpg"> <!-- Sẽ thay bằng ảnh thật sau -->
+    <meta property="og:image" content="https://res.cloudinary.com/dvrtr4lpc/image/upload/v1/shopthoitrang/brand-cover.jpg">
+    <link rel="canonical" href="https://shop-omega-nine-23.vercel.app" />
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -32,7 +33,7 @@
       },
       "telephone": "0774182263",
       "priceRange": "100.000đ - 2.000.000đ",
-      "url": "https://fashionmodern.com"
+      "url": "https://shop-omega-nine-23.vercel.app"
     }
     </script>
 
@@ -54,58 +55,29 @@
 </div>
 <div class="page-wrapper">
     <header class="topbar">
-        <!-- Hamburger Menu Button -->
-        <button class="hamburger" id="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+        <div class="topbar-left">
+            <button class="hamburger" id="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
 
-        <a href="index.html" style="text-decoration:none; color:inherit;">
-        <div class="brand">
-            <span class="brand-mark">F</span>
-            <div>
+        <a href="index.html" class="brand-link">
+            <div class="brand">
+                <span class="brand-mark">F</span>
                 <p class="brand-name">Fashion Modern</p>
             </div>
-        </div>
         </a>
 
-        <nav class="yame-nav">
-            <div class="nav-item">
-                <a href="#">SẢN PHẨM</a>
-                <div class="mega-menu">
-                    <div class="mega-col">
-                        <h4>Mẫu Mới</h4>
-                        <a href="#">Hàng mới về</a>
-                        <a href="#">Best Seller Yame</a>
-                    </div>
-                    <div class="mega-col">
-                        <h4>Áo</h4>
-                        <a href="#">Áo Thun</a>
-                        <a href="#">Áo Polo</a>
-                        <a href="#">Áo Sơ Mi</a>
-                    </div>
-                    <div class="mega-col">
-                        <h4>Quần</h4>
-                        <a href="#">Quần Jeans</a>
-                        <a href="#">Quần Tây</a>
-                    </div>
+        <div class="topbar-right">
+            <div class="topbar-actions">
+                <button class="icon-btn" onclick="toggleSearch()" title="Tìm kiếm"><i class="fas fa-search"></i></button>
+                <button class="icon-btn" onclick="toggleCart()" title="Giỏ hàng"><i class="fas fa-shopping-bag"></i><span class="cart-badge" id="cart-count-badge">0</span></button>
+                <div class="profile-trigger" onclick="toggleProfile()">
+                    <button class="icon-btn"><i class="fas fa-user-circle"></i></button>
                 </div>
             </div>
-            <div class="nav-item">
-                <a href="#">BỘ SƯU TẬP</a>
-            </div>
-            <div class="nav-item">
-                <a href="#">KHUYẾN MÃI</a>
-            </div>
-        </nav>
-
-        <div class="topbar-actions" style="display:flex; align-items:center;">
-            <div class="search-bar" style="margin-right: 12px; min-width: 220px; display: flex;">
-                <input id="search-input" type="search" placeholder="Tìm kiếm..." oninput="searchProducts()" style="padding: 12px 18px; border-radius: 99px; background: rgba(0,0,0,0.05); border: none; font-size: 0.95rem;">
-            </div>
-            <button class="icon-btn" id="cart-icon" onclick="toggleCart()" style="background: transparent; color: #111; font-size: 1.2rem;">🛒 <span id="cart-count">0</span></button>
-            <button class="icon-btn" onclick="toggleProfile()" style="background: transparent; color: #111; font-size: 1.2rem;">👤 <span id="user-name"></span></button>
         </div>
     </header>
 
@@ -138,43 +110,73 @@
 
     <section class="products-section">
         <div class="section-header">
-            <p class="section-title">Sản phẩm</p>
-            <div class="filter-group" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-                <select id="user-category-filter" onchange="filterCategory(this.value)" class="dark-input" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd;">
-                    <option value="Tất cả">Tất cả</option>
-                    <option value="Nam">Nam</option>
-                    <option value="Nữ">Nữ</option>
-                    <option value="Khác">Khác</option>
-                </select>
-                <select id="user-color-filter" onchange="applyFilters()" class="dark-input" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd;">
-                    <option value="">Màu sắc...</option>
-                    <option value="Đen">Đen</option>
-                    <option value="Trắng">Trắng</option>
-                    <option value="Xanh Dương">Xanh Dương</option>
-                    <option value="Xám">Xám</option>
-                </select>
-                <select id="user-fit-filter" onchange="applyFilters()" class="dark-input" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd;">
-                    <option value="">Phom dáng...</option>
-                    <option value="Ôm">Ôm (Slim / Tôn dáng)</option>
-                    <option value="Rộng">Rộng (Oversize)</option>
-                    <option value="Vừa vặn">Vừa vặn (Regular)</option>
-                </select>
-                <select id="user-sort" onchange="applyFilters()" class="dark-input" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd;">
-                    <option value="default">Sắp xếp: Mặc định</option>
-                    <option value="price-asc">Giá: Thấp -> Cao</option>
-                    <option value="price-desc">Giá: Cao -> Thấp</option>
-                </select>
-                <div style="display: flex; gap: 8px; align-items: center; border-left: 1px solid #ddd; padding-left: 12px; height: 38px;">
-                    <input type="number" id="user-min-price" placeholder="Từ giá" class="dark-input" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; width: 90px; height: 100%;">
-                    <span style="color: #888;">-</span>
-                    <input type="number" id="user-max-price" placeholder="Đến giá" class="dark-input" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ddd; width: 90px; height: 100%;">
-                    <button onclick="applyFilters()" class="btn-primary" style="padding: 0 16px; border-radius: 8px; font-size: 0.85rem; height: 100%; white-space: nowrap;">Áp dụng</button>
+            <h2 class="section-title">Danh sách sản phẩm</h2>
+            <button class="btn-filter-trigger" onclick="toggleFilterDrawer()">
+                <i class="fas fa-sliders-h"></i> Bộ lọc & Sắp xếp
+            </button>
+        </div>
+
+        <div class="active-filters-bar" id="active-filters-display" style="display: none; margin-bottom: 20px;">
+            <!-- Active filter chips will appear here -->
+        </div>
+
+        <div id="product-list-container">
+            <p id="product-count" style="margin-bottom: 20px; color: #888; font-size: 0.9rem;">Đang tải sản phẩm...</p>
+            <div class="product-grid" id="product-list"></div>
+        </div>
+    </section>
+
+    <!-- FILTER DRAWER OVERLAY -->
+    <div class="filter-drawer-overlay" id="filter-overlay" onclick="toggleFilterDrawer()"></div>
+    <div class="filter-drawer" id="filter-drawer">
+        <div class="drawer-header">
+            <h3>Bộ lọc & Sắp xếp</h3>
+            <button class="close-drawer" onclick="toggleFilterDrawer()">&times;</button>
+        </div>
+        <div class="drawer-body">
+            <div class="filter-section">
+                <h4>Phân loại</h4>
+                <div class="chip-group" id="filter-category-chips">
+                    <button class="chip active" data-type="category" data-value="Tất cả" onclick="selectFilterChip(this)">Tất cả</button>
+                    <button class="chip" data-type="category" data-value="Nam" onclick="selectFilterChip(this)">Nam</button>
+                    <button class="chip" data-type="category" data-value="Nữ" onclick="selectFilterChip(this)">Nữ</button>
                 </div>
-                <span id="product-count" style="font-weight: bold; color: #666; margin-left: 8px;"></span>
+            </div>
+
+            <div class="filter-section">
+                <h4>Màu sắc</h4>
+                <div class="color-chips" id="filter-color-chips">
+                    <div class="color-chip" style="background:#000;" data-type="color" data-value="Đen" onclick="selectFilterChip(this)" title="Đen"></div>
+                    <div class="color-chip" style="background:#fff; border:1px solid #ddd;" data-type="color" data-value="Trắng" onclick="selectFilterChip(this)" title="Trắng"></div>
+                    <div class="color-chip" style="background:#3b82f6;" data-type="color" data-value="Xanh Dương" onclick="selectFilterChip(this)" title="Xanh Dương"></div>
+                    <div class="color-chip" style="background:#9ca3af;" data-type="color" data-value="Xám" onclick="selectFilterChip(this)" title="Xám"></div>
+                    <div class="color-chip" style="background: linear-gradient(45deg, red, yellow, green, blue);" data-type="color" data-value="" onclick="selectFilterChip(this)" title="Tất cả màu"></div>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h4>Khoảng giá (VNĐ)</h4>
+                <div class="price-range-inputs">
+                    <input type="number" id="drawer-min-price" placeholder="Từ giá">
+                    <span>-</span>
+                    <input type="number" id="drawer-max-price" placeholder="Đến giá">
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h4>Sắp xếp theo</h4>
+                <div class="pills-group" id="filter-sort-pills">
+                    <button class="pill active" data-type="sort" data-value="default" onclick="selectFilterChip(this)">Mặc định</button>
+                    <button class="pill" data-type="sort" data-value="price-asc" onclick="selectFilterChip(this)">Giá thấp đến cao</button>
+                    <button class="pill" data-type="sort" data-value="price-desc" onclick="selectFilterChip(this)">Giá cao đến thấp</button>
+                </div>
             </div>
         </div>
-        <div class="product-grid" id="product-list"></div>
-    </section>
+        <div class="drawer-footer">
+            <button class="btn-reset" onclick="resetAllFilters()">Đặt lại</button>
+            <button class="btn-apply-filter" onclick="applyFiltersFromDrawer()">Áp dụng</button>
+        </div>
+    </div>
 
     <footer class="footer-container">
       <div class="footer-content">
