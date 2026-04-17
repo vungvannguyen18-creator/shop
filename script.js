@@ -250,13 +250,33 @@ async function loadCategories() {
 function renderCategories() {
   const container = document.getElementById("category-list");
   if (!container) return;
+  
   const categories = ["Tất cả", ...new Set(products.map(item => item.category))];
+  const iconMap = {
+    "Tất cả": "bi-grid-fill",
+    "Áo nam": "bi-person-badge",
+    "Quần nam": "bi-door-open-fill",
+    "Phụ kiện": "bi-watch",
+    "Giày dép": "bi-footprint",
+    "Áo thun": "bi-tshirt",
+    "Áo sơ mi": "bi-shirt",
+    "Quần tây": "bi-layers",
+    "Quần jean": "bi-columns"
+  };
+
   container.innerHTML = categories
-    .map(category => `
-        <button class="category-pill ${category === activeCategory ? 'active' : ''}" onclick="filterCategory('${category}')">${category}</button>
-    `)
+    .map(category => {
+      const iconClass = iconMap[category] || "bi-tag-fill";
+      return `
+        <button class="category-pill ${category === activeCategory ? 'active' : ''}" onclick="filterCategory('${category}')">
+          <i class="bi ${iconClass}"></i>
+          <span>${category}</span>
+        </button>
+      `;
+    })
     .join("");
 }
+
 
 function filterCategory(category) {
   activeCategory = category;
@@ -345,33 +365,63 @@ function renderProducts() {
         // Smart Badging: Freeship
         let smartBadgeHtml = '';
         if (p.price >= globalFreeShipThreshold) {
-            smartBadgeHtml = `<div style="background: #10b981; color: #fff; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-top: 6px;">FREESHIP</div>`;
+            smartBadgeHtml = `<div class="freeship-badge">FREESHIP</div>`;
         }
 
-        const hasSizes = p.sizes && p.sizes.length > 0;
-        const addBtnLabel = hasSizes ? 'Chọn Size' : 'Thêm giỏ';
+        // Quick Size UI
+        let sizeHtml = '';
+        if (p.sizes && p.sizes.length > 0) {
+            sizeHtml = `<div class="quick-sizes">`;
+            p.sizes.forEach(s => {
+                sizeHtml += `<span class="size-chip" onclick="event.stopPropagation(); quickAdd('${p.id}', '${s}')">${s}</span>`;
+            });
+            sizeHtml += `</div>`;
+        }
 
         return `
         <div class="product-card" onclick="openProductModal('${p.id}')">
             ${badgeHtml}
             <div class="img-wrapper">
-                <img src="${p.img}" alt="${p.name}" loading="lazy">
+                <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/400x500?text=No+Image'">
+                <div class="card-overlay">
+                    <button class="btn-quick-view"><i class="far fa-eye"></i></button>
+                </div>
             </div>
-            <div>
+            <div class="card-info">
                 <h3>${p.name}</h3>
                 <p class="price">${p.price.toLocaleString()} VND</p>
                 ${smartBadgeHtml}
-                <div class="rating">⭐ ${p.rating || '4.8'} <span>(${Math.floor(20 + Math.random() * 80)} đánh giá)</span></div>
+                <div class="rating">
+                    <span class="stars">★★★★★</span>
+                    <span class="count">(${Math.floor(20 + Math.random() * 80)})</span>
+                </div>
+                ${sizeHtml}
             </div>
-            <div class="actions" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:auto;">
-                <button class="btn-outline" style="border-radius:12px; font-weight:700; border-color:var(--primary-gold); color:var(--primary-gold);" onclick="event.stopPropagation(); openProductModal('${p.id}')">${addBtnLabel}</button>
-                <button class="btn-primary" style="border-radius:12px; font-weight:700; background:var(--gold-gradient); border:none;" onclick="event.stopPropagation(); buyNow('${p.id}')">MUA NGAY</button>
+            <div class="card-cta">
+                <button class="btn-buy-now" onclick="event.stopPropagation(); buyNow('${p.id}')">MUA NGAY</button>
             </div>
         </div>
         `;
     })
     .join("");
 }
+
+function quickAdd(productId, size) {
+    const product = products.find(p => p.id == productId);
+    if (!product) return;
+    
+    const cartItem = {
+        ...product,
+        selectedSize: size,
+        selectedColor: product.colors ? product.colors[0] : "Phối màu",
+        qty: 1
+    };
+    
+    cart.push(cartItem);
+    updateCartState();
+    showToast(`Đã thêm Size ${size} vào giỏ!`, "success");
+}
+
 
 function updateCartState() {
   localStorage.setItem("cart", JSON.stringify(cart));

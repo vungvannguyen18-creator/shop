@@ -392,24 +392,37 @@ img {
 .categories {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
+  padding: 10px 0;
 }
 
 .category-pill {
-  padding: 12px 18px;
+  padding: 14px 24px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  background: #f3f4f6;
+  color: #111;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   font-size: 0.95rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.category-pill i {
+  font-size: 1.1rem;
 }
 
 .category-pill.active,
 .category-pill:hover {
-  background: #ff424e;
-  border-color: #ff424e;
+  background: var(--deep-black);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
+
 
 /* SECTION HEADER & GRID */
 .section-header {
@@ -426,66 +439,171 @@ img {
   gap: 32px;
 }
 
+@media (max-width: 900px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+}
+
 /* PRODUCT CARD ENHANCEMENTS */
 .product-card {
   background: #fff;
-  border-radius: 32px;
+  border-radius: 20px;
   overflow: hidden;
-  padding: 0;
-  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   position: relative;
-  border: 1px solid rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
+  border: 1px solid #f0f0f0;
+  height: 100%;
 }
 
 .product-card:hover {
-  transform: translateY(-12px);
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1);
-  border-color: rgba(197, 160, 89, 0.2);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  border-color: var(--primary-gold);
 }
 
 .img-wrapper {
   position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.25;
   overflow: hidden;
-  background: #f1f1f1;
-  aspect-ratio: 1 / 1.15;
-  /* Tỷ lệ vàng thời trang */
+  background: #f8f8f8;
 }
 
 .img-wrapper img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.6s ease;
 }
 
 .product-card:hover .img-wrapper img {
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
-.product-card>div:last-child {
-  padding: 24px;
+.card-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.03);
+  opacity: 0;
+  transition: 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-card:hover .card-overlay { opacity: 1; }
+
+.btn-quick-view {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: #fff; border: none;
+  cursor: pointer;
+  display: grid; place-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transform: translateY(20px);
+  transition: 0.3s;
+}
+
+.product-card:hover .btn-quick-view { transform: translateY(0); }
+
+.card-info {
+  padding: 16px;
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.product-card h3 {
+.card-info h3 {
   font-family: var(--font-premium);
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 700;
-  margin: 0 0 10px;
-  color: var(--deep-black);
-  line-height: 1.2;
+  margin: 0 0 8px;
+  color: #111;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.product-card .price {
+.card-info .price {
   font-family: var(--font-premium);
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 800;
-  color: var(--primary-gold);
+  color: var(--deep-black);
+  margin-bottom: 8px;
 }
+
+.freeship-badge {
+  background: #10b981;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 8px;
+  width: fit-content;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.rating .stars { color: #fbbf24; font-size: 0.85rem; }
+.rating .count { color: #888; font-size: 0.75rem; }
+
+.quick-sizes {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px dashed #eee;
+}
+
+.size-chip {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  color: #111;
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.size-chip:hover { background: #111; color: #fff; }
+
+.card-cta { padding: 0 16px 16px; }
+
+.btn-buy-now {
+  width: 100%;
+  padding: 12px;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-premium);
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-buy-now:hover { background: var(--primary-gold); transform: scale(1.02); }
+
+
+
 
 .badge-float {
   position: absolute;
@@ -625,23 +743,33 @@ img {
 .cart-panel,
 .profile-panel {
   position: fixed;
-  right: 24px;
-  top: 120px;
-  width: 360px;
-  max-height: calc(100vh - 150px);
+  right: 0;
+  top: 0;
+  width: 100%;
+  max-width: 440px;
+  height: 100vh;
   background: #fff;
-  border-radius: 28px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.18);
-  padding: 22px;
-  transform: translateX(420px);
-  transition: transform 0.3s ease;
-  z-index: 2000;
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 5002;
 }
+
+@media (max-width: 600px) {
+  .cart-panel, .profile-panel {
+    max-width: 100%;
+  }
+}
+
+
 
 .cart-panel.panel-open,
 .profile-panel.panel-open {
   transform: translateX(0);
 }
+
 
 .panel-header {
   display: flex;
@@ -3140,15 +3268,17 @@ button:disabled::after {
   padding: 24px;
 }
 
-.filter-section { margin-bottom: 30px; }
+.filter-section { margin-bottom: 40px; }
 .filter-section h4 { 
   font-family: var(--font-premium); 
-  font-size: 0.85rem; 
+  font-size: 0.9rem; 
   text-transform: uppercase; 
-  letter-spacing: 1px; 
-  color: #888; 
-  margin-bottom: 16px; 
+  letter-spacing: 1.5px; 
+  color: #111; 
+  margin-bottom: 20px;
+  font-weight: 800;
 }
+
 
 .chip-group, .pills-group { display: flex; gap: 8px; flex-wrap: wrap; }
 .chip, .pill {
