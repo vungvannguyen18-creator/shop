@@ -1,13 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;600;700&display=swap');
 
 /* Global Variables */
-/* Global Variables - Vibrant Style */
+/* Global Variables - Premium Streetwear Style */
 :root {
-  --primary-pink: #ff5c8d;
+  --primary-pink: #e21d26; /* One Drip Red */
+  --primary-gold: #c5a059;
   --primary-purple: #8b5cf6;
   --primary-purple-dark: #7c3aed;
   --secondary-green: #10b981;
-  --deep-black: #111827;
+  --deep-black: #000000;
   --text-main: #111;
   --text-muted: #6b7280;
   --premium-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
@@ -69,8 +70,8 @@ img {
 }
 
 .main-header {
-  background: #fff;
-  border-bottom: 1px solid #f0f0f0;
+  background: #000;
+  border-bottom: 1px solid #222;
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -82,8 +83,84 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 24px;
+  padding: 15px 24px;
   gap: 30px;
+}
+
+.logo-area .brand-name {
+  color: #fff !important;
+  font-size: 1.5rem;
+}
+
+.header-nav-pills {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-item-link {
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 10px 0;
+  transition: 0.3s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nav-item-link:hover {
+  color: #ccc;
+}
+
+.nav-item-link i {
+  font-size: 0.6rem;
+}
+
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-tools .tool-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.3s;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.header-tools .tool-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.cart-trigger {
+  position: relative;
+}
+
+.cart-badge {
+  background: #fff;
+  color: #000;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-nav-pills {
@@ -151,12 +228,75 @@ img {
   letter-spacing: 0.05em;
 }
 
-/* YAME MENU STYLES */
-.yame-nav {
+/* MEGA MENU STYLES */
+.header-nav-pills {
+  position: relative;
+}
+
+.nav-item-link {
+  position: relative;
+}
+
+.nav-item-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #fff;
+  transition: 0.3s;
+  transform: translateX(-50%);
+}
+
+.nav-item-link:hover::after {
+  width: 100%;
+}
+
+.mega-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100vw; /* Use vw to span screen */
+  margin-left: calc(-50vw + 50%); /* Center it if parent is not full width */
+  background: #fff;
+  color: #000;
+  padding: 40px;
   display: flex;
-  gap: 32px;
-  align-items: center;
-  margin: 0 auto;
+  justify-content: center;
+  gap: 60px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+  z-index: 1000;
+  transform: translateY(10px);
+}
+
+.nav-item-link:hover .mega-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.mega-col h4 {
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.mega-col a {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.mega-col a:hover {
+  color: #000;
+  font-weight: 700;
 }
 
 /* Biến Hamburger mặc định ẩn */

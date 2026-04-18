@@ -329,46 +329,73 @@ async function loadCategories() {
     if (!res.ok) return;
     const cats = await res.json();
     
-    const nav = document.querySelector('.yame-nav');
-    if (!nav) return;
-    
-    let html = '';
-    cats.forEach(c => {
-      let subHtml = '';
-      if (c.subcategories && c.subcategories.length > 0) {
-        subHtml = `<div class="mega-menu"><div class="mega-col"><h4>DANH MỤC</h4>`;
-        c.subcategories.forEach(sub => subHtml += `<a href="#" onclick="filterCategory('${sub}')">${sub}</a>`);
-        subHtml += `</div></div>`;
-      }
+    // 1. Render Desktop Menu
+    const desktopNav = document.getElementById('desktop-nav');
+    if (desktopNav) {
+      let desktopHtml = '';
+      cats.forEach(c => {
+        let subHtml = '';
+        const hasSubs = c.subcategories && c.subcategories.length > 0;
+        
+        if (hasSubs) {
+            subHtml = `<div class="mega-menu">
+                        <div class="mega-col">
+                            <h4>${c.name.toUpperCase()}</h4>`;
+            c.subcategories.forEach(sub => {
+                subHtml += `<a href="#" onclick="filterCategory('${sub}')">${sub}</a>`;
+            });
+            subHtml += `</div></div>`;
+        }
+
+        desktopHtml += `
+            <div class="nav-item-link" onclick="filterCategory('${c.name}')">
+                ${c.name} ${hasSubs ? '<i class="bi bi-chevron-down"></i>' : ''}
+                ${subHtml}
+            </div>
+        `;
+      });
       
-      html += `
-        <div class="nav-item">
-            <a href="#" onclick="filterCategory('${c.name}')">${c.name.toUpperCase()}</a>
-            ${subHtml}
-        </div>
+      // Thêm các mục cố định cuối menu
+      desktopHtml += `
+        <div class="nav-item-link">Hệ thống cửa hàng</div>
+        <div class="nav-item-link">Thông tin thương hiệu <i class="bi bi-chevron-down"></i></div>
       `;
-    });
-    
-    html += `<div class="nav-item"><a href="#">MỤC KHÁC</a></div>`;
-    nav.innerHTML = html;
-  } catch(e) {
-    console.error("Lỗi load danh mục:", e);
+      
+      desktopNav.innerHTML = desktopHtml;
+    }
+
+    // 2. Render Mobile Menu
+    const mobileNav = document.getElementById('mobile-nav-dynamic');
+    if (mobileNav) {
+        let mobileHtml = '<a href="index.html" class="mobile-menu-item">Trang chủ</a>';
+        cats.forEach(c => {
+            const hasSubs = c.subcategories && c.subcategories.length > 0;
+            mobileHtml += `
+                <div class="mobile-menu-group" style="border-top: 1px solid #222; margin-top: 10px; padding-top: 10px;">
+                    <h4 style="color: #666; font-size: 0.75rem; text-transform: uppercase; padding: 0 16px; margin-bottom: 8px;">${c.name}</h4>
+                    <a href="#" class="mobile-menu-item-sub" onclick="filterCategory('${c.name}')">Tất cả ${c.name} <i class="bi bi-chevron-right"></i></a>
+            `;
+            if (hasSubs) {
+                c.subcategories.forEach(sub => {
+                    mobileHtml += `<a href="#" class="mobile-menu-item-sub" onclick="filterCategory('${sub}')">${sub} <i class="bi bi-chevron-right"></i></a>`;
+                });
+            }
+            mobileHtml += `</div>`;
+        });
+        mobileHtml += `
+            <a href="#" class="mobile-menu-item">Hệ thống cửa hàng</a>
+            <a href="#" class="mobile-menu-item">Thông tin thương hiệu <i class="bi bi-chevron-right"></i></a>
+        `;
+        mobileNav.innerHTML = mobileHtml;
+    }
+  } catch (err) {
+    console.error("Lỗi tải danh mục:", err);
   }
 }
 
 function renderCategories() {
-  const container = document.getElementById("category-pills");
-  if (!container) return;
-  
-  const categories = ["Tất cả", "HÀNG MỚI VỀ", "BỘ SƯU TẬP", "ÁO", "QUẦN", "PHỤ KIỆN", "GIÁ TỐT"];
-
-  container.innerHTML = categories
-    .map(category => `
-        <button class="category-pill ${category === activeCategory ? 'active' : ''}" onclick="filterCategory('${category}')">
-          ${category}
-        </button>
-      `)
-    .join("");
+  // Navigation is now hardcoded in index.html for specific Owen/Onevora style
+  return;
 }
 
 
@@ -722,7 +749,7 @@ function openProductModal(id) {
   if (modalImg) {
     modalImg.src = product.img;
     modalImg.alt = product.name;
-    modalImg.onerror = () => { modalImg.src = "https://via.placeholder.com/600x450?text=Fashion+Modern"; };
+    modalImg.onerror = () => { modalImg.src = "assets/onevora_logo.png"; };
   }
 
   document.getElementById("modal-name").innerText = product.name;
