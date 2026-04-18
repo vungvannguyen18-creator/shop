@@ -686,50 +686,56 @@ function openProductModal(id) {
   quantity = 1;
   document.getElementById("modal-qty").innerText = quantity;
 
-  const featList = product.features && product.features.length > 0 ? product.features : [
-    "Chất liệu thoáng khí, phù hợp cả ngày",
-    "Thiết kế tối giản, dễ mix đồ phong cách",
-    "Giao hàng toàn quốc, đổi trả 7 ngày"
-  ];
-  document.getElementById("modal-features").innerHTML = featList.map(f => `<li>${f}</li>`).join("");
+  const featArea = document.getElementById("modal-features");
+  if (featArea) {
+      const featList = product.features && product.features.length > 0 ? product.features : [
+        "Chất liệu thoáng khí, phù hợp cả ngày",
+        "Thiết kế tối giản, dễ mix đồ phong cách",
+        "Giao hàng toàn quốc, đổi trả 7 ngày"
+      ];
+      featArea.innerHTML = featList.map(f => `<li>${f}</li>`).join("");
+  }
 
   // Render sizes dynamically
   const sizesBox = document.getElementById("modal-sizes-box");
   const sizesRow = document.getElementById("modal-sizes-row");
-  const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : [];
-  
-  if (sizes.length > 0) {
-    sizesRow.style.display = '';
-    sizesBox.innerHTML = sizes.map(sz => `
-      <div class="size-box" onclick="selectSize(this, '${sz}')">${sz}</div>
-    `).join('');
-  } else {
-    sizesRow.style.display = 'none';
-    selectedSize = 'Free Size';
+  if (sizesBox) {
+    const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : [];
+    if (sizes.length > 0) {
+      if (sizesRow) sizesRow.style.display = '';
+      sizesBox.innerHTML = sizes.map(sz => `
+        <div class="size-box" onclick="selectSize(this, '${sz}')">${sz}</div>
+      `).join('');
+    } else {
+      if (sizesRow) sizesRow.style.display = 'none';
+      selectedSize = 'Free Size';
+    }
   }
 
   // Render colors dynamically
   const colorsBox = document.getElementById("modal-colors-box");
   const colorsRow = document.getElementById("modal-colors-row");
-  const colors = product.colors && product.colors.length > 0 ? product.colors : [];
-  selectedColor = null;
+  if (colorsBox) {
+    const colors = product.colors && product.colors.length > 0 ? product.colors : [];
+    selectedColor = null;
 
-  if (colors.length > 0) {
-    colorsRow.style.display = '';
-    colorsBox.innerHTML = colors.map(c => {
-      const hex = COLOR_MAP[c] || '#ddd';
-      const isWhite = c === 'Trang';
-      return `
-        <button class="color-pill" onclick="selectColor(this, '${c}')" title="${c}"
-          style="width:42px; height:42px; border-radius:50%; background:${hex}; border: 1px solid ${isWhite ? '#ccc' : hex}; cursor:pointer; transition:0.2s; position:relative; padding: 2px;">
-          <div class="color-inner" style="width:100%; height:100%; border-radius:50%; background:${hex}; border: 1px solid rgba(0,0,0,0.1);"></div>
-          <span class="check-mark" style="display:none; position:absolute; inset:0; align-items:center; justify-content:center; color:${isWhite?'#333':'#fff'}; font-size:1.1rem; font-weight: bold;">✓</span>
-        </button>
-      `;
-    }).join('');
-  } else {
-    colorsRow.style.display = 'none';
-    selectedColor = 'Default';
+    if (colors.length > 0) {
+      if (colorsRow) colorsRow.style.display = '';
+      colorsBox.innerHTML = colors.map(c => {
+        const hex = COLOR_MAP[c] || '#ddd';
+        const isWhite = c === 'Trang';
+        return `
+          <button class="color-pill" onclick="selectColor(this, '${c}')" title="${c}"
+            style="width:42px; height:42px; border-radius:50%; background:${hex}; border: 1px solid ${isWhite ? '#ccc' : hex}; cursor:pointer; transition:0.2s; position:relative; padding: 2px;">
+            <div class="color-inner" style="width:100%; height:100%; border-radius:50%; background:${hex}; border: 1px solid rgba(0,0,0,0.1);"></div>
+            <span class="check-mark" style="display:none; position:absolute; inset:0; align-items:center; justify-content:center; color:${isWhite?'#333':'#fff'}; font-size:1.1rem; font-weight: bold;">✓</span>
+          </button>
+        `;
+      }).join('');
+    } else {
+      if (colorsRow) colorsRow.style.display = 'none';
+      selectedColor = 'Default';
+    }
   }
 
   // Cập nhật Reviews (Đánh giá thật)
