@@ -438,40 +438,53 @@
 <div class="cart-panel" id="cart-panel">
     <div class="panel-header">
         <h3>Giỏ hàng của bạn</h3>
-        <button onclick="toggleCart()">×</button>
+        <button onclick="toggleCart()" style="background:none; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
     </div>
     
-    <!-- FREESHIP METER -->
-    <div id="freeship-meter" class="freeship-meter" style="padding: 16px; border-bottom: 1px solid #eee;">
-        <div class="meter-text" id="meter-text" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: #333;">
-            Mua thêm <span id="meter-remaining" style="color: #ff424e;">...</span> để được FREESHIP
+    <div class="cart-items-container" style="flex: 1; overflow-y: auto;">
+        <div id="cart-items-yame">
+            <!-- Sản phẩm sẽ được chèn vào đây bởi script.js -->
         </div>
-        <div class="meter-bar-bg" style="height: 6px; background: #eee; border-radius: 10px; overflow: hidden;">
-            <div id="meter-progress" style="height: 100%; width: 0%; background: linear-gradient(90deg, #10b981, #34d399); transition: width 0.5s ease;"></div>
-        </div>
-    </div>
-
-    <div class="cart-items-container" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
-        <ul id="cart-items" style="list-style: none; padding: 0; margin: 0;"></ul>
         
-        <!-- EMPTY CART STATE (OWEN STYLE) -->
-        <div id="empty-cart-state" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; color: #888;">
-            <div style="position: relative; margin-bottom: 24px;">
-                <i class="bi bi-cart3" style="font-size: 5rem; color: #eee;"></i>
-                <div style="position: absolute; top: -5px; right: -5px; background: #c5a059; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; border: 3px solid #fff;">!</div>
-            </div>
-            <p style="font-size: 0.95rem; font-weight: 600; line-height: 1.6; max-width: 200px;">Không có sản phẩm nào trong giỏ hàng của bạn.</p>
+        <!-- EMPTY CART STATE -->
+        <div id="empty-cart-state" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px; text-align: center; color: #888;">
+            <i class="bi bi-cart3" style="font-size: 4rem; opacity: 0.2; margin-bottom: 15px;"></i>
+            <p style="font-weight: 600;">Giỏ hàng của bạn đang trống</p>
+            <button class="btn-primary" onclick="toggleCart()" style="margin-top: 20px; padding: 10px 24px;">Tiếp tục mua sắm</button>
         </div>
     </div>
 
-    <div class="cart-summary" style="padding: 20px; border-top: 1px solid #eee; background: #fafafa;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-            <p style="margin: 0; color: #666;">Tổng tạm tính:</p>
-            <p style="margin: 0; font-weight: 800; font-size: 1.1rem;"><span id="total">0</span> VNĐ</p>
+    <div class="cart-summary-yame">
+        <div class="cart-breakdown">
+            <div class="breakdown-row">
+                <span>Giá gốc</span>
+                <span id="yame-original-price" style="text-decoration: line-through; color: #888;">0đ</span>
+            </div>
+            <div class="breakdown-row saving">
+                <div class="saving-label">
+                    <span>🎁</span>
+                    <span>Tiết kiệm</span>
+                </div>
+                <span class="saving-val" id="yame-saving">-0đ</span>
+            </div>
+            <div class="breakdown-row total">
+                <span>Tổng số tiền ước tính</span>
+                <span id="yame-total-price" style="color: #111;">0đ</span>
+            </div>
+            <div style="font-size: 0.75rem; color: #888; text-align: right; margin-top: 4px;">
+                Thuế, ưu đãi giảm giá và <span style="text-decoration: underline;">phí vận chuyển</span> được tính khi thanh toán.
+            </div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <button class="btn-outline" onclick="location.href='cart.html'" style="padding: 12px; font-size: 0.85rem;">XEM GIỎ</button>
-            <button class="btn-primary ripple" onclick="checkout()" style="padding: 12px; font-size: 0.85rem;">THANH TOÁN</button>
+
+        <label class="terms-checkbox">
+            <input type="checkbox" id="terms-confirm" checked>
+            <span>Tôi đã đọc và đồng ý điều kiện giao dịch Website.</span>
+        </label>
+
+        <div class="cart-actions-yame">
+            <button class="btn-yame-checkout" onclick="checkout()">
+                Đặt hàng miễn phí ship
+            </button>
         </div>
     </div>
 </div>

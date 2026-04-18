@@ -526,6 +526,12 @@ function quickAdd(productId, size) {
 function updateCartState() {
   localStorage.setItem("cart", JSON.stringify(cart));
   renderCart();
+  
+  // Tự động mở giỏ hàng khi có cập nhật (thêm sản phẩm)
+  const cartPanel = document.getElementById('cart-panel');
+  if (cartPanel && !cartPanel.classList.contains('panel-open')) {
+      cartPanel.classList.add('panel-open');
+  }
 }
 
 // buyNowMode: neu true, sau khi them gio se chuyen thang checkout
@@ -567,56 +573,73 @@ function buyNow(id) {
 }
 
 function renderCart() {
-  const itemsContainer = document.getElementById("cart-items");
-  const countEl = document.getElementById("cart-count");
-  const totalEl = document.getElementById("total");
+  const itemsContainer = document.getElementById("cart-items-yame");
+  const countEls = document.querySelectorAll(".cart-count"); // Cập nhật tất cả các badge số lượng
+  
+  const originalPriceEl = document.getElementById("yame-original-price");
+  const savingEl = document.getElementById("yame-saving");
+  const totalPriceEl = document.getElementById("yame-total-price");
 
-  if (!itemsContainer || !countEl || !totalEl) return;
+  if (!itemsContainer) return;
 
   if (cart.length === 0) {
     itemsContainer.innerHTML = '';
     document.getElementById('empty-cart-state').style.display = 'flex';
-    countEl.innerText = "0";
-    totalEl.innerText = "0";
-    updateFreeshipMeter(0);
+    if (originalPriceEl) originalPriceEl.innerText = "0đ";
+    if (savingEl) savingEl.innerText = "-0đ";
+    if (totalPriceEl) totalPriceEl.innerText = "0đ";
+    countEls.forEach(el => el.innerText = "0");
     return;
   }
   
   document.getElementById('empty-cart-state').style.display = 'none';
 
-  let totalValue = 0;
+  let totalActual = 0;
+  let totalOriginal = 0;
+
   itemsContainer.innerHTML = cart.map((item, index) => {
-    totalValue += (item.price * (item.qty || 1));
+    const qty = item.qty || 1;
+    const price = item.price || 0;
+    const itemOriginal = Math.round(price * 1.1 / 1000) * 1000; // Giả định giá gốc +10%
+    
+    totalActual += (price * qty);
+    totalOriginal += (itemOriginal * qty);
+
     const thumb = item.img || item.image || "https://images.unsplash.com/photo-1512374382149-4332c6c02151?auto=format&fit=crop&w=400&q=80";
     
     return `
-      <div class="cart-item-modern">
-        <div class="cart-thumb">
-          <img src="${thumb}" alt="${item.name}">
-        </div>
-        <div class="cart-info">
+      <div class="cart-item-yame">
+        <img src="${thumb}" alt="${item.name}">
+        <div class="item-details">
           <h4>${item.name}</h4>
-          <div class="cart-variant">
-            ${item.selectedColor ? `Màu: ${item.selectedColor}` : ''} 
-            ${item.selectedSize ? `• Size: ${item.selectedSize}` : ''}
+          <div class="item-meta">
+            ${item.selectedSize ? `Size: ${item.selectedSize}` : ''} 
+            ${item.selectedColor ? ` | Màu: ${item.selectedColor}` : ''}
           </div>
-          <div class="cart-price-row">
-            <div class="cart-qty-ctrl">
-              <button onclick="changeCartQty(${index}, -1)">−</button>
-              <span>${item.qty || 1}</span>
-              <button onclick="changeCartQty(${index}, 1)">+</button>
+          <div class="item-price-row">
+            <div class="qty-controls">
+              <button onclick="changeCartQty(${index}, -1)">&minus;</button>
+              <span>${qty}</span>
+              <button onclick="changeCartQty(${index}, 1)">&plus;</button>
             </div>
-            <div class="item-price">${(item.price * (item.qty || 1)).toLocaleString()} VNĐ</div>
+            <div style="text-align: right;">
+              <div style="font-weight: 800; font-size: 1.1rem; color: #111;">${(price * qty).toLocaleString('vi-VN')}đ</div>
+              <div style="text-decoration: line-through; color: #888; font-size: 0.85rem;">${(itemOriginal * qty).toLocaleString('vi-VN')}đ</div>
+            </div>
           </div>
-          <button class="delete-btn" style="margin-top:10px; text-align:left;" onclick="removeFromCart(${index})">Xóa món này</button>
         </div>
+        <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#ccc; cursor:pointer; font-size:1.5rem; align-self: flex-start; padding: 0 0 10px 10px;">&times;</button>
       </div>
     `;
-  }).join('');
+  }).join("");
 
-  countEl.innerText = cart.length;
-  totalEl.innerText = totalValue.toLocaleString();
-  updateFreeshipMeter(totalValue);
+  const totalSaving = totalOriginal - totalActual;
+
+  if (originalPriceEl) originalPriceEl.innerText = totalOriginal.toLocaleString('vi-VN') + "đ";
+  if (savingEl) savingEl.innerText = "-" + totalSaving.toLocaleString('vi-VN') + "đ";
+  if (totalPriceEl) totalPriceEl.innerText = totalActual.toLocaleString('vi-VN') + "đ";
+  
+  countEls.forEach(el => el.innerText = cart.length.toString());
 }
 
 function changeCartQty(index, delta) {
@@ -626,7 +649,6 @@ function changeCartQty(index, delta) {
   if (cart[index].qty <= 0) {
     removeFromCart(index);
   } else {
-    cart[index].totalPrice = cart[index].qty * cart[index].price;
     updateCartState();
   }
 }
