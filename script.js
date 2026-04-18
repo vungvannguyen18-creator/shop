@@ -489,7 +489,7 @@ function renderProducts() {
 }
 
 function openQuickSizes(productId) {
-    // Logic to open size selection
+    buyNowMode = true;
     openProductModal(productId);
 }
 
@@ -944,7 +944,7 @@ function updateAddBtn() {
     addBtn.disabled = false;
     addBtn.style.opacity = '1';
     addBtn.style.cursor = 'pointer';
-    let label = 'Thêm giỏ';
+    let label = buyNowMode ? 'Mua ngay' : 'Thêm giỏ';
     if (selectedSize !== 'Free Size') label += ` (${selectedSize})`;
     if (selectedColor !== 'Default') label += ` - ${selectedColor}`;
     addBtn.innerText = label;
@@ -1013,25 +1013,22 @@ function addToCartWithSize(id, button) {
     });
   }
 
+  const existing = cart.find(item => item.id === product.id && item.selectedSize === selectedSize && item.selectedColor === selectedColor);
+  if (existing) {
+    existing.qty = (existing.qty || 1) + quantity;
+    existing.totalPrice = existing.qty * existing.price;
+  } else {
+    cart.push(cartItem);
+  }
+  
+  updateCartState();
+  showToast(buyNowMode ? `Đang chuyển đến thanh toán...` : `Đã thêm ${quantity}x "${finalName}" vào giỏ`, "success");
+
   if (buyNowMode) {
-    cart = [cartItem];
-    updateCartState();
-    showToast(`Đã chọn mua ${quantity}x ${finalName}`, "success");
     buyNowMode = false;
     closeProductModal();
     window.location.href = "checkout.html";
   } else {
-    // Check if same product/size/color exists to increment qty
-    const existing = cart.find(item => item.id === product.id && item.selectedSize === selectedSize && item.selectedColor === selectedColor);
-    if (existing) {
-      existing.qty = (existing.qty || 1) + quantity;
-      existing.totalPrice = existing.qty * existing.price;
-    } else {
-      cart.push(cartItem);
-    }
-    
-    updateCartState();
-    showToast(`Đã thêm ${quantity}x "${finalName}" vào giỏ`, "success");
     if (button) flyToCart(button);
     closeProductModal();
   }
