@@ -930,6 +930,8 @@ function updateAddBtn() {
     buyBtn.disabled = false;
     buyBtn.style.opacity = '1';
     buyBtn.style.cursor = 'pointer';
+    addBtn.innerText = "Thêm vào giỏ hàng";
+    buyBtn.innerText = "Mua ngay";
   } else {
     addBtn.disabled = true;
     addBtn.style.opacity = '0.5';
@@ -937,6 +939,13 @@ function updateAddBtn() {
     buyBtn.disabled = true;
     buyBtn.style.opacity = '0.5';
     buyBtn.style.cursor = 'not-allowed';
+    
+    let msg = 'Chọn ';
+    if (!selectedSize) msg += 'Size ';
+    if (!selectedSize && !selectedColor) msg += '& ';
+    if (!selectedColor) msg += 'Màu ';
+    addBtn.innerText = msg;
+    buyBtn.innerText = msg;
   }
 }
 
@@ -1030,7 +1039,7 @@ function closeProductModal() {
     addBtn.disabled = true;
     addBtn.style.opacity = '0.45';
     addBtn.style.cursor = 'not-allowed';
-    addBtn.innerText = 'Chon size de them gio';
+    addBtn.innerText = 'Chọn size để thêm giỏ';
   }
 }
 
@@ -1112,7 +1121,8 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 function changeQuantity(val) {
   quantity = Math.max(1, quantity + val);
-  document.getElementById("modal-qty").innerText = quantity;
+  const qtyEl = document.getElementById("modal-qty");
+  if (qtyEl) qtyEl.innerText = quantity;
 }
 function showMaintenanceOverlay() {
     if (document.getElementById('maintenance-overlay')) return;
