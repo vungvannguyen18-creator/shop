@@ -73,8 +73,8 @@
     </script>
 </head>
 <body>
-<div id="top-announcement" style="background: linear-gradient(90deg, #111, #333); color: #fff; text-align: center; padding: 10px 20px; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">
-    Miễn phí giao hàng toàn quốc cho đơn từ <span id="announce-threshold">...</span>
+<div id="top-announcement" style="background: #111; color: #fff; text-align: center; padding: 8px 20px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">
+    MIỄN PHÍ GIAO HÀNG TOÀN QUỐC CHO ĐƠN TỪ <span id="announce-threshold">...</span>
 </div>
 <div class="page-wrapper">
     <header class="main-header">
@@ -314,17 +314,17 @@
 
 <div class="modal-backdrop" id="product-modal" hidden>
     <div class="product-modal-card">
-        <button class="modal-close" onclick="closeProductModal()">×</button>
+        <div class="modal-label">CHI TIẾT SẢN PHẨM</div>
+        <button class="modal-close" onclick="closeProductModal()"><i class="bi bi-x"></i></button>
         <div class="modal-image">
             <img id="modal-img" src="" alt="">
         </div>
         <div class="modal-details">
             <p class="eyebrow">Chi tiết sản phẩm</p>
-            <h2 id="modal-name"></h2>
-            <p id="modal-description"></p>
-            <div class="modal-meta">
-                <span id="modal-price"></span>
-                <span id="modal-category"></span>
+            <h2 id="modal-name" class="modal-title"></h2>
+            <div class="price-pill-wrapper"><span id="modal-price" class="price-pill"></span></div>
+            <div class="modal-meta-row">
+                <span id="modal-category" class="category-tag"></span>
             </div>
             <div class="modal-sizes" id="modal-sizes-row">
                 <span style="font-weight:600; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; color:#888;">Chọn size:</span>

@@ -718,10 +718,7 @@ function openProductModal(id) {
   if (sizes.length > 0) {
     sizesRow.style.display = '';
     sizesBox.innerHTML = sizes.map(sz => `
-      <button class="size-pill" onclick="selectSize(this, '${sz}')"
-        style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 8px; border: 1.5px solid #ddd; background: #fff; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 0.95rem; color: #111;">
-        ${sz}
-      </button>
+      <div class="size-box" onclick="selectSize(this, '${sz}')">${sz}</div>
     `).join('');
   } else {
     sizesRow.style.display = 'none';
@@ -793,10 +790,12 @@ async function checkReviewEligibility(productId, reviews) {
 
     // Mẫu hiển thị KHÓA thân thiện (UX)
     const lockedHTML = (msg) => `
-        <div style="text-align: center; padding: 10px;">
-            <div style="font-size: 2rem; margin-bottom: 8px; opacity: 0.5;">🔒</div>
-            <p style="color: #555; font-size: 0.9rem; margin: 0; font-weight: 600;">${msg}</p>
-            <p style="font-size: 0.75rem; color: #888; margin-top: 6px;">Chúng tôi chỉ cho phép đánh giá từ người dùng đã trải nghiệm thực tế để đảm bảo chất lượng phản hồi luôn chính xác nhất.</p>
+        <div class="review-lock-box">
+            <div class="lock-icon-container">
+                <i class="bi bi-lock-fill"></i>
+            </div>
+            <p style="color: #111; font-weight: 700; font-size: 1rem; margin-bottom: 8px;">${msg}</p>
+            <p class="review-lock-text">Chúng tôi chỉ cho phép đánh giá từ người dùng đã trải nghiệm thực tế để đảm bảo chất lượng phản hồi luôn chính xác nhất.</p>
         </div>
     `;
 
@@ -881,7 +880,7 @@ async function submitReview(productId) {
 function selectSize(element, sz) {
   if (element.classList.contains('out-of-stock')) return;
   selectedSize = sz;
-  document.querySelectorAll(".size-pill").forEach(p => p.classList.remove('active'));
+  document.querySelectorAll(".size-box").forEach(p => p.classList.remove('active'));
   element.classList.add('active');
   document.getElementById("size-required-hint").style.display = 'none';
   updateAvailability();
@@ -899,14 +898,15 @@ function selectColor(element, c) {
 }
 
 function updateAvailability() {
-  const currentProduct = products.find(p => p.name === document.getElementById("modal-name").innerText);
+  const modalName = document.getElementById("modal-name").innerText;
+  const currentProduct = products.find(p => p.name === modalName);
   if (!currentProduct || !currentProduct.variants) return;
 
   const variants = currentProduct.variants;
 
   // 1. If color is selected, update size buttons
   if (selectedColor) {
-    document.querySelectorAll('.size-pill').forEach(btn => {
+    document.querySelectorAll('.size-box').forEach(btn => {
       const sz = btn.innerText.trim();
       const variant = variants.find(v => v.color === selectedColor && v.size === sz);
       if (variant && !variant.inStock) {
@@ -916,8 +916,7 @@ function updateAvailability() {
       }
     });
   } else {
-    // Reset all sizes to available if no color selected (or based on global availability)
-    document.querySelectorAll('.size-pill').forEach(btn => btn.classList.remove('out-of-stock'));
+    document.querySelectorAll('.size-box').forEach(btn => btn.classList.remove('out-of-stock'));
   }
 
   // 2. If size is selected, update color buttons
