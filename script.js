@@ -117,12 +117,12 @@ const COLOR_MAP = {
 };
 
 const fallbackProducts = [
-  { id: "owen-1", name: "Áo Polo - APV23620", price: 399000, img: "https://owen.vn/media/catalog/product/a/p/apv23631_1_2.jpg", category: "ÁO", rating: 5, colors: ['#000', '#333', '#fff'], sizes: ['S','M','L','XL'], isHot: true, isOnlineOnly: true },
-  { id: "owen-2", name: "Áo sơ mi - AS230913T", price: 550000, img: "https://owen.vn/media/catalog/product/a/s/as230913t_1_2.jpg", category: "ÁO", rating: 4.5, colors: ['#fff', '#e5e7eb'], sizes: ['M','L','XL','XXL'], isNew: true },
-  { id: "owen-3", name: "Quần Short - QS230101", price: 350000, img: "https://owen.vn/media/catalog/product/q/s/qs230101_1.jpg", category: "QUẦN", rating: 4, colors: ['#1e40af', '#334155'], sizes: ['29','30','31','32'] },
-  { id: "owen-4", name: "Quần Tây - QT230801", price: 650000, img: "https://owen.vn/media/catalog/product/q/t/qt230801_1.jpg", category: "QUẦN", rating: 4.8, colors: ['#111', '#1f2937'], sizes: ['30','31','32','33'], isHot: true },
-  { id: "owen-5", name: "Thắt lưng da - TL2301", price: 450000, img: "https://owen.vn/media/catalog/product/t/l/tl2301_1.jpg", category: "PHỤ KIỆN", rating: 5, colors: ['#000'], sizes: ['F'] },
-  { id: "owen-6", name: "Áo khoác Blazer - AK2305", price: 1250000, img: "https://owen.vn/media/catalog/product/a/k/ak2305_1.jpg", category: "ÁO", rating: 4.9, colors: ['#000', '#111'], sizes: ['L','XL'], isNew: true }
+  { id: "owen-1", name: "Áo Polo - APV23620", price: 399000, img: "assets/polo.png", category: "ÁO", rating: 5, colors: ['#000', '#333', '#fff'], sizes: ['S','M','L','XL'], isHot: true, isOnlineOnly: true },
+  { id: "owen-2", name: "Áo sơ mi - AS230913T", price: 550000, img: "assets/shirt.png", category: "ÁO", rating: 4.5, colors: ['#fff', '#e5e7eb'], sizes: ['M','L','XL','XXL'], isNew: true },
+  { id: "owen-3", name: "Quần Short - QS230101", price: 350000, img: "assets/belt_shorts.png", category: "QUẦN", rating: 4, colors: ['#1e40af', '#334155'], sizes: ['29','30','31','32'] },
+  { id: "owen-4", name: "Quần Tây - QT230801", price: 650000, img: "assets/trousers.png", category: "QUẦN", rating: 4.8, colors: ['#111', '#1f2937'], sizes: ['30','31','32','33'], isHot: true },
+  { id: "owen-5", name: "Thắt lưng da - TL2301", price: 450000, img: "assets/belt_shorts.png", category: "PHỤ KIỆN", rating: 5, colors: ['#000'], sizes: ['F'] },
+  { id: "owen-6", name: "Áo khoác Blazer - AK2305", price: 1250000, img: "assets/blazer.png", category: "ÁO", rating: 4.9, colors: ['#000', '#111'], sizes: ['L','XL'], isNew: true }
 ];
 
 
