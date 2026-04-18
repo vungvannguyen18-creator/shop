@@ -563,8 +563,91 @@
         </div>
 
         <!-- 2. Payment -->
-        <!-- 2. Payment (Simplified: Default to COD) -->
-        <input type="hidden" id="selected-payment-method" value="cod">
+        <!-- 2. Payment -->
+        <div class="card">
+            <div class="card-title">
+                <div class="step-badge">2</div>
+                Phương thức thanh toán
+            </div>
+
+            <div class="payment-grid">
+                <div class="payment-card active" onclick="selectPayment(this, 'cod')">
+                    <div class="pay-icon">💵</div>
+                    <div class="pay-name">COD</div>
+                    <div class="pay-sub">Trả khi nhận hàng</div>
+                </div>
+                <div class="payment-card" onclick="selectPayment(this, 'bank')">
+                    <div class="pay-icon">🏦</div>
+                    <div class="pay-name">Chuyển khoản</div>
+                    <div class="pay-sub">Ngân hàng nội địa</div>
+                </div>
+                <div class="payment-card" onclick="selectPayment(this, 'ewallet')">
+                    <div class="pay-icon">📱</div>
+                    <div class="pay-name">Ví điện tử</div>
+                    <div class="pay-sub">Momo / ZaloPay</div>
+                </div>
+            </div>
+
+            <!-- Bank Transfer Info -->
+            <div class="payment-info-box" id="bank-info">
+                <div style="text-align:center; margin-bottom: 16px;">
+                    <img id="info-bank-qr" src="https://img.vietqr.io/image/MB-0774182263-compact2.png?accountName=NGUYEN+VAN+VUNG&addInfo=FASHIONMODERN" 
+                         alt="Bank QR" 
+                         style="width: 200px; height: 200px; border-radius: 12px; border: 1px solid #eee; display: block; margin: 0 auto 10px;"
+                         onerror="this.style.display='none'">
+                    <div id="info-bank-label" style="font-size: 0.78rem; color: #888; display: flex; justify-content: center; align-items: center; gap: 6px;">
+                        MB Bank · Napas 247 · VietQR
+                    </div>
+                </div>
+                <div class="bank-row">
+                    <span class="label">Ngân hàng</span>
+                    <span class="value" id="info-bank-name">MB Bank</span>
+                </div>
+                <div class="bank-row">
+                    <span class="label">Số tài khoản</span>
+                    <span class="value">
+                        <span id="info-bank-number">0774182263</span>
+                        <button id="btn-copy-bank" class="copy-btn" onclick="copyText('0774182263', this)">Sao chép</button>
+                    </span>
+                </div>
+                <div class="bank-row">
+                    <span class="label">Tên tài khoản</span>
+                    <span class="value" id="info-bank-user">NGUYEN VAN VUNG</span>
+                </div>
+                <div class="bank-row">
+                    <span class="label">Nội dung CK</span>
+                    <span class="value" id="transfer-content">FASHIONMODERN + SDT</span>
+                </div>
+            </div>
+
+            <!-- E-Wallet Info -->
+            <div class="payment-info-box" id="ewallet-info">
+                <div style="text-align:center; margin-bottom: 16px;">
+                    <img id="info-momo-qr" src="https://img.vietqr.io/image/MOMO-0357747203-compact2.png?accountName=NGUYEN+VAN+VUNG&addInfo=FASHIONMODERN" 
+                         alt="Momo QR"
+                         style="width: 200px; height: 200px; border-radius: 12px; border: 1px solid #f0c0d0; display: block; margin: 0 auto 10px;"
+                         onerror="this.style.display='none'">
+                    <div style="font-size: 0.78rem; color: #888; display: flex; justify-content: center; align-items: center; gap: 6px;">
+                        <span style="color: #ae2070; font-weight: 700;">MoMo</span> · VietQR · Napas 247
+                    </div>
+                </div>
+                <div class="bank-row">
+                    <span class="label">Ví Momo / ZaloPay</span>
+                    <span class="value">
+                        <span id="info-momo-phone">0357747203</span>
+                        <button id="btn-copy-momo" class="copy-btn" onclick="copyText('0357747203', this)">Sao chép</button>
+                    </span>
+                </div>
+                <div class="bank-row">
+                    <span class="label">Tên</span>
+                    <span class="value" id="info-momo-user">NGUYEN VAN VUNG</span>
+                </div>
+                <div class="bank-row">
+                    <span class="label">Nội dung</span>
+                    <span class="value">FASHIONMODERN + SDT</span>
+                </div>
+            </div>
+        </div>
 
     </div>
 
@@ -887,7 +970,26 @@ function renderTotals() {
     }
 }
 
-// Unused payment logic removed. Defaulting to COD.
+// ── PAYMENT SELECT ──
+function selectPayment(el, method) {
+    document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    selectedPayment = method;
+
+    document.getElementById('bank-info').classList.toggle('visible', method === 'bank');
+    document.getElementById('ewallet-info').classList.toggle('visible', method === 'ewallet');
+}
+
+// ── COPY ──
+function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = '✓ Đã chép';
+        btn.style.background = '#111';
+        btn.style.color = '#fff';
+        setTimeout(() => { btn.innerText = orig; btn.style.background = ''; btn.style.color = ''; }, 1500);
+    });
+}
 
 // ── PLACE ORDER ──
 async function placeOrder() {
@@ -972,7 +1074,11 @@ async function placeOrder() {
             }
 
             localStorage.removeItem('cart');
-            document.getElementById('success-overlay').classList.add('show');
+            if (selectedPayment === 'bank') {
+                showVietQRModal(order);
+            } else {
+                document.getElementById('success-overlay').classList.add('show');
+            }
         } else {
             alert("Lỗi đặt hàng: " + order.message);
         }
