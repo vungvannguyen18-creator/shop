@@ -314,59 +314,62 @@
 
 <div class="modal-backdrop" id="product-modal" hidden>
     <div class="product-modal-card">
-        <div class="modal-label">CHI TIẾT SẢN PHẨM</div>
-        <button class="modal-close" onclick="closeProductModal()"><i class="bi bi-x"></i></button>
-        <div class="modal-image">
-            <img id="modal-img" src="" alt="">
+        <button class="modal-close" onclick="closeProductModal()" style="z-index: 100;"><i class="bi bi-x"></i></button>
+        
+        <div class="modal-header-hero">
+            <div class="modal-hero-label">Chi tiết sản phẩm</div>
+            <div style="font-size: 0.75rem; color: #666;">Xem thông tin, lựa chọn kích cỡ và thêm vào giỏ hàng.</div>
+            <div class="modal-image-container">
+                <img id="modal-img" src="" alt="">
+            </div>
         </div>
-        <div class="modal-details">
-            <p class="eyebrow">Chi tiết sản phẩm</p>
-            <h2 id="modal-name" class="modal-title"></h2>
-            <div class="price-pill-wrapper"><span id="modal-price" class="price-pill"></span></div>
-            <div class="modal-meta-row">
-                <span id="modal-category" class="category-tag"></span>
-            </div>
-            <div class="modal-sizes" id="modal-sizes-row">
-                <span style="font-weight:600; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; color:#888;">Chọn size:</span>
-                <div id="modal-sizes-box" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;"></div>
-                <p id="size-required-hint" style="color:#ef4444; font-size:0.82rem; margin-top:6px; display:none;">* Vui lòng chọn size trước khi thêm giỏ</p>
-            </div>
-            <div class="modal-colors" id="modal-colors-row" style="margin-top: 16px;">
-                <span style="font-weight:600; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; color:#888;">Chọn màu:</span>
-                <div id="modal-colors-box" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;"></div>
-                <p id="color-required-hint" style="color:#ef4444; font-size:0.82rem; margin-top:6px; display:none;">* Vui lòng chọn màu trước khi thêm giỏ</p>
-            </div>
-            <div class="modal-qty-row" style="margin-top: 20px; display: flex; align-items: center; gap: 20px;">
-                <span style="font-weight:600; font-size:0.85rem; text-transform:uppercase; letter-spacing:0.5px; color:#888;">Số lượng:</span>
-                <div class="qty-picker" style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; width: fit-content;">
-                    <button onclick="changeQuantity(-1)" style="width: 40px; height: 40px; border: none; background: #fff; cursor: pointer; font-size: 1.2rem; transition: 0.2s;">−</button>
-                    <span id="modal-qty" style="width: 40px; text-align: center; font-weight: 700; font-size: 1.1rem;">1</span>
-                    <button onclick="changeQuantity(1)" style="width: 40px; height: 40px; border: none; background: #fff; cursor: pointer; font-size: 1.2rem; transition: 0.2s;">+</button>
-                </div>
-            </div>
-            <div class="modal-features" style="margin-top: 20px;">
-                <p style="font-weight: 700; font-size: 0.95rem; margin-bottom: 8px;">Ưu điểm sản phẩm:</p>
-                <ul id="modal-features" style="padding-left: 20px; font-size: 0.9rem; color: #555; line-height: 1.6;"></ul>
+
+        <div class="modal-content-area">
+            <nav class="modal-breadcrumbs">
+                <span style="color: #ff5c8d;">Trang chủ</span> / <span id="modal-breadcrumb-cat" class="active">ÁO</span>
+            </nav>
+
+            <h2 id="modal-name" class="modal-product-title"></h2>
+            
+            <div class="modal-price-row">
+                <span id="modal-price" class="modal-price-val"></span>
+                <span class="badge-stock">CÒN HÀNG</span>
             </div>
 
-            <!-- CUSTOMER REVIEWS (Đánh giá thật) -->
-            <div class="modal-reviews" style="margin-top: 32px; border-top: 1px solid #eee; padding-top: 24px;">
-                <h3 style="font-size: 1.1rem; margin-bottom: 16px; display:flex; align-items:center; gap:8px;">
-                    ⭐ Đánh giá từ khách hàng
-                </h3>
-                <div id="modal-reviews-list" style="margin-bottom: 20px; max-height: 250px; overflow-y: auto; padding-right: 8px; display: flex; flex-direction: column; gap: 12px;">
-                    <!-- Reviews injected here -->
+            <p id="modal-description" style="font-size: 0.9rem; color: #666; margin-bottom: 20px; line-height: 1.6;"></p>
+
+            <div class="modal-selection-group" style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+                    <div class="sel-item">
+                        <div style="font-size: 0.75rem; font-weight: 700; margin-bottom: 8px;">Kích cỡ</div>
+                        <div id="modal-sizes-box" style="display: flex; gap: 8px;"></div>
+                    </div>
+                    <div class="sel-item">
+                        <div style="font-size: 0.75rem; font-weight: 700; margin-bottom: 8px;">Số lượng</div>
+                        <div class="qty-stepper">
+                            <button class="qty-btn" onclick="changeQuantity(-1)">−</button>
+                            <span id="modal-qty" style="font-weight: 700; min-width: 20px; text-align: center;">1</span>
+                            <button class="qty-btn" onclick="changeQuantity(1)">+</button>
+                        </div>
+                    </div>
                 </div>
                 
-                <div id="review-input-container" style="background: #f9fafb; padding: 16px; border-radius: 12px; border: 1px solid #e5e7eb;">
-                    <!-- The review form or the Disabled Lock state will be injected here dynamically -->
+                <div class="sel-item">
+                    <div style="font-size: 0.75rem; font-weight: 700; margin-bottom: 8px;">Màu sắc</div>
+                    <div id="modal-colors-box" style="display: flex; gap: 10px;"></div>
                 </div>
             </div>
 
-            <div class="modal-actions" style="margin-top: 24px;">
-                <button class="btn-outline" onclick="closeProductModal()">Đóng</button>
-                <button class="btn-primary ripple" id="modal-add-btn" onclick="addToCartWithSize(currentModalProductId, this)" style="opacity:0.5; cursor:not-allowed;" disabled>Chọn size để thêm giỏ</button>
+            <!-- Review section remains available below if needed -->
+            <div class="modal-reviews-mini" style="margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px;">
+                 <div id="modal-reviews-list"></div>
+                 <div id="review-input-container"></div>
             </div>
+        </div>
+
+        <div class="modal-sticky-actions">
+            <button class="btn-modal-cart" id="modal-add-btn" onclick="addToCartWithSize(currentModalProductId, this)">Thêm vào giỏ hàng</button>
+            <button class="btn-modal-buynow" id="modal-buy-btn" onclick="buyNowFromModal(currentModalProductId)">Mua ngay</button>
         </div>
     </div>
 </div>

@@ -451,36 +451,18 @@ function renderProducts() {
 
   list.innerHTML = displayProducts
     .map(p => {
-        const badgeHot = p.isHot ? '<span class="badge-float hot">HOT</span>' : '';
-        const badgeNew = p.isNew ? '<span class="badge-float new">NEW</span>' : '';
-        const onlineOnly = p.isOnlineOnly ? '<p class="online-only-text">Chỉ có tại Online</p>' : '';
-        
-        let colorDotsHtml = '';
-        if (p.colors && p.colors.length > 0) {
-            colorDotsHtml = `<div class="color-swatches">`;
-            p.colors.forEach(c => {
-                colorDotsHtml += `<span class="color-dot" style="background-color: ${c}"></span>`;
-            });
-            colorDotsHtml += `</div>`;
-        }
-
         return `
-        <div class="product-card" onclick="openProductModal('${p.id}')">
-            ${badgeHot || badgeNew}
-            <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('${p.id}')">
-                <i class="bi bi-heart"></i>
-            </button>
+        <div class="product-card">
             <div class="img-wrapper">
-                <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/400x500?text=No+Image'">
-                <div class="card-overlay">
-                    <button class="btn-hover-buy" onclick="event.stopPropagation(); openQuickSizes('${p.id}')">MUA NGAY</button>
-                </div>
+                <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
             </div>
             <div class="card-info">
-                ${colorDotsHtml}
                 <h3>${p.name}</h3>
-                <p class="price">${p.price.toLocaleString()} đ</p>
-                ${onlineOnly}
+                <p class="price">${p.price.toLocaleString()}đ</p>
+            </div>
+            <div class="card-actions">
+                <button class="btn-card-add" onclick="event.stopPropagation(); addToCart('${p.id}', this)">Thêm vào giỏ</button>
+                <button class="btn-card-detail" onclick="openProductModal('${p.id}')">Chi tiết</button>
             </div>
         </div>
         `;
@@ -697,9 +679,9 @@ function openProductModal(id) {
   }
 
   document.getElementById("modal-name").innerText = product.name;
+  document.getElementById("modal-breadcrumb-cat").innerText = (product.category || 'SẢN PHẨM').toUpperCase();
   document.getElementById("modal-description").innerText = product.description || '';
-  document.getElementById("modal-price").innerText = `${product.price.toLocaleString()} VNĐ`;
-  document.getElementById("modal-category").innerText = product.category || '';
+  document.getElementById("modal-price").innerText = `${product.price.toLocaleString()}đ`;
   quantity = 1;
   document.getElementById("modal-qty").innerText = quantity;
 
@@ -937,27 +919,24 @@ function updateAvailability() {
 
 function updateAddBtn() {
   const addBtn = document.getElementById("modal-add-btn");
-  if (!addBtn) return;
+  const buyBtn = document.getElementById("modal-buy-btn");
+  if (!addBtn || !buyBtn) return;
   
   const isReady = selectedSize && selectedColor;
   if (isReady) {
     addBtn.disabled = false;
     addBtn.style.opacity = '1';
     addBtn.style.cursor = 'pointer';
-    let label = buyNowMode ? 'Mua ngay' : 'Thêm giỏ';
-    if (selectedSize !== 'Free Size') label += ` (${selectedSize})`;
-    if (selectedColor !== 'Default') label += ` - ${selectedColor}`;
-    addBtn.innerText = label;
+    buyBtn.disabled = false;
+    buyBtn.style.opacity = '1';
+    buyBtn.style.cursor = 'pointer';
   } else {
     addBtn.disabled = true;
-    addBtn.style.opacity = '0.45';
+    addBtn.style.opacity = '0.5';
     addBtn.style.cursor = 'not-allowed';
-    let msg = 'Chọn ';
-    if (!selectedSize) msg += 'size ';
-    if (!selectedSize && !selectedColor) msg += '& ';
-    if (!selectedColor) msg += 'màu ';
-    msg += 'để thêm giỏ';
-    addBtn.innerText = msg;
+    buyBtn.disabled = true;
+    buyBtn.style.opacity = '0.5';
+    buyBtn.style.cursor = 'not-allowed';
   }
 }
 
@@ -1032,6 +1011,11 @@ function addToCartWithSize(id, button) {
     if (button) flyToCart(button);
     closeProductModal();
   }
+}
+
+function buyNowFromModal(id) {
+    buyNowMode = true;
+    addToCartWithSize(id, document.getElementById('modal-buy-btn'));
 }
 
 function closeProductModal() {
