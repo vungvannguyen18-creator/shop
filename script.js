@@ -679,7 +679,8 @@ function openProductModal(id) {
   }
 
   document.getElementById("modal-name").innerText = product.name;
-  document.getElementById("modal-breadcrumb-cat").innerText = (product.category || 'SẢN PHẨM').toUpperCase();
+  const breadCat = document.getElementById("modal-breadcrumb-cat");
+  if (breadCat) breadCat.innerText = (product.category || 'ÁO').toUpperCase();
   document.getElementById("modal-description").innerText = product.description || '';
   document.getElementById("modal-price").innerText = `${product.price.toLocaleString()}đ`;
   quantity = 1;
@@ -1008,7 +1009,7 @@ function addToCartWithSize(id, button) {
   }
   
   updateCartState();
-  showToast(buyNowMode ? `Đang chuyển đến thanh toán...` : `Đã thêm ${quantity}x "${finalName}" vào giỏ`, "success");
+  showToast(buyNowMode ? `Đang chuyển đến thanh toán...` : `Thêm vào giỏ hàng thành công!`, "success");
 
   if (buyNowMode) {
     buyNowMode = false;
