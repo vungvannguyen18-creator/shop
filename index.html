@@ -317,114 +317,79 @@
 
 <div class="modal-backdrop" id="product-modal" hidden>
     <div class="product-modal-card">
-        <button class="modal-close" onclick="closeProductModal()" style="z-index: 100;"><i class="bi bi-x"></i></button>
+        <!-- HEADER KIỂU YAME -->
+        <div class="modal-yame-header">
+            <span class="yame-header-title">Chi tiết sản phẩm</span>
+            <button class="yame-close-btn" onclick="closeProductModal()">&times;</button>
+        </div>
         
         <div class="modal-main-layout">
             <div class="modal-left-media">
-                <div class="modal-hero-label-mobile">Chi tiết sản phẩm</div>
                 <div class="modal-image-container">
                     <img id="modal-img" src="" alt="">
                 </div>
-                <div class="modal-trust-badges-desktop">
-                    <div class="trust-item"><i class="bi bi-truck"></i> Giao hàng toàn quốc</div>
-                    <div class="trust-item"><i class="bi bi-shield-check"></i> Bảo hành 12 tháng</div>
+                
+                <!-- TRUST CARDS KIỂU YAME (Hộp bo góc) -->
+                <div class="yame-trust-container">
+                    <div class="yame-trust-card">
+                        <span class="trust-icon">🚚</span>
+                        <div class="trust-info">
+                            <span class="trust-label">Giao hàng toàn quốc</span>
+                        </div>
+                    </div>
+                    <div class="yame-trust-card">
+                        <span class="trust-icon">🛡️</span>
+                        <div class="trust-info">
+                            <span class="trust-label">Bảo hành 12 tháng</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="modal-right-info">
                 <div class="modal-content-scroll">
-                    <nav class="modal-breadcrumbs">
-                        <span style="color: var(--primary-pink);">Trang chủ</span> / <span id="modal-breadcrumb-cat" class="active">ÁO</span>
+                    <nav class="modal-breadcrumbs" style="margin-top: 10px;">
+                        <span style="color: #64748b;">TRANG CHỦ</span> / <span id="modal-breadcrumb-cat" style="color: #ef4444; font-weight: 800;">ÁO</span>
                     </nav>
 
-                    <h2 id="modal-name" class="modal-product-title"></h2>
-                    <div class="modal-sku-row" style="margin-bottom: 8px;">
-                        <span style="color: #64748b; font-size: 0.8rem; font-weight: 700;">MÃ SP: </span>
-                        <span id="modal-sku" style="color: #1e293b; font-size: 0.8rem; font-weight: 800;"></span>
-                    </div>
+                    <h2 id="modal-name" class="modal-product-title" style="margin-top: 15px; font-weight: 900; letter-spacing: -0.5px;"></h2>
                     
-                    <div class="modal-price-row">
-                        <span id="modal-price" class="modal-price-val"></span>
+                    <div class="modal-price-row" style="margin: 15px 0;">
+                        <span id="modal-price" class="modal-price-val" style="color: #111; font-size: 1.8rem; font-weight: 900;"></span>
                     </div>
 
                     <div class="modal-selection-area">
                         <div class="sel-block">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                                <label class="sel-label" style="margin: 0;">Kích cỡ:</label>
-                                <a href="javascript:void(0)" class="size-guide-link" style="font-size: 0.75rem; font-weight: 700; color: #1e293b; text-decoration: underline;">Hướng dẫn chọn size</a>
-                            </div>
+                            <label class="sel-label">Kích cỡ:</label>
                             <div id="modal-sizes-box" class="options-grid"></div>
                         </div>
                         
-                        <div class="selection-row" style="margin-top: 24px;">
-                            <div class="sel-block">
-                                <label class="sel-label">Màu sắc:</label>
-                                <div id="modal-colors-box" class="colors-flex"></div>
-                            </div>
-                            <div class="sel-block">
-                                <label class="sel-label">Số lượng:</label>
-                                <div class="qty-stepper-v2">
-                                    <button class="qty-step-btn" onclick="changeQuantity(-1)">−</button>
-                                    <span id="modal-qty">1</span>
-                                    <button class="qty-step-btn" onclick="changeQuantity(1)">+</button>
-                                </div>
+                        <div class="sel-block" style="margin-top: 20px;">
+                            <label class="sel-label">Màu sắc:</label>
+                            <div id="modal-colors-box" class="colors-flex"></div>
+                        </div>
+
+                        <div class="sel-block" style="margin-top: 20px;">
+                            <label class="sel-label">Số lượng:</label>
+                            <div class="qty-stepper-v2">
+                                <button class="qty-step-btn" onclick="changeQuantity(-1)">−</button>
+                                <span id="modal-qty">1</span>
+                                <button class="qty-step-btn" onclick="changeQuantity(1)">+</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- ONEVORA STYLE ACCORDIONS -->
-                    <div class="modal-accordions" style="margin-top: 40px; border-top: 1px solid #eee;">
-                        <div class="accordion-item active">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <span>MÔ TẢ</span>
-                                <i class="bi bi-dash"></i>
-                            </div>
-                            <div class="accordion-content">
-                                <p id="modal-description" class="modal-product-desc" style="margin: 0;"></p>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <span>HƯỚNG DẪN SỬ DỤNG SẢN PHẨM</span>
-                                <i class="bi bi-plus"></i>
-                            </div>
-                            <div class="accordion-content">
-                                <ul style="margin: 0; padding-left: 18px; color: #64748b; font-size: 0.9rem; line-height: 1.8;">
-                                    <li>Giặt máy với chu kỳ trung bình và vòng quay ngắn</li>
-                                    <li>Giặt với nhiệt độ tối đa 30 độ C</li>
-                                    <li>Không được sấy khô</li>
-                                    <li>Ủi ở nhiệt độ trung bình</li>
-                                    <li>Không dùng chất tẩy mạnh</li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="accordion-item">
-                            <div class="accordion-header" onclick="toggleAccordion(this)">
-                                <span>GIAO HÀNG / ĐỔI HÀNG</span>
-                                <i class="bi bi-plus"></i>
-                            </div>
-                            <div class="accordion-content">
-                                <p style="margin: 0; color: #64748b; font-size: 0.9rem; line-height: 1.6;">Giao hàng nhanh toàn quốc. Đổi hàng trong vòng 30 ngày đối với mặt hàng nguyên giá. Tham khảo thêm chính sách đổi trả tại website.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- RELATED PRODUCTS -->
-                    <div class="modal-related-section" style="margin-top: 60px;">
-                        <h4 style="font-size: 0.9rem; font-weight: 900; letter-spacing: 1px; margin-bottom: 24px;">CÓ THỂ BẠN THÍCH</h4>
-                        <div id="modal-related-list" class="related-products-grid">
-                            <!-- Injected via script.js -->
-                        </div>
+                    <!-- MÔ TẢ & CHI TIẾT -->
+                    <div class="modal-yame-details" style="margin-top: 30px; border-top: 1px solid #f1f1f1; padding-top: 20px;">
+                        <h4 style="font-size: 0.85rem; font-weight: 800; color: #888; margin-bottom: 12px; text-transform: uppercase;">Mô tả sản phẩm</h4>
+                        <p id="modal-description" style="color: #444; line-height: 1.6; font-size: 0.95rem;"></p>
                     </div>
                 </div>
 
-                <div class="modal-actions-sticky-onevora">
-                    <button class="btn-solid-black" id="modal-add-btn" onclick="addToCartWithSize(currentModalProductId, this)">
-                        <span>Thêm vào giỏ hàng</span>
-                        <i class="bi bi-bag"></i>
-                    </button>
-                    <!-- Buy Now Button can be dynamic or hidden for pure Owen style -->
-                    <button id="modal-buy-btn" onclick="buyNowFromModal(currentModalProductId)" style="display: none;"></button>
+                <!-- ACTIONS KIỂU YAME -->
+                <div class="modal-actions-yame">
+                    <button class="btn-yame-outline" id="modal-add-btn" onclick="addToCartWithSize(currentModalProductId, this)">THÊM VÀO GIỎ</button>
+                    <button class="btn-yame-solid" id="modal-buy-btn" onclick="buyNowFromModal(currentModalProductId)">MUA NGAY</button>
                 </div>
             </div>
         </div>

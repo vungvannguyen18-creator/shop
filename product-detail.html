@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản phẩm | Onevora Fashion</title>
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { background-color: #fff; color: #111; }
+        
+        /* Product Detail Layout */
+        .pd-container {
+            max-width: 1300px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 60px;
+        }
+
+        @media (max-width: 992px) {
+            .pd-container { grid-template-columns: 1fr; gap: 30px; }
+        }
+
+        /* Left: Media Column */
+        .pd-media {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .main-image-view {
+            width: 100%;
+            border-radius: 24px;
+            overflow: hidden;
+            background: #f8f8f8;
+            position: sticky;
+            top: 100px;
+        }
+
+        .main-image-view img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: 0.5s ease;
+        }
+
+        /* Right: Info Column */
+        .pd-info {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .pd-breadcrumb { font-size: 0.85rem; color: #888; letter-spacing: 0.5px; }
+        .pd-breadcrumb span.cat { color: #ef4444; font-weight: 800; }
+
+        .pd-title { font-size: 2.2rem; font-weight: 900; line-height: 1.2; letter-spacing: -1px; }
+        .pd-price { font-size: 1.8rem; font-weight: 900; color: #111; margin: 10px 0; }
+
+        /* YaMe Style Highlights Column */
+        .pd-highlights {
+            margin: 40px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .highlight-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #fdfdfd;
+            border: 1.5px solid #f1f1f1;
+            border-radius: 16px;
+        }
+
+        .highlight-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .highlight-text b { display: block; font-size: 0.9rem; font-weight: 800; }
+        .highlight-text span { font-size: 0.8rem; color: #666; }
+
+        /* Customer Photos UGC */
+        .ugc-section {
+            margin-top: 60px;
+            border-top: 1px solid #f1f1f1;
+            padding-top: 40px;
+        }
+
+        .ugc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 24px;
+        }
+
+        .ugc-item { aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; background: #eee; }
+        .ugc-item img { width: 100%; height: 100%; object-fit: cover; }
+
+        @media (max-width: 600px) { .ugc-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        /* Sticky Bottom Bar on Mobile */
+        .pd-sticky-footer {
+            display: none;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: #fff;
+            padding: 15px 20px 30px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+            z-index: 1000;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .pd-sticky-footer { display: flex; }
+            .pd-actions-desktop { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="topbar">
+        <div class="header-container">
+            <a href="index.html" class="logo">
+                <img src="assets/onevora_logo.png" alt="Onevora" style="height: 45px;">
+            </a>
+            <div class="header-actions" style="display: flex; gap: 20px; align-items: center;">
+                <a href="index.html" style="text-decoration: none; font-weight: 800; color: #111; font-size: 0.9rem;">TRANG CHỦ</a>
+                <button onclick="window.history.back()" style="font-weight: 700; text-decoration: none; color: #111; background:none; border:none; cursor:pointer; font-size: 1.5rem;">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="pd-container">
+        <!-- LEFT SCREEN -->
+        <section class="pd-media">
+            <div class="main-image-view">
+                <img id="detail-img" src="" alt="Product Image">
+            </div>
+            
+            <!-- THUMBNAILS -->
+            <div style="display: flex; gap: 10px; margin-top: 20px; overflow-x: auto;">
+                <div class="ugc-item" style="width: 100px; height: 125px; border: 2px solid #111;"><img id="thumb-1" src=""></div>
+                <div class="ugc-item" style="width: 100px; height: 125px; opacity: 0.5;"><img id="thumb-2" src=""></div>
+                <div class="ugc-item" style="width: 100px; height: 125px; opacity: 0.5;"><img id="thumb-3" src=""></div>
+            </div>
+        </section>
+
+        <!-- RIGHT SCREEN -->
+        <section class="pd-info">
+            <nav class="pd-breadcrumb">
+                TRANG CHỦ / <span id="detail-cat" class="cat">ÁO</span>
+            </nav>
+
+            <h1 id="detail-name" class="pd-title">Đang tải...</h1>
+            <div id="detail-price" class="pd-price">0đ</div>
+
+            <div class="selection-box">
+                <label style="font-weight: 800; font-size: 0.9rem; display: block; margin-bottom: 12px;">KÍCH CỠ:</label>
+                <div id="detail-sizes" class="options-grid" style="display: flex; gap: 10px;"></div>
+            </div>
+
+            <div class="selection-box">
+                <label style="font-weight: 800; font-size: 0.9rem; display: block; margin-bottom: 12px; margin-top: 20px;">MÀU SẮC:</label>
+                <div id="detail-colors" class="colors-flex" style="display: flex; gap: 15px;"></div>
+            </div>
+
+            <div class="pd-actions-desktop" style="margin-top: 40px; display: flex; gap: 15px;">
+                <button class="btn-yame-outline" style="flex: 1; padding: 18px;" onclick="addToCartDetailed()">THÊM VÀO GIỎ</button>
+                <button class="btn-yame-solid" style="flex: 1; padding: 18px;" onclick="buyNowDetailed()">MUA NGAY</button>
+            </div>
+
+            <!-- YAME HIGHLIGHTS -->
+            <div class="pd-highlights">
+                <div class="highlight-item">
+                    <div class="highlight-img">💎</div>
+                    <div class="highlight-text">
+                        <b>Vải Cotton Premium</b>
+                        <span>Mềm mịn, thoáng mát, thấm hút mồ hôi cực tốt.</span>
+                    </div>
+                </div>
+                <div class="highlight-item">
+                    <div class="highlight-img">⚡</div>
+                    <div class="highlight-text">
+                        <b>Công nghệ AirDry™</b>
+                        <span>Nhanh khô, kháng khuẩn, bảo vệ làn da nhạy cảm.</span>
+                    </div>
+                </div>
+                <div class="highlight-item">
+                    <div class="highlight-img">♻️</div>
+                    <div class="highlight-text">
+                        <b>Bền vững & Thân thiện</b>
+                        <span>Chất liệu tái chế xanh, không chứa hóa chất độc hại.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h4 style="font-weight: 900; font-size: 0.85rem; color: #888; text-transform: uppercase; border-bottom: 1.5px solid #f1f1f1; padding-bottom: 12px;">Mô tả sản phẩm</h4>
+                <p id="detail-desc" style="line-height: 1.8; color: #444; margin-top: 15px; font-size: 0.95rem;"></p>
+            </div>
+        </section>
+    </main>
+
+    <div class="pd-container" style="display: block;">
+        <section class="ugc-section">
+            <h3 style="font-weight: 900; letter-spacing: -1px; font-size: 1.8rem;">Hình ảnh khách hàng chia sẻ</h3>
+            <div class="ugc-grid">
+                <div class="ugc-item"><img src="https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=400&q=80"></div>
+                <div class="ugc-item"><img src="https://images.unsplash.com/photo-1539106609512-7170667d26fa?w=400&q=80"></div>
+                <div class="ugc-item"><img src="https://images.unsplash.com/photo-1550928431-ee0ec6db30d3?w=400&q=80"></div>
+                <div class="ugc-item"><img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&q=80"></div>
+            </div>
+        </section>
+
+        <section class="ugc-section">
+            <h3 style="font-weight: 900; letter-spacing: -1px; font-size: 1.8rem;">Đánh giá của khách hàng (4.9⭐)</h3>
+            <div id="detail-reviews" style="margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;"></div>
+        </section>
+    </div>
+
+    <!-- MOBILE STICKY -->
+    <div class="pd-sticky-footer">
+        <button class="btn-yame-outline" style="flex: 1;" onclick="addToCartDetailed()">GIỎ HÀNG</button>
+        <button class="btn-yame-solid" style="flex: 1.5;" onclick="buyNowDetailed()">MUA NGAY</button>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+    <script>
+        let currentProduct = null;
+        const pId = new URLSearchParams(window.location.search).get('id');
+
+        async function initPage() {
+            // Wait for products to load from script.js
+            if (!products || products.length === 0) {
+               await loadProducts();
+            }
+            
+            currentProduct = products.find(p => p.id === pId);
+            if (!currentProduct) {
+                document.body.innerHTML = "<div style='padding: 100px; text-align:center;'><h3>Sản phẩm không tìm thấy</h3><a href='index.html'>Quay lại trang chủ</a></div>";
+                return;
+            }
+
+            renderData();
+        }
+
+        function renderData() {
+            document.title = currentProduct.name + " | Onevora";
+            document.getElementById('detail-img').src = currentProduct.img;
+            document.getElementById('thumb-1').src = currentProduct.img;
+            document.getElementById('thumb-2').src = currentProduct.img;
+            document.getElementById('thumb-3').src = currentProduct.img;
+            document.getElementById('detail-name').innerText = currentProduct.name;
+            document.getElementById('detail-price').innerText = currentProduct.price.toLocaleString() + 'đ';
+            document.getElementById('detail-cat').innerText = (currentProduct.category || 'ÁO').toUpperCase();
+            document.getElementById('detail-desc').innerText = currentProduct.description || "Sản phẩm chất lượng cao, kiểu dáng hiện đại.";
+
+            const sizes = currentProduct.sizes || ['S','M','L'];
+            document.getElementById('detail-sizes').innerHTML = sizes.map(sz => `
+                <div class="size-box" id="size-${sz}" style="padding: 10px 20px; border: 1px solid #ddd; border-radius: 8px; cursor:pointer;" onclick="selectSizeLocal(this, '${sz}')">${sz}</div>
+            `).join('');
+
+            const colors = currentProduct.colors || ['Đen'];
+            document.getElementById('detail-colors').innerHTML = colors.map(c => {
+                const hex = COLOR_MAP[c] || '#111';
+                return `<button class="color-pill" onclick="selectColorLocal(this, '${c}')" style="width:40px; height:40px; border-radius:50%; background:${hex}; border:1px solid #eee; cursor:pointer;"></button>`;
+            }).join('');
+        }
+
+        let selectedSize = null;
+        let selectedColor = null;
+
+        function selectSizeLocal(el, sz) {
+            selectedSize = sz;
+            document.querySelectorAll('.size-box').forEach(b => b.style.borderColor = '#ddd');
+            el.style.borderColor = '#111';
+        }
+
+        function selectColorLocal(el, c) {
+            selectedColor = c;
+            document.querySelectorAll('.color-pill').forEach(b => b.style.boxShadow = 'none');
+            el.style.boxShadow = '0 0 0 2px #111';
+        }
+
+        function addToCartDetailed() {
+            if (!selectedSize || !selectedColor) return alert("Chọn size và màu!");
+            addToCartWithSize(currentProduct.id);
+        }
+
+        function buyNowDetailed() {
+            if (!selectedSize || !selectedColor) return alert("Chọn size và màu!");
+            buyNowFromModal(currentProduct.id);
+        }
+
+        initPage();
+    </script>
+</body>
+</html>

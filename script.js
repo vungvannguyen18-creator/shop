@@ -747,109 +747,14 @@ function renderRelatedProducts(category, excludeId) {
 }
 
 function openProductModal(id) {
-  const product = products.find(p => p.id === id);
-  if (!product) return;
-
-  // Track event: View Item Detail (GA4)
-  if (typeof gtag === 'function') {
-    gtag('event', 'view_item', {
-      currency: 'VND',
-      value: product.price,
-      items: [{
-        item_id: product.id,
-        item_name: product.name,
-        price: product.price,
-        item_category: product.category
-      }]
-    });
-  }
-
-  currentModalProductId = id;
-  selectedSize = null; // reset — khach phai chon lai
-
-  const modalImg = document.getElementById("modal-img");
-  if (modalImg) {
-    modalImg.src = product.img;
-    modalImg.alt = product.name;
-    modalImg.onerror = () => { modalImg.src = "assets/onevora_logo.png"; };
-  }
-
-  document.getElementById("modal-name").innerText = product.name;
-  const skuElem = document.getElementById("modal-sku");
-  if (skuElem) skuElem.innerText = product.id;
-
-  const breadCat = document.getElementById("modal-breadcrumb-cat");
-  if (breadCat) breadCat.innerText = (product.category || 'ÁO').toUpperCase();
-  document.getElementById("modal-description").innerText = product.description || 'Sản phẩm kiểu dáng hiện đại, tôn dáng người mặc. Màu sắc trung tính, dễ phối đồ. Chất liệu cao cấp, mềm mát và bền màu.';
-  document.getElementById("modal-price").innerText = `${product.price.toLocaleString()}đ`;
-  quantity = 1;
-  document.getElementById("modal-qty").innerText = quantity;
-
-  // Render sizes dynamically
-  const sizesBox = document.getElementById("modal-sizes-box");
-  if (sizesBox) {
-    const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : ['S', 'M', 'L', 'XL', '2XL'];
-    sizesBox.innerHTML = sizes.map(sz => `
-      <div class="size-box" onclick="selectSize(this, '${sz}')">${sz}</div>
-    `).join('');
-  }
-
-  // Render colors dynamically
-  const colorsBox = document.getElementById("modal-colors-box");
-  if (colorsBox) {
-    const colors = product.colors && product.colors.length > 0 ? product.colors : ['Đen'];
-    selectedColor = null;
-
-    colorsBox.innerHTML = colors.map(c => {
-      const hex = COLOR_MAP[c] || '#111';
-      const isWhite = c === 'Trang';
-      return `
-        <button class="color-pill" onclick="selectColor(this, '${c}')" title="${c}"
-          style="width:38px; height:38px; border-radius:50%; background:${hex}; border: 1px solid ${isWhite ? '#ccc' : hex}; cursor:pointer; transition:0.2s; position:relative; padding: 2px;">
-          <div class="color-inner" style="width:100%; height:100%; border-radius:50%; background:${hex};"></div>
-          <span class="check-mark" style="display:none; position:absolute; inset:0; align-items:center; justify-content:center; color:${isWhite?'#333':'#fff'}; font-size:1rem; font-weight: bold;">✓</span>
-        </button>
-      `;
-    }).join('');
-    
-    // Auto select if only 1 color
-    if (colors.length === 1) {
-       const firstBtn = colorsBox.querySelector('.color-pill');
-       if (firstBtn) selectColor(firstBtn, colors[0]);
-    }
-  }
-
-  // Related Products
-  renderRelatedProducts(product.category, product.id);
-
-  // Reviews integration
-  checkReviewEligibility(id, product.reviews || []);
-
-  updateAddBtn();
-  const modal = document.getElementById("product-modal");
-  if (modal) {
-    modal.hidden = false;
-    document.body.style.overflow = 'hidden'; 
-    
-    // Reset Accordion to default (Mô tả mở)
-    const accordions = modal.querySelectorAll('.accordion-item');
-    accordions.forEach((acc, idx) => {
-       if (idx === 0) acc.classList.add('active');
-       else acc.classList.remove('active');
-       
-       const ico = acc.querySelector('.accordion-header i');
-       if (ico) {
-         ico.classList.toggle('bi-dash', idx === 0);
-         ico.classList.toggle('bi-plus', idx !== 0);
-       }
-    });
-  }
+  // Thay vì mở modal, chúng ta chuyển hướng sang trang chi tiết sản phẩm mới kiểu YaMe
+  window.location.href = `product-detail.html?id=${id}`;
 }
 
 function closeProductModal() {
   const modal = document.getElementById("product-modal");
   if (modal) modal.hidden = true;
-  document.body.style.overflow = ''; // Cho phép cuộn lại
+  document.body.style.overflow = ''; 
   selectedSize = null;
   selectedColor = null;
 }
