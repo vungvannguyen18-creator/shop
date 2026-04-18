@@ -134,14 +134,21 @@
 
     <!-- Header -->
     <header class="topbar">
-        <div class="header-container">
-            <a href="index.html" class="logo">
-                <img src="assets/onevora_logo.png" alt="Onevora" style="height: 45px;">
-            </a>
+        <div class="header-container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="menu-hamburger-btn" onclick="toggleMobileMenu()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; display: none; padding: 5px;">
+                    <i class="bi bi-list"></i>
+                </button>
+                <a href="index.html" class="logo">
+                    <img src="assets/onevora_logo.png" alt="Onevora" style="height: 38px;">
+                </a>
+            </div>
+            
             <div class="header-actions" style="display: flex; gap: 20px; align-items: center;">
-                <a href="index.html" style="text-decoration: none; font-weight: 800; color: #111; font-size: 0.9rem;">TRANG CHỦ</a>
-                <button onclick="window.history.back()" style="font-weight: 700; text-decoration: none; color: #111; background:none; border:none; cursor:pointer; font-size: 1.5rem;">
-                    <i class="bi bi-x-lg"></i>
+                <button class="tool-btn" onclick="toggleSearch()" style="background:none; border:none; cursor:pointer; font-size: 1.3rem;"><i class="bi bi-search"></i></button>
+                <button class="tool-btn cart-trigger" onclick="toggleCart()" style="background:none; border:none; cursor:pointer; font-size: 1.3rem; position: relative;">
+                    <i class="bi bi-bag"></i>
+                    <span class="cart-badge" id="cart-count-badge">0</span>
                 </button>
             </div>
         </div>
@@ -241,7 +248,46 @@
         <button class="btn-yame-solid" style="flex: 1.5;" onclick="buyNowDetailed()">MUA NGAY</button>
     </div>
 
-    <script src="auth.js"></script>
+    <!-- Mobile Menu Overlay (YaMe Style) -->
+<div class="mobile-nav-full" id="mobile-menu-overlay">
+    <div class="mobile-nav-header">
+        <button class="close-nav-btn" onclick="toggleMobileMenu()">&times;</button>
+        <img src="assets/onevora_logo.png" alt="Logo" style="height: 30px; filter: invert(1);">
+        <div style="display: flex; gap: 15px;">
+            <i class="bi bi-search" onclick="toggleSearch(); toggleMobileMenu()"></i>
+            <div class="cart-trigger" onclick="toggleCart(); toggleMobileMenu()" style="position: relative;">
+                <i class="bi bi-bag"></i>
+                <span class="cart-badge" id="cart-count-mobile">0</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mobile-nav-content">
+        <div id="mobile-dynamic-categories">
+            <!-- Luồng danh mục động được render tại đây -->
+        </div>
+        
+        <div class="mobile-fixed-links">
+            <a href="#">Hệ thống cửa hàng <i class="bi bi-chevron-right"></i></a>
+            <a href="#">VIP Member <i class="bi bi-chevron-right"></i></a>
+            <a href="#">Tra cứu đơn hàng <i class="bi bi-chevron-right"></i></a>
+        </div>
+    </div>
+
+    <div class="mobile-nav-footer">
+        <a href="login.html" class="footer-login-btn">
+            <i class="bi bi-person"></i>
+            <span>Đăng nhập</span>
+        </a>
+    </div>
+</div>
+
+<!-- Floating Action Button (Chat) -->
+<a href="https://zalo.me/0774182263" target="_blank" class="floating-chat-btn">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo">
+</a>
+
+<script src="auth.js"></script>
     <script src="script.js"></script>
     <script>
         let currentProduct = null;

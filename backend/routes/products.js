@@ -31,6 +31,16 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Lấy danh sách danh mục duy nhất (để render Menu)
+router.get("/categories", async (req, res) => {
+    try {
+        const categories = await Product.distinct("category");
+        res.json(categories);
+    } catch (e) {
+        res.status(500).json({ message: "Lỗi server" });
+    }
+});
+
 // Admin: Lấy danh sách sản phẩm đầy đủ (bao gồm giá vốn)
 router.get("/admin", verifyToken, verifyAdmin, async (req, res) => {
     try {

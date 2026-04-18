@@ -178,7 +178,17 @@ function renderSearchResults(term) {
     `).join('');
 }
 
-// --- MOBILE MENU TAB LOGIC ---
+// --- MOBILE MENU LOGIC (YaMe STYLE) ---
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu-overlay');
+    if (!menu) return;
+    menu.classList.toggle('open');
+    if (menu.classList.contains('open')) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
+}
 function switchMobileMenuTab(tab) {
     document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -325,7 +335,7 @@ async function loadProducts(isSilent = false) {
 
 async function loadCategories() {
   try {
-    const res = await fetch(`${API_BASE}/categories`);
+    const res = await fetch(`${API_BASE}/products/categories`);
     if (!res.ok) return;
     const cats = await res.json();
     
@@ -333,60 +343,40 @@ async function loadCategories() {
     const desktopNav = document.getElementById('desktop-nav');
     if (desktopNav) {
       let desktopHtml = '';
+      // Luôn cho mục "Tất cả" hoặc "Sale" lên đầu nếu muốn
+      desktopHtml += `<div class="nav-item-link" onclick="filterCategory('Tất cả')">SẢN PHẨM MỚI</div>`;
+      
       cats.forEach(c => {
-        let subHtml = '';
-        const hasSubs = c.subcategories && c.subcategories.length > 0;
-        
-        if (hasSubs) {
-            subHtml = `<div class="mega-menu">
-                        <div class="mega-col">
-                            <h4>${c.name.toUpperCase()}</h4>`;
-            c.subcategories.forEach(sub => {
-                subHtml += `<a href="#" onclick="filterCategory('${sub}')">${sub}</a>`;
-            });
-            subHtml += `</div></div>`;
-        }
-
         desktopHtml += `
-            <div class="nav-item-link" onclick="filterCategory('${c.name}')">
-                ${c.name} ${hasSubs ? '<i class="bi bi-chevron-down"></i>' : ''}
-                ${subHtml}
+            <div class="nav-item-link" onclick="filterCategory('${c}')">
+                ${c.toUpperCase()}
             </div>
         `;
       });
       
-      // Thêm các mục cố định cuối menu
       desktopHtml += `
-        <div class="nav-item-link">Hệ thống cửa hàng</div>
-        <div class="nav-item-link">Thông tin thương hiệu <i class="bi bi-chevron-down"></i></div>
+        <div class="nav-item-link">HỆ THỐNG CỬA HÀNG</div>
+        <div class="nav-item-link">VIP</div>
       `;
       
       desktopNav.innerHTML = desktopHtml;
     }
 
-    // 2. Render Mobile Menu
-    const mobileNav = document.getElementById('mobile-nav-dynamic');
-    if (mobileNav) {
-        let mobileHtml = '<a href="index.html" class="mobile-menu-item">Trang chủ</a>';
+    // 2. Render Mobile Menu (YaMe Dynamic)
+    const mobileDynamic = document.getElementById('mobile-dynamic-categories');
+    if (mobileDynamic) {
+        let mobileHtml = `<a href="index.html" onclick="toggleMobileMenu()">TRANG CHỦ</a>`;
+        mobileHtml += `<a href="#" onclick="filterCategory('Tất cả'); toggleMobileMenu()" style="color: #ef4444;">SALE <i class="bi bi-chevron-right"></i></a>`;
+        
         cats.forEach(c => {
-            const hasSubs = c.subcategories && c.subcategories.length > 0;
             mobileHtml += `
-                <div class="mobile-menu-group" style="border-top: 1px solid #222; margin-top: 10px; padding-top: 10px;">
-                    <h4 style="color: #666; font-size: 0.75rem; text-transform: uppercase; padding: 0 16px; margin-bottom: 8px;">${c.name}</h4>
-                    <a href="#" class="mobile-menu-item-sub" onclick="filterCategory('${c.name}')">Tất cả ${c.name} <i class="bi bi-chevron-right"></i></a>
+                <div class="mobile-menu-item-main" onclick="filterCategory('${c}'); toggleMobileMenu()">
+                    ${c.toUpperCase()}
+                    <i class="bi bi-chevron-right"></i>
+                </div>
             `;
-            if (hasSubs) {
-                c.subcategories.forEach(sub => {
-                    mobileHtml += `<a href="#" class="mobile-menu-item-sub" onclick="filterCategory('${sub}')">${sub} <i class="bi bi-chevron-right"></i></a>`;
-                });
-            }
-            mobileHtml += `</div>`;
         });
-        mobileHtml += `
-            <a href="#" class="mobile-menu-item">Hệ thống cửa hàng</a>
-            <a href="#" class="mobile-menu-item">Thông tin thương hiệu <i class="bi bi-chevron-right"></i></a>
-        `;
-        mobileNav.innerHTML = mobileHtml;
+        mobileDynamic.innerHTML = mobileHtml;
     }
   } catch (err) {
     console.error("Lỗi tải danh mục:", err);
@@ -640,6 +630,8 @@ function renderCart() {
   if (totalPriceEl) totalPriceEl.innerText = totalActual.toLocaleString('vi-VN') + "đ";
   
   countEls.forEach(el => el.innerText = cart.length.toString());
+  const mobileBadge = document.getElementById('cart-count-mobile');
+  if (mobileBadge) mobileBadge.innerText = cart.length.toString();
 }
 
 function changeCartQty(index, delta) {
