@@ -349,17 +349,14 @@
             el.style.opacity = '1';
         }
 
-        let selectedSize = null;
-        let selectedColor = null;
-
         function selectSizeLocal(el, sz) {
-            selectedSize = sz;
+            window.selectedSize = sz; 
             document.querySelectorAll('.size-box').forEach(b => b.style.borderColor = '#ddd');
             el.style.borderColor = '#111';
         }
 
         function selectColorLocal(el, c) {
-            selectedColor = c;
+            window.selectedColor = c;
             document.querySelectorAll('.color-pill').forEach(b => b.style.boxShadow = 'none');
             el.style.boxShadow = '0 0 0 2px #111';
         }
