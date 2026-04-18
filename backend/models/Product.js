@@ -8,7 +8,16 @@ const ProductSchema = new mongoose.Schema({
   category: { type: String, default: "Khác" },
   stock: { type: Number, default: 0 },
   description: { type: String },
-  features: [{ type: String }],
+  features: [{ type: String }], // Ưu điểm ngắn gọn
+  thumbnails: [{ type: String }], // Danh sách ảnh chi tiết
+  highlights: [ // Các khối đặc điểm nổi bật kiểu YaMe
+    {
+      icon: String,
+      title: String,
+      text: String
+    }
+  ],
+  ugcPhotos: [{ type: String }], // Ảnh thực tế từ khách hàng
   sizes: [{ type: String }],
   colors: [{ type: String }],
   variants: [

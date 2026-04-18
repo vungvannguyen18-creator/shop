@@ -93,6 +93,64 @@ async function loadUsersAdmin() {
     }
 }
 
+// --- NEW DYNAMIC PRODUCT UTILS ---
+function previewMultipleUpload(input, containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    
+    if (input.files) {
+        Array.from(input.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.width = '60px'; img.style.height = '60px';
+                img.style.objectFit = 'cover'; img.style.borderRadius = '8px';
+                img.style.border = '1px solid #333'; img.style.margin = '4px';
+                container.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+}
+
+function addHighlightRow(data = { icon: '', title: '', text: '' }) {
+    const container = document.getElementById('highlights-container');
+    if (!container) return;
+    
+    const div = document.createElement('div');
+    div.className = 'highlight-input-group';
+    div.style.display = 'flex'; div.style.gap = '8px';
+    div.style.alignItems = 'flex-start'; div.style.marginBottom = '8px';
+    
+    div.innerHTML = `
+        <input class="dark-input hl-icon" placeholder="Icon" style="width:70px;" value="${data.icon || ''}">
+        <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+            <input class="dark-input hl-title" placeholder="Tiêu đề" value="${data.title || ''}">
+            <input class="dark-input hl-text" placeholder="Mô tả" value="${data.text || ''}">
+        </div>
+        <button onclick="this.parentElement.remove()" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size: 1.2rem;">&times;</button>
+    `;
+    container.appendChild(div);
+}
+
+async function uploadMultipleFiles(files) {
+    if (!files || files.length === 0) return [];
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+        formData.append('images', files[i]);
+    }
+    const res = await fetch(`${API_BASE}/upload/multiple`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getAuthToken()}` },
+        body: formData
+    });
+    if (!res.ok) throw new Error("Lỗi tải lên nhiều ảnh");
+    const data = await res.json();
+    return data.urls || [];
+}
+
 function renderProductTable() {
   const body = document.getElementById('product-table-body');
   if (!body) return;
@@ -773,13 +831,21 @@ async function addProduct() {
     alert('Vui long chon anh cho san pham moi.');
     return;
   }
+  // Thu thập Highlights
+  const highlightItems = [];
+  document.querySelectorAll('.highlight-input-group').forEach(group => {
+    const icon = group.querySelector('.hl-icon').value.trim();
+    const title = group.querySelector('.hl-title').value.trim();
+    const text = group.querySelector('.hl-text').value.trim();
+    if (title) highlightItems.push({ icon, title, text });
+  });
+
   try {
       let imageUrl = 'https://via.placeholder.com/600x800?text=No+Image';
       
       if (imageFile) {
           const formData = new FormData();
           formData.append('image', imageFile);
-          
           const uploadRes = await fetch(`${API_BASE}/upload`, {
               method: 'POST',
               headers: { Authorization: `Bearer ${getAuthToken()}` },
@@ -790,11 +856,28 @@ async function addProduct() {
           imageUrl = uploadData.url;
       }
 
+      // Tải ảnh Thumbnails
+      let thumbnailUrlList = [];
+      const thumbInput = document.getElementById('new-thumbnails-files');
+      if (thumbInput.files.length > 0) {
+          thumbnailUrlList = await uploadMultipleFiles(thumbInput.files);
+      }
+
+      // Tải ảnh UGC
+      let ugcUrlList = [];
+      const ugcInput = document.getElementById('new-ugc-files');
+      if (ugcInput.files.length > 0) {
+          ugcUrlList = await uploadMultipleFiles(ugcInput.files);
+      }
+
       const productData = { 
         name, 
         price, 
         cost: Number(document.getElementById('new-cost').value) || Math.floor(price * 0.7),
         image: imageUrl, 
+        thumbnails: thumbnailUrlList,
+        ugcPhotos: ugcUrlList,
+        highlights: highlightItems,
         stock, 
         category, 
         sizes, 
@@ -1090,6 +1173,42 @@ function editProduct(id) {
   renderSizePicker();
   renderColorPicker();
 
+  // --- HIỂN THỊ DỮ LIỆU ĐỘNG KIỂU YAME ---
+  // Hiển thị ảnh bìa hiện tại
+  const previewBox = document.getElementById('upload-preview-box');
+  if (previewBox) {
+    previewBox.innerHTML = `<img src="${p.image || p.img}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">`;
+    document.getElementById('upload-text').innerText = "Thay đổi ảnh bìa";
+  }
+
+  // Hiển thị Thumbnails hiện tại
+  const thumbContainer = document.getElementById('thumb-preview-container');
+  if (thumbContainer) {
+    thumbContainer.innerHTML = (p.thumbnails || []).map(url => `
+        <img src="${url}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333; margin:2px;">
+    `).join('');
+  }
+
+  // Hiển thị UGC hiện tại
+  const ugcContainer = document.getElementById('ugc-preview-container');
+  if (ugcContainer) {
+    ugcContainer.innerHTML = (p.ugcPhotos || []).map(url => `
+        <img src="${url}" style="width:50px; height:50px; object-fit:cover; border-radius:6px; border:1px solid #333; margin:2px;">
+    `).join('');
+  }
+
+  // Hiển thị Highlights hiện tại
+  const hlContainer = document.getElementById('highlights-container');
+  if (hlContainer) {
+    hlContainer.innerHTML = '';
+    const highlights = p.highlights || [];
+    if (highlights.length === 0) {
+        addHighlightRow();
+    } else {
+        highlights.forEach(h => addHighlightRow(h));
+    }
+  }
+
   // Scroll to form
   const card = document.querySelector('.product-add-card');
   if (card) card.scrollIntoView({ behavior: 'smooth' });
@@ -1108,22 +1227,59 @@ async function saveProduct() {
     const category = document.getElementById('new-category').value;
     const description = document.getElementById('new-description').value.trim();
     const features = document.getElementById('new-features').value.trim().split('\n').filter(f => f.trim());
-    const sizes = [...selectedSizes];
-    const colors = [...selectedColors];
+    const sizes = [...selectedSizeValues];
+    const colors = [...selectedColorValues];
 
-    const variants = [];
-    selectedColors.forEach(c => {
-      selectedSizes.forEach(s => {
-        const sku = `${c}-${s}`;
-        if (currentMatrixData[sku]) {
-          variants.push({ color: c, size: s, ...currentMatrixData[sku] });
-        }
-      });
+    // Thu thập Highlights
+    const highlightItems = [];
+    document.querySelectorAll('.highlight-input-group').forEach(group => {
+        const icon = group.querySelector('.hl-icon').value.trim();
+        const title = group.querySelector('.hl-title').value.trim();
+        const text = group.querySelector('.hl-text').value.trim();
+        if (title) highlightItems.push({ icon, title, text });
     });
 
     try {
+      const product = products.find(p => p.id === editingProductId || p._id === editingProductId);
+      
+      // Handle Main Image Update
+      let imgUrl = product.image || product.img;
+      const fileInput = document.getElementById('new-image-file');
+      if (fileInput.files.length > 0) {
+        const formData = new FormData();
+        formData.append('image', fileInput.files[0]);
+        const upRes = await fetch(`${API_BASE}/upload`, { 
+            method: 'POST', 
+            headers: { Authorization: `Bearer ${getAuthToken()}` },
+            body: formData 
+        });
+        const upData = await upRes.json();
+        imgUrl = upData.url;
+      }
+
+      // Handle Thumbnails Update
+      let thumbnailUrlList = product.thumbnails || [];
+      const thumbInput = document.getElementById('new-thumbnails-files');
+      if (thumbInput.files.length > 0) {
+          thumbnailUrlList = await uploadMultipleFiles(thumbInput.files);
+      }
+
+      // Handle UGC Update
+      let ugcUrlList = product.ugcPhotos || [];
+      const ugcInput = document.getElementById('new-ugc-files');
+      if (ugcInput.files.length > 0) {
+          ugcUrlList = await uploadMultipleFiles(ugcInput.files);
+      }
+
       const cost = document.getElementById('new-cost') ? Number(document.getElementById('new-cost').value) : null;
-      const payload = { name, price, cost, stock, category, description, features, sizes, colors, variants };
+      const payload = { 
+        name, price, cost, stock, category, description, features, 
+        sizes, colors, variants, 
+        image: imgUrl,
+        thumbnails: thumbnailUrlList,
+        ugcPhotos: ugcUrlList,
+        highlights: highlightItems
+      };
       // Note: if image changed, we'd handle file upload here, but standard PUT skips img update unless refined
       
       const res = await fetch(`${API_BASE}/products/${editingProductId}`, {

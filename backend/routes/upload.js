@@ -28,9 +28,17 @@ router.post("/", upload.single("image"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "Không có file" });
   }
-
-  // Trả về URL trực tiếp từ Cloudinary
   res.json({ url: req.file.path });
+});
+
+// Upload nhiều ảnh cùng lúc
+router.post("/multiple", upload.array("images", 10), (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({ message: "Không có file nào được tải lên" });
+  }
+
+  const urls = req.files.map(file => file.path);
+  res.json({ urls });
 });
 
 module.exports = router;

@@ -264,25 +264,89 @@
 
         function renderData() {
             document.title = currentProduct.name + " | Onevora";
-            document.getElementById('detail-img').src = currentProduct.img;
-            document.getElementById('thumb-1').src = currentProduct.img;
-            document.getElementById('thumb-2').src = currentProduct.img;
-            document.getElementById('thumb-3').src = currentProduct.img;
+            
+            // Render ảnh chính và thumbnails
+            const mainImg = currentProduct.image || currentProduct.img;
+            document.getElementById('detail-img').src = mainImg;
+            
+            const thumbList = currentProduct.thumbnails || [];
+            const thumbContainer = document.querySelector('.pd-media > div[style*="overflow-x: auto"]');
+            if (thumbList.length > 0) {
+                thumbContainer.innerHTML = thumbList.map((url, i) => `
+                    <div class="ugc-item" style="width: 100px; height: 125px; border: ${i===0?'2px solid #111':'none'}; opacity: ${i===0?1:0.6};" onclick="switchMainImg(this, '${url}')">
+                        <img src="${url}" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                `).join('');
+            } else {
+                thumbContainer.innerHTML = `<div class="ugc-item" style="width: 100px; height: 125px; border: 2px solid #111;"><img src="${mainImg}"></div>`;
+            }
+
             document.getElementById('detail-name').innerText = currentProduct.name;
             document.getElementById('detail-price').innerText = currentProduct.price.toLocaleString() + 'đ';
             document.getElementById('detail-cat').innerText = (currentProduct.category || 'ÁO').toUpperCase();
-            document.getElementById('detail-desc').innerText = currentProduct.description || "Sản phẩm chất lượng cao, kiểu dáng hiện đại.";
+            document.getElementById('detail-desc').innerText = currentProduct.description || "Sản phẩm chất lượng cao từ Onevora.";
+
+            // Render Highlights động
+            const hlContainer = document.querySelector('.pd-highlights');
+            const highlights = currentProduct.highlights || [];
+            if (highlights.length > 0) {
+                hlContainer.innerHTML = highlights.map(hl => `
+                    <div class="highlight-item">
+                        <div class="highlight-img">${hl.icon || '💎'}</div>
+                        <div class="highlight-text">
+                            <b>${hl.title}</b>
+                            <span>${hl.text}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Render UGC động
+            const ugcGrid = document.querySelector('.ugc-grid');
+            const ugcPhotos = currentProduct.ugcPhotos || [];
+            if (ugcPhotos.length > 0) {
+                ugcGrid.innerHTML = ugcPhotos.map(url => `
+                    <div class="ugc-item"><img src="${url}"></div>
+                `).join('');
+            } else {
+                document.querySelector('.ugc-section').style.display = 'none'; // Ẩn nếu không có ảnh UGC
+            }
 
             const sizes = currentProduct.sizes || ['S','M','L'];
             document.getElementById('detail-sizes').innerHTML = sizes.map(sz => `
-                <div class="size-box" id="size-${sz}" style="padding: 10px 20px; border: 1px solid #ddd; border-radius: 8px; cursor:pointer;" onclick="selectSizeLocal(this, '${sz}')">${sz}</div>
+                <div class="size-box" id="size-${sz}" style="padding: 10px 20px; border: 1px solid #ddd; border-radius: 8px; cursor:pointer; font-weight:700;" onclick="selectSizeLocal(this, '${sz}')">${sz}</div>
             `).join('');
 
             const colors = currentProduct.colors || ['Đen'];
             document.getElementById('detail-colors').innerHTML = colors.map(c => {
                 const hex = COLOR_MAP[c] || '#111';
-                return `<button class="color-pill" onclick="selectColorLocal(this, '${c}')" style="width:40px; height:40px; border-radius:50%; background:${hex}; border:1px solid #eee; cursor:pointer;"></button>`;
+                return `<button class="color-pill" onclick="selectColorLocal(this, '${c}')" style="width:40px; height:40px; border-radius:50%; background:${hex}; border:1px solid #eee; cursor:pointer; padding:2px;"><div style="width:100%; height:100%; border-radius:50%; background:${hex};"></div></button>`;
             }).join('');
+            
+            // Render Reviews
+            const reviewList = document.getElementById('detail-reviews');
+            const reviews = currentProduct.reviews || [];
+            if (reviews.length > 0) {
+                reviewList.innerHTML = reviews.map(r => `
+                    <div style="padding: 20px; border-radius: 16px; background: #f9f9f9; border: 1px solid #eee;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                            <span style="font-weight:800;">${r.user}</span>
+                            <span style="color:#f59e0b;">${'⭐'.repeat(r.rating || 5)}</span>
+                        </div>
+                        <p style="color:#555; font-size: 0.9rem; line-height: 1.5;">${r.text}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function switchMainImg(el, url) {
+            document.getElementById('detail-img').src = url;
+            document.querySelectorAll('.pd-media .ugc-item').forEach(item => {
+                item.style.border = 'none';
+                item.style.opacity = '0.6';
+            });
+            el.style.border = '2px solid #111';
+            el.style.opacity = '1';
         }
 
         let selectedSize = null;
