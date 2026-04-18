@@ -117,11 +117,14 @@ const COLOR_MAP = {
 };
 
 const fallbackProducts = [
-  { id: "p1", name: "Áo thun oversize basic", price: 150000, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80", category: "Áo", rating: 4.8, description: "Chất liệu cotton 100% thoáng mát, form rộng phong cách.", sizes: ['S', 'M', 'L', 'XL', 'XXL'], colors: ['Đen', 'Trắng', 'Xám'], features: ['Cotton 100% mát mịn', 'Không xù lông khi giặt', 'Form rộng oversize trẻ trung'] },
-  { id: "p2", name: "Quần jeans xanh Denim", price: 300000, img: "https://images.unsplash.com/photo-1542272604-787c3835535d?auto=format&fit=crop&w=600&q=80", category: "Quần", rating: 4.7, description: "Vải Denim cao cấp, co giãn nhẹ, tôn dáng.", sizes: ['28', '29', '30', '31', '32'], colors: ['Xanh Dương', 'Đen'], features: ['Denim co giãn 4 chiều', 'Màu bền, không phai', 'Đường may tinh tế'] },
-  { id: "p3", name: "Sneaker trắng Modern", price: 650000, img: "https://images.unsplash.com/photo-1512374382149-4332c6c02151?auto=format&fit=crop&w=600&q=80", category: "Giày", rating: 4.9, description: "Thiết kế trẻ trung, đế cao su chống trơn trượt.", sizes: ['38', '39', '40', '41', '42'], colors: ['Trắng', 'Đen'], features: ['Đế cao su chống trơn trượt', 'Lót đệm êm chân', 'Thiết kế dễ phối đồ'] },
-  { id: "p4", name: "Áo sơ mi trắng Simple", price: 250000, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=600&q=80", category: "Áo", rating: 4.6, description: "Sơ mi basic phù hợp mọi hoàn cảnh.", sizes: ['M', 'L', 'XL'], colors: ['Trắng', 'Xanh Navy'], features: ['Vải ít nhăn, dễ ủi', 'Form regular fit lịch lãm', 'Cổ áo cứng cáp'] }
+  { id: "owen-1", name: "Áo Polo - APV23620", price: 399000, img: "https://owen.vn/media/catalog/product/a/p/apv23631_1_2.jpg", category: "ÁO", rating: 5, colors: ['#000', '#333', '#fff'], sizes: ['S','M','L','XL'], isHot: true, isOnlineOnly: true },
+  { id: "owen-2", name: "Áo sơ mi - AS230913T", price: 550000, img: "https://owen.vn/media/catalog/product/a/s/as230913t_1_2.jpg", category: "ÁO", rating: 4.5, colors: ['#fff', '#e5e7eb'], sizes: ['M','L','XL','XXL'], isNew: true },
+  { id: "owen-3", name: "Quần Short - QS230101", price: 350000, img: "https://owen.vn/media/catalog/product/q/s/qs230101_1.jpg", category: "QUẦN", rating: 4, colors: ['#1e40af', '#334155'], sizes: ['29','30','31','32'] },
+  { id: "owen-4", name: "Quần Tây - QT230801", price: 650000, img: "https://owen.vn/media/catalog/product/q/t/qt230801_1.jpg", category: "QUẦN", rating: 4.8, colors: ['#111', '#1f2937'], sizes: ['30','31','32','33'], isHot: true },
+  { id: "owen-5", name: "Thắt lưng da - TL2301", price: 450000, img: "https://owen.vn/media/catalog/product/t/l/tl2301_1.jpg", category: "PHỤ KIỆN", rating: 5, colors: ['#000'], sizes: ['F'] },
+  { id: "owen-6", name: "Áo khoác Blazer - AK2305", price: 1250000, img: "https://owen.vn/media/catalog/product/a/k/ak2305_1.jpg", category: "ÁO", rating: 4.9, colors: ['#000', '#111'], sizes: ['L','XL'], isNew: true }
 ];
+
 
 let quantity = 1;
 
@@ -248,34 +251,20 @@ async function loadCategories() {
 }
 
 function renderCategories() {
-  const container = document.getElementById("category-list");
+  const container = document.getElementById("category-pills");
   if (!container) return;
   
-  const categories = ["Tất cả", ...new Set(products.map(item => item.category))];
-  const iconMap = {
-    "Tất cả": "bi-grid-fill",
-    "Áo nam": "bi-person-badge",
-    "Quần nam": "bi-door-open-fill",
-    "Phụ kiện": "bi-watch",
-    "Giày dép": "bi-footprint",
-    "Áo thun": "bi-tshirt",
-    "Áo sơ mi": "bi-shirt",
-    "Quần tây": "bi-layers",
-    "Quần jean": "bi-columns"
-  };
+  const categories = ["Tất cả", "HÀNG MỚI VỀ", "BỘ SƯU TẬP", "ÁO", "QUẦN", "PHỤ KIỆN", "GIÁ TỐT"];
 
   container.innerHTML = categories
-    .map(category => {
-      const iconClass = iconMap[category] || "bi-tag-fill";
-      return `
+    .map(category => `
         <button class="category-pill ${category === activeCategory ? 'active' : ''}" onclick="filterCategory('${category}')">
-          <i class="bi ${iconClass}"></i>
-          <span>${category}</span>
+          ${category}
         </button>
-      `;
-    })
+      `)
     .join("");
 }
+
 
 
 function filterCategory(category) {
@@ -356,54 +345,50 @@ function renderProducts() {
 
   list.innerHTML = displayProducts
     .map(p => {
-        const rand = Math.random();
-        let badgeHtml = '';
-        if (rand > 0.85) badgeHtml = '<span class="badge-float hot">Hot</span>';
-        else if (rand > 0.7) badgeHtml = '<span class="badge-float new">Mới</span>';
-        else if (rand > 0.55) badgeHtml = '<span class="badge-float sale">-10%</span>';
-
-        // Smart Badging: Freeship
-        let smartBadgeHtml = '';
-        if (p.price >= globalFreeShipThreshold) {
-            smartBadgeHtml = `<div class="freeship-badge">FREESHIP</div>`;
-        }
-
-        // Quick Size UI
-        let sizeHtml = '';
-        if (p.sizes && p.sizes.length > 0) {
-            sizeHtml = `<div class="quick-sizes">`;
-            p.sizes.forEach(s => {
-                sizeHtml += `<span class="size-chip" onclick="event.stopPropagation(); quickAdd('${p.id}', '${s}')">${s}</span>`;
+        const badgeHot = p.isHot ? '<span class="badge-float hot">HOT</span>' : '';
+        const badgeNew = p.isNew ? '<span class="badge-float new">NEW</span>' : '';
+        const onlineOnly = p.isOnlineOnly ? '<p class="online-only-text">Chỉ có tại Online</p>' : '';
+        
+        let colorDotsHtml = '';
+        if (p.colors && p.colors.length > 0) {
+            colorDotsHtml = `<div class="color-swatches">`;
+            p.colors.forEach(c => {
+                colorDotsHtml += `<span class="color-dot" style="background-color: ${c}"></span>`;
             });
-            sizeHtml += `</div>`;
+            colorDotsHtml += `</div>`;
         }
 
         return `
         <div class="product-card" onclick="openProductModal('${p.id}')">
-            ${badgeHtml}
+            ${badgeHot || badgeNew}
+            <button class="wishlist-btn" onclick="event.stopPropagation(); toggleWishlist('${p.id}')">
+                <i class="bi bi-heart"></i>
+            </button>
             <div class="img-wrapper">
                 <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/400x500?text=No+Image'">
                 <div class="card-overlay">
-                    <button class="btn-quick-view"><i class="far fa-eye"></i></button>
+                    <button class="btn-hover-buy" onclick="event.stopPropagation(); openQuickSizes('${p.id}')">MUA NGAY</button>
                 </div>
             </div>
             <div class="card-info">
+                ${colorDotsHtml}
                 <h3>${p.name}</h3>
-                <p class="price">${p.price.toLocaleString()} VND</p>
-                ${smartBadgeHtml}
-                <div class="rating">
-                    <span class="stars">★★★★★</span>
-                    <span class="count">(${Math.floor(20 + Math.random() * 80)})</span>
-                </div>
-                ${sizeHtml}
-            </div>
-            <div class="card-cta">
-                <button class="btn-buy-now" onclick="event.stopPropagation(); buyNow('${p.id}')">MUA NGAY</button>
+                <p class="price">${p.price.toLocaleString()} đ</p>
+                ${onlineOnly}
             </div>
         </div>
         `;
     })
     .join("");
+}
+
+function openQuickSizes(productId) {
+    // Logic to open size selection
+    openProductModal(productId);
+}
+
+function toggleWishlist(id) {
+    showToast("Thêm vào danh sách yêu thích!", "success");
 }
 
 function quickAdd(productId, size) {
@@ -603,6 +588,7 @@ function openProductModal(id) {
   const modalImg = document.getElementById("modal-img");
   if (modalImg) {
     modalImg.src = product.img;
+    modalImg.alt = product.name;
     modalImg.onerror = () => { modalImg.src = "https://via.placeholder.com/600x450?text=Fashion+Modern"; };
   }
 

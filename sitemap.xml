@@ -7,15 +7,15 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://shop-omega-nine-23.vercel.app/admin.html</loc>
+    <loc>https://shop-omega-nine-23.vercel.app/login.html</loc>
     <lastmod>2026-04-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://shop-omega-nine-23.vercel.app/history.html</loc>
+    <loc>https://shop-omega-nine-23.vercel.app/checkout.html</loc>
     <lastmod>2026-04-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

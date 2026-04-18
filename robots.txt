@@ -1,6 +1,9 @@
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /login
+Disallow: /admin/
+Disallow: /backend/
+Disallow: /scratch/
+Disallow: /.git/
+Disallow: /vercel.json
 
 Sitemap: https://shop-omega-nine-23.vercel.app/sitemap.xml

@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fashion Modern - Cửa hàng Thời trang Cao cấp & Hiện đại</title>
-    <meta name="description" content="Chào mừng bạn đến với Fashion Modern - Nơi cung cấp các sản phẩm thời trang tối giản, sang trọng và hiện đại. Miễn phí giao hàng toàn quốc cho đơn từ 300K.">
-    <meta name="keywords" content="thời trang, quần áo, shop quần áo, fashion modern, thời trang nam, thời trang nữ">
+    <title>Fashion Modern | Thời Trang Nam Nữ Cao Cấp | Shop Quần Áo Đẹp & Hiện Đại</title>
+    <meta name="description" content="Fashion Modern chuyên cung cấp các sản phẩm thời trang nam nữ cao cấp, phong cách tối giản và hiện đại. Miễn phí giao hàng toàn quốc từ 300K. Khám phá ngay bộ sưu tập 2026!">
+    <meta name="keywords" content="thời trang, quần áo, shop quần áo, fashion modern, thời trang nam, thời trang nữ, áo thun cao cấp, quần jean đẹp, thời trang tối giản, owen fashion">
     
     <meta name="theme-color" content="#1a1a1a">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -13,8 +13,8 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://shop-omega-nine-23.vercel.app">
-    <meta property="og:title" content="Fashion Modern - Thời trang tối giản, sang trọng">
-    <meta property="og:description" content="Khám phá bộ sưu tập thời trang mới nhất, đặt hàng nhanh chóng và nhận ưu đãi đặc biệt ngay hôm nay.">
+    <meta property="og:title" content="Fashion Modern | Thời Trang Cao Cấp & Tối Giản">
+    <meta property="og:description" content="Khám phá bộ sưu tập thời trang nam nữ mới nhất tại Fashion Modern. Miễn phí giao hàng toàn quốc cho mọi đơn hàng từ 300.000đ.">
     <meta property="og:image" content="https://res.cloudinary.com/dvrtr4lpc/image/upload/v1/shopthoitrang/brand-cover.jpg">
     <link rel="canonical" href="https://shop-omega-nine-23.vercel.app" />
 
@@ -24,21 +24,44 @@
       "@context": "https://schema.org",
       "@type": "Store",
       "name": "Fashion Modern",
-      "image": "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80",
-      "description": "Cửa hàng thời trang cao cấp với phong cách tối giản và hiện đại.",
+      "image": "https://res.cloudinary.com/dvrtr4lpc/image/upload/v1/shopthoitrang/brand-cover.jpg",
+      "description": "Cửa hàng thời trang cao cấp với phong cách tối giản và hiện đại. Chuyên cung cấp áo thun, quần tây, phụ kiện nam nữ.",
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": "Ninh Kiều",
         "addressLocality": "Cần Thơ",
+        "addressRegion": "Cần Thơ",
+        "postalCode": "900000",
         "addressCountry": "VN"
       },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 10.0371,
+        "longitude": 105.7882
+      },
       "telephone": "0774182263",
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "08:30",
+        "closes": "21:00"
+      },
       "priceRange": "100.000đ - 2.000.000đ",
       "url": "https://shop-omega-nine-23.vercel.app"
     }
     </script>
 
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="cart-modern.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
     
     <!-- Google Analytics (GA4) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
@@ -54,32 +77,31 @@
     Miễn phí giao hàng toàn quốc cho đơn từ <span id="announce-threshold">...</span>
 </div>
 <div class="page-wrapper">
-    <header class="topbar">
-        <div class="topbar-left">
-            <button class="hamburger" id="hamburger-menu" onclick="toggleMobileMenu()" aria-label="Menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-
-        <a href="index.html" class="brand-link">
-            <div class="brand">
-                <span class="brand-mark">F</span>
-                <p class="brand-name">Fashion Modern</p>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <a href="index.html" class="brand-link">
+                    <span class="brand-name" style="font-weight: 800; letter-spacing: 2px;">OWEN</span>
+                </a>
             </div>
-        </a>
+            
+            <div class="header-nav-pills" id="category-pills">
+                <!-- Injected via script.js -->
+            </div>
 
-        <div class="topbar-right">
-            <div class="topbar-actions">
-                <button class="icon-btn" onclick="toggleSearch()" title="Tìm kiếm"><i class="fas fa-search"></i></button>
-                <button class="icon-btn" onclick="toggleCart()" title="Giỏ hàng"><i class="fas fa-shopping-bag"></i><span class="cart-badge" id="cart-count-badge">0</span></button>
+            <div class="header-tools">
+                <button class="tool-btn" onclick="toggleSearch()"><i class="bi bi-search"></i></button>
                 <div class="profile-trigger" onclick="toggleProfile()">
-                    <button class="icon-btn"><i class="fas fa-user-circle"></i></button>
+                    <button class="tool-btn"><i class="bi bi-person"></i></button>
                 </div>
+                <button class="tool-btn cart-trigger" onclick="toggleCart()">
+                    <i class="bi bi-bag"></i>
+                    <span class="cart-badge" id="cart-count-badge">0</span>
+                </button>
             </div>
         </div>
     </header>
+
 
     <!-- NEW: Dynamic Voucher Banner -->
     <!-- NEW: Dynamic Voucher Banner -->
@@ -109,12 +131,14 @@
     </section>
 
     <section class="products-section">
-        <div class="section-header">
-            <h2 class="section-title">Danh sách sản phẩm</h2>
-            <button class="btn-filter-trigger" onclick="toggleFilterDrawer()">
-                <i class="fas fa-sliders-h"></i> Bộ lọc & Sắp xếp
-            </button>
-        </div>
+    <div class="filter-count-bar">
+        <h2 class="section-title" style="margin: 0;">Sản phẩm nổi bật</h2>
+        <button class="btn-filter-trigger" onclick="toggleFilterDrawer()">
+            <i class="bi bi-sliders2"></i> BỘ LỌC
+        </button>
+        <span id="product-count" class="product-total-label">0 sản phẩm</span>
+    </div>
+
 
         <div class="active-filters-bar" id="active-filters-display" style="display: none; margin-bottom: 20px;">
             <!-- Active filter chips will appear here -->
@@ -178,18 +202,84 @@
         </div>
     </div>
 
-    <footer class="footer-container">
-      <div class="footer-content">
-        <div class="brand-info">
-          <h3>Fashion Modern</h3>
-          <p>Giữ mình phong cách, tận hưởng trải nghiệm mua sắm sang xịn mỗi ngày.</p>
+    <footer class="owen-footer">
+    <div class="footer-top">
+        <div class="footer-column brand-info">
+            <h2 class="footer-logo">OWEN</h2>
+            <p class="company-name">CÔNG TY CỔ PHẦN THỜI TRANG KOWIL VIỆT NAM</p>
+            <div class="contact-item">
+                <i class="bi bi-telephone"></i>
+                <span>Hotline: 1900 8079</span>
+            </div>
+            <div class="contact-item">
+                <i class="bi bi-clock"></i>
+                <span>8:30 - 19:00 tất cả các ngày trong tuần</span>
+            </div>
         </div>
-        <div class="contact-info">
-          <p><strong>Hotline:</strong> 0774182263</p>
-          <p><strong>Email:</strong> vungvannguyen18@gmail.com</p>
+        
+        <div class="footer-column">
+            <h4>GIỚI THIỆU OWEN</h4>
+            <ul>
+                <li><a href="#">Giới thiệu</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Hệ thống cửa hàng</a></li>
+                <li><a href="#">Liên hệ với Owen</a></li>
+            </ul>
         </div>
-      </div>
-    </footer>
+        
+        <div class="footer-column">
+            <h4>HỖ TRỢ KHÁCH HÀNG</h4>
+            <ul>
+                <li><a href="#">Hỏi đáp</a></li>
+                <li><a href="#">Chính sách khách hàng thân thiết</a></li>
+                <li><a href="#">Chính sách vận chuyển</a></li>
+                <li><a href="#">Hướng dẫn chọn kích cỡ</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-column">
+            <h4>KẾT NỐI</h4>
+            <div class="social-links">
+                <a href="#"><i class="bi bi-facebook"></i></a>
+                <a href="#"><i class="bi bi-instagram"></i></a>
+                <a href="#"><i class="bi bi-youtube"></i></a>
+                <a href="#"><i class="bi bi-tiktok"></i></a>
+            </div>
+            <h4 class="mt-4">PHƯƠNG THỨC THANH TOÁN</h4>
+            <div class="payment-methods">
+                <img src="https://owen.vn/static/version1697441548/frontend/Owen/default/vi_VN/images/napas.png" alt="Napas" onerror="this.src='https://placehold.co/40x25?text=N'">
+                <img src="https://owen.vn/static/version1697441548/frontend/Owen/default/vi_VN/images/visa.png" alt="Visa" onerror="this.src='https://placehold.co/40x25?text=V'">
+                <img src="https://owen.vn/static/version1697441548/frontend/Owen/default/vi_VN/images/mastercard.png" alt="Master" onerror="this.src='https://placehold.co/40x25?text=M'">
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2024 by Kowil Fashion - Phú Thái Holdings</p>
+    </div>
+</footer>
+
+<nav class="bottom-navigation">
+    <a href="index.html" class="nav-item active">
+        <i class="bi bi-house"></i>
+        <span>Trang chủ</span>
+    </a>
+    <a href="#" class="nav-item" onclick="toggleSearch()">
+        <i class="bi bi-search"></i>
+        <span>Tìm kiếm</span>
+    </a>
+    <a href="#" class="nav-item" onclick="toggleCart()">
+        <i class="bi bi-bag"></i>
+        <span>Giỏ hàng</span>
+    </a>
+    <a href="#" class="nav-item" onclick="toggleProfile()">
+        <i class="bi bi-person"></i>
+        <span>Tài khoản</span>
+    </a>
+    <a href="#" class="nav-item" onclick="toggleMobileMenu()">
+        <i class="bi bi-list"></i>
+        <span>Menu</span>
+    </a>
+</nav>
 </div>
 
 <div class="modal-backdrop" id="product-modal" hidden>
@@ -327,7 +417,8 @@
 </div>
 
 <script src="auth.js"></script>
-<script src="script.js"></script>
+    <script src="script.js"></script>
+
 <script>
     function toggleMobileMenu() {
         const hamburger = document.getElementById('hamburger-menu');
