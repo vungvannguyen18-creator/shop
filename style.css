@@ -143,6 +143,12 @@ img {
   background: rgba(255,255,255,0.1);
 }
 
+@media (max-width: 768px) {
+  .header-tools {
+    display: none !important;
+  }
+}
+
 .cart-trigger {
   position: relative;
 }
