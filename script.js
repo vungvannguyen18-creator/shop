@@ -947,7 +947,7 @@ function updateAddBtn() {
     buyBtn.disabled = false;
     buyBtn.style.opacity = '1';
     buyBtn.style.cursor = 'pointer';
-    addBtn.innerText = "Thêm vào giỏ hàng";
+    addBtn.innerText = "Thêm vào giỏ";
     buyBtn.innerText = "Mua ngay";
   } else {
     addBtn.disabled = true;
@@ -957,12 +957,8 @@ function updateAddBtn() {
     buyBtn.style.opacity = '0.5';
     buyBtn.style.cursor = 'not-allowed';
     
-    let msg = 'Chọn ';
-    if (!selectedSize) msg += 'Size ';
-    if (!selectedSize && !selectedColor) msg += '& ';
-    if (!selectedColor) msg += 'Màu ';
-    addBtn.innerText = msg;
-    buyBtn.innerText = msg;
+    addBtn.innerText = "Chọn Size & Màu";
+    buyBtn.innerText = "Chọn Size & Màu";
   }
 }
 
