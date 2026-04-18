@@ -3608,10 +3608,11 @@ button:disabled::after {
 
 .footer-logo {
   font-family: var(--font-premium);
-  font-size: 2rem;
-  font-weight: 900;
-  margin: 0 0 15px;
-  letter-spacing: 2px;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: 5px;
+  margin-bottom: 20px;
+  color: #111;
 }
 
 .company-name {
