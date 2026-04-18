@@ -742,11 +742,19 @@ function openProductModal(id) {
   checkReviewEligibility(id, product.reviews || []);
 
   updateAddBtn();
-  document.getElementById("product-modal").hidden = false;
+  const modal = document.getElementById("product-modal");
+  if (modal) {
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden'; // Chống cuộn trang khi mở modal
+  }
 }
 
 function closeProductModal() {
-  document.getElementById("product-modal").hidden = true;
+  const modal = document.getElementById("product-modal");
+  if (modal) modal.hidden = true;
+  document.body.style.overflow = ''; // Cho phép cuộn lại
+  selectedSize = null;
+  selectedColor = null;
 }
 
 // --- REVIEW (ĐÁNH GIÁ THỰC TẾ) LOGIC ---
@@ -1041,10 +1049,8 @@ function closeProductModal() {
   // Reset add button
   const addBtn = document.getElementById("modal-add-btn");
   if (addBtn) {
-    addBtn.disabled = true;
-    addBtn.style.opacity = '0.45';
-    addBtn.style.cursor = 'not-allowed';
-    addBtn.innerText = 'Chọn size để thêm giỏ';
+    addBtn.innerText = 'CHỌN SIZE';
+    buyBtn.innerText = 'CHỌN MÀU';
   }
 }
 
