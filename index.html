@@ -263,7 +263,7 @@
         <i class="bi bi-house"></i>
         <span>Trang chủ</span>
     </a>
-    <a href="#" class="nav-item" onclick="toggleSearch()">
+    <a href="javascript:void(0)" class="nav-item" onclick="toggleSearchOverlay()">
         <i class="bi bi-search"></i>
         <span>Tìm kiếm</span>
     </a>
@@ -359,8 +359,17 @@
         </div>
     </div>
 
-    <div class="cart-items-container" style="flex: 1; overflow-y: auto;">
+    <div class="cart-items-container" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
         <ul id="cart-items" style="list-style: none; padding: 0; margin: 0;"></ul>
+        
+        <!-- EMPTY CART STATE (OWEN STYLE) -->
+        <div id="empty-cart-state" style="display: none; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; color: #888;">
+            <div style="position: relative; margin-bottom: 24px;">
+                <i class="bi bi-cart3" style="font-size: 5rem; color: #eee;"></i>
+                <div style="position: absolute; top: -5px; right: -5px; background: #c5a059; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; border: 3px solid #fff;">!</div>
+            </div>
+            <p style="font-size: 0.95rem; font-weight: 600; line-height: 1.6; max-width: 200px;">Không có sản phẩm nào trong giỏ hàng của bạn.</p>
+        </div>
     </div>
 
     <div class="cart-summary" style="padding: 20px; border-top: 1px solid #eee; background: #fafafa;">
@@ -395,24 +404,65 @@
 
 <div class="mobile-nav-overlay" id="mobile-overlay" onclick="toggleMobileMenu()"></div>
 <div class="mobile-menu" id="mobile-menu-panel">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <div class="brand">
-            <span class="brand-mark" style="width:40px; height:40px; border-radius:12px; font-size:1rem;">F</span>
-            <p class="brand-name" style="font-size:0.9rem;">Fashion Modern</p>
+    <!-- TABS HEADER -->
+    <div class="mobile-menu-tabs">
+        <button class="menu-tab active" id="tab-menu" onclick="switchMobileMenuTab('menu')">Menu</button>
+        <button class="menu-tab" id="tab-account" onclick="switchMobileMenuTab('account')">Tài khoản</button>
+        <button class="close-menu-btn" onclick="toggleMobileMenu()">×</button>
+    </div>
+
+    <!-- TAB CONTENT: MENU -->
+    <div id="content-menu" class="tab-content active">
+        <div class="mobile-menu-list">
+            <a href="index.html" class="mobile-menu-item">Trang chủ</a>
+            <div class="mobile-menu-group">
+                <h4>Sản phẩm</h4>
+                <a href="#" class="mobile-menu-item-sub">Mẫu Mới <i class="bi bi-chevron-right"></i></a>
+                <a href="#" class="mobile-menu-item-sub">Áo <i class="bi bi-chevron-right"></i></a>
+                <a href="#" class="mobile-menu-item-sub">Quần <i class="bi bi-chevron-right"></i></a>
+                <a href="#" class="mobile-menu-item-sub">Phụ kiện <i class="bi bi-chevron-right"></i></a>
+            </div>
+            <a href="#" class="mobile-menu-item">Hệ thống cửa hàng</a>
+            <a href="#" class="mobile-menu-item">Thông tin thương hiệu <i class="bi bi-chevron-right"></i></a>
         </div>
-        <button onclick="toggleMobileMenu()" style="background:transparent; border:none; font-size:1.5rem; cursor:pointer;">×</button>
     </div>
-    <a href="index.html" class="mobile-menu-item">Trang chủ</a>
-    <div class="mobile-menu-group">
-        <h4>Sản phẩm</h4>
-        <a href="#" class="mobile-menu-item" style="font-size: 0.95rem; padding-left: 10px; border:none;">Mẫu Mới</a>
-        <a href="#" class="mobile-menu-item" style="font-size: 0.95rem; padding-left: 10px; border:none;">Áo</a>
-        <a href="#" class="mobile-menu-item" style="font-size: 0.95rem; padding-left: 10px; border:none;">Quần</a>
+
+    <!-- TAB CONTENT: ACCOUNT -->
+    <div id="content-account" class="tab-content">
+        <div class="account-tab-view">
+            <div class="user-brief-card" id="mobile-user-card">
+                <!-- Injected via script -->
+            </div>
+            <div class="mobile-menu-list">
+                <a href="history.html" class="mobile-menu-item">Đơn hàng của tôi</a>
+                <a href="#" class="mobile-menu-item">Sổ địa chỉ</a>
+                <a href="#" class="mobile-menu-item">Voucher của tôi</a>
+                <button class="mobile-menu-item btn-logout-mobile" onclick="logout()" style="color: #ef4444;">Đăng xuất</button>
+            </div>
+        </div>
     </div>
-    <a href="checkout.html" class="mobile-menu-item">Thanh toán</a>
-    <a href="history.html" class="mobile-menu-item">Đơn hàng của tôi</a>
-    <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #eee;">
-        <p style="font-size: 0.8rem; color: #888; margin-bottom: 10px;">Hotline: 0774182263</p>
+</div>
+
+<!-- FULL-SCREEN SEARCH OVERLAY (OWEN STYLE) -->
+<div class="search-overlay" id="search-overlay">
+    <div class="search-header">
+        <button class="back-btn" onclick="toggleSearchOverlay()"><i class="bi bi-arrow-left"></i></button>
+        <div class="search-input-wrapper">
+            <input type="text" id="global-search-input" placeholder="Nhập từ khóa tìm kiếm..." oninput="handleSearch(this.value)">
+            <button class="clear-search-btn" id="clear-search-btn" onclick="clearSearch()"><i class="bi bi-x-circle-fill"></i></button>
+        </div>
+    </div>
+    <div class="search-body">
+        <div id="recent-searches-container">
+            <h4 class="search-section-title">TÌM KIẾM GẦN ĐÂY</h4>
+            <div class="search-pills" id="recent-search-pills">
+                <!-- Injected via script -->
+            </div>
+        </div>
+        <div id="search-results-container" style="display:none;">
+            <h4 class="search-section-title">KẾT QUẢ TÌM KIẾM</h4>
+            <div class="search-results-list" id="global-search-results"></div>
+        </div>
     </div>
 </div>
 

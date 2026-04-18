@@ -21,89 +21,44 @@
     </script>
 </head>
 <body data-auth-mode="login">
-<div class="login-page">
-    <div class="login-layout fade-in">
-        <div class="login-left">
-            <div class="left-overlay"></div>
-            <div class="left-copy">
-                <p class="eyebrow">NEW COLLECTION 2026</p>
-                <h1>Minimal Luxury</h1>
-                <p>Ảnh model thời trang, tông màu đen sang trọng và cảm giác app-like.</p>
-            </div>
+<div class="login-wrapper">
+    <div class="minimal-login-card fade-in">
+        <div class="minimal-header">
+            <h2 class="auth-title">ĐĂNG NHẬP</h2>
+            <p class="subtitle">Nếu bạn đã có tài khoản, hãy đăng nhập để tích lũy điểm thành viên và nhận được những ưu đãi tốt hơn!</p>
         </div>
 
-        <div class="login-right">
-            <div class="login-card">
-                <div class="brand-row">
-                    <div class="brand-logo">F</div>
-                    <div>
-                        <p class="brand-name">Fashion Modern</p>
-                        <p class="brand-note">Sang xịn</p>
+        <div class="minimal-form">
+            <div class="form-group login-form">
+                <div class="input-field">
+                    <label>Email hoặc Số điện thoại <span class="required">*</span></label>
+                    <input id="user" type="text" placeholder="Nhập email hoặc SĐT" autocomplete="username">
+                </div>
+
+                <div class="input-field">
+                    <label>Mật khẩu <span class="required">*</span></label>
+                    <div class="password-input-wrapper">
+                        <input id="pass" type="password" placeholder="Nhập mật khẩu" autocomplete="current-password">
+                        <button type="button" class="toggle-pass-btn" onclick="togglePassword()">Hiện</button>
                     </div>
                 </div>
 
-                <div class="auth-switch">
-                    <button class="auth-tab active" data-mode="login" onclick="switchAuthMode('login')">Đăng nhập</button>
-                    <button class="auth-tab" data-mode="register" onclick="switchAuthMode('register')">Đăng ký</button>
+                <div class="extra-actions">
+                    <a href="#" class="forgot-link">Bạn quên mật khẩu?</a>
                 </div>
 
-                <div class="title-group">
-                    <h2 class="auth-title">Chào mừng trở lại 👋</h2>
-                    <p class="subtitle">Đăng nhập để mua sắm</p>
-                </div>
+                <button class="btn-black-long ripple" id="submit-button" onclick="login()">TIẾP TỤC</button>
+            </div>
 
-                <div class="form-group login-form">
-                    <label class="field">
-                        <span class="field-icon">👤</span>
-                        <input id="user" type="text" placeholder="Tên đăng nhập" autocomplete="username" autofocus>
-                    </label>
+            <div class="divider-text">Hoặc</div>
 
-                    <label class="field password-field">
-                        <span class="field-icon">🔒</span>
-                        <input id="pass" type="password" placeholder="Mật khẩu" autocomplete="current-password">
-                        <button type="button" class="show-pass" onclick="togglePassword()">👁</button>
-                    </label>
-
-                    <div class="extra-row">
-                        <a href="#" class="text-link">Quên mật khẩu?</a>
-                    </div>
-
-                    <button class="btn-primary ripple" id="submit-button" onclick="login()">ĐĂNG NHẬP</button>
-                </div>
-
-                <div class="form-group register-form">
-                    <label class="field">
-                        <span class="field-icon">👤</span>
-                        <input id="register-user" type="text" placeholder="Tên đăng nhập" autocomplete="username">
-                    </label>
-
-                    <label class="field password-field">
-                        <span class="field-icon">🔒</span>
-                        <input id="register-pass" type="password" placeholder="Mật khẩu" autocomplete="new-password">
-                        <button type="button" class="show-pass" onclick="togglePassword('register-pass')">👁</button>
-                    </label>
-
-                    <label class="field password-field">
-                        <span class="field-icon">🔒</span>
-                        <input id="confirm-pass" type="password" placeholder="Xác nhận mật khẩu" autocomplete="new-password">
-                    </label>
-
-                    <button class="btn-primary ripple" onclick="register()">ĐĂNG KÝ</button>
-                </div>
-
-                <div class="or-divider"><span>OR</span></div>
-
-                <div class="social-buttons">
-                    <button class="btn-social google ripple" onclick="socialLogin('google')">Google</button>
-                    <button class="btn-social facebook ripple" onclick="socialLogin('facebook')">Facebook</button>
-                </div>
-
-                <p class="register-note">
-                    <span class="note-login">Chưa có tài khoản?</span>
-                    <button class="link-button show-register" onclick="switchAuthMode('register')">Đăng ký</button>
-                    <span class="note-register">Đã có tài khoản?</span>
-                    <button class="link-button show-login" onclick="switchAuthMode('login')">Đăng nhập</button>
-                </p>
+            <div class="alternative-actions">
+                <button class="btn-outline-long ripple" onclick="switchAuthMode('register')">TẠO TÀI KHOẢN</button>
+            </div>
+            
+            <div class="social-login-grid">
+                <button class="btn-social-mini" onclick="socialLogin('google')">Google</button>
+                <button class="btn-social-mini" onclick="socialLogin('facebook')">Facebook</button>
             </div>
         </div>
     </div>

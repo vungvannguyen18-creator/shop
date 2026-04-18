@@ -99,11 +99,117 @@ function resetSingleFilter(type) {
     updateActiveFilterBar();
 }
 
-function toggleSearch() {
-    const term = prompt("Tìm kiếm sản phẩm:");
-    if (term !== null) {
-        currentSearch = term.trim().toLowerCase();
-        loadProducts();
+// --- SEARCH OVERLAY LOGIC (OWEN STYLE) ---
+function toggleSearchOverlay() {
+    const overlay = document.getElementById('search-overlay');
+    if (!overlay) return;
+    
+    overlay.classList.toggle('open');
+    if (overlay.classList.contains('open')) {
+        document.getElementById('global-search-input').focus();
+        renderRecentSearches();
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
+}
+
+function handleSearch(term) {
+    const clearBtn = document.getElementById('clear-search-btn');
+    const recent = document.getElementById('recent-searches-container');
+    const results = document.getElementById('search-results-container');
+    
+    if (term.length > 0) {
+        clearBtn.style.display = 'block';
+        recent.style.display = 'none';
+        results.style.display = 'block';
+        renderSearchResults(term);
+    } else {
+        clearBtn.style.display = 'none';
+        recent.style.display = 'block';
+        results.style.display = 'none';
+    }
+}
+
+function clearSearch() {
+    const input = document.getElementById('global-search-input');
+    input.value = '';
+    input.focus();
+    handleSearch('');
+}
+
+function renderRecentSearches() {
+    const container = document.getElementById('recent-search-pills');
+    const recents = JSON.parse(localStorage.getItem('recentSearches')) || ['Áo sơ mi', 'Quần tây', 'Polo', 'Mẫu mới'];
+    
+    container.innerHTML = recents.map(r => `
+        <button class="search-pill" onclick="executeSearch('${r}')">${r}</button>
+    `).join('');
+}
+
+function executeSearch(term) {
+    // Save to recent
+    let recents = JSON.parse(localStorage.getItem('recentSearches')) || ['Áo sơ mi', 'Quần tây', 'Polo', 'Mẫu mới'];
+    recents = [term, ...recents.filter(x => x !== term)].slice(0, 8);
+    localStorage.setItem('recentSearches', JSON.stringify(recents));
+    
+    currentSearch = term.toLowerCase();
+    loadProducts();
+    toggleSearchOverlay();
+}
+
+function renderSearchResults(term) {
+    const grid = document.getElementById('global-search-results');
+    const filtered = products.filter(p => p.name.toLowerCase().includes(term.toLowerCase())).slice(0, 5);
+    
+    if (filtered.length === 0) {
+        grid.innerHTML = '<p style="color:#aaa; font-style:italic;">Không tìm thấy sản phẩm phù hợp.</p>';
+        return;
+    }
+    
+    grid.innerHTML = filtered.map(p => `
+        <div class="search-result-item" onclick="executeSearch('${p.name}')">
+            <img src="${p.img}" alt="${p.name}">
+            <div class="res-info">
+                <h5>${p.name}</h5>
+                <p>${p.price.toLocaleString()} đ</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+// --- MOBILE MENU TAB LOGIC ---
+function switchMobileMenuTab(tab) {
+    document.querySelectorAll('.menu-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    document.getElementById(`tab-${tab}`).classList.add('active');
+    document.getElementById(`content-${tab}`).classList.add('active');
+    
+    if (tab === 'account') renderMobileAccountView();
+}
+
+function renderMobileAccountView() {
+    const user = getCurrentUser();
+    const container = document.getElementById('mobile-user-card');
+    
+    if (!user) {
+        container.innerHTML = `
+            <div style="text-align:center;">
+                <p style="margin-bottom:15px; color:#666;">Bạn chưa đăng nhập</p>
+                <button class="btn-primary" onclick="location.href='login.html'" style="padding: 10px 30px; border-radius: 99px;">ĐĂNG NHẬP / ĐĂNG KÝ</button>
+            </div>
+        `;
+    } else {
+        container.innerHTML = `
+            <div class="brief-info" style="display:flex; align-items:center; gap:15px;">
+                <div style="width:50px; height:50px; background:#f0f0f0; border-radius:50%; display:grid; place-items:center; font-size:1.5rem;">👤</div>
+                <div>
+                    <h3 style="margin:0;">Chào, ${user.username}!</h3>
+                    <p style="margin:0; font-size:0.8rem; color:var(--primary-gold);">Khách hàng thân thiết</p>
+                </div>
+            </div>
+        `;
     }
 }
 
@@ -459,17 +565,15 @@ function renderCart() {
   if (!itemsContainer || !countEl || !totalEl) return;
 
   if (cart.length === 0) {
-    itemsContainer.innerHTML = `
-      <div style="text-align:center; padding: 40px 20px; color:#888;">
-        <div style="font-size:3rem; margin-bottom:10px;">🛒</div>
-        <p>Giỏ hàng đang trống.</p>
-      </div>
-    `;
+    itemsContainer.innerHTML = '';
+    document.getElementById('empty-cart-state').style.display = 'flex';
     countEl.innerText = "0";
     totalEl.innerText = "0";
     updateFreeshipMeter(0);
     return;
   }
+  
+  document.getElementById('empty-cart-state').style.display = 'none';
 
   let totalValue = 0;
   itemsContainer.innerHTML = cart.map((item, index) => {
