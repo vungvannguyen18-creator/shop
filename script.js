@@ -650,6 +650,53 @@ function checkout() {
   window.location.href = "checkout.html";
 }
 
+function toggleAccordion(header) {
+  const item = header.parentElement;
+  const icon = header.querySelector('i');
+  
+  // Close other accordions in the same section
+  const section = item.parentElement;
+  section.querySelectorAll('.accordion-item').forEach(el => {
+    if (el !== item) {
+      el.classList.remove('active');
+      const otherIcon = el.querySelector('.accordion-header i');
+      if (otherIcon) {
+        otherIcon.classList.remove('bi-dash');
+        otherIcon.classList.add('bi-plus');
+      }
+    }
+  });
+
+  // Toggle current
+  const isActive = item.classList.toggle('active');
+  if (icon) {
+    icon.classList.toggle('bi-plus', !isActive);
+    icon.classList.toggle('bi-dash', isActive);
+  }
+}
+
+function renderRelatedProducts(category, excludeId) {
+  const container = document.getElementById("modal-related-list");
+  if (!container) return;
+
+  const related = products
+    .filter(p => p.category === category && p.id !== excludeId)
+    .slice(0, 4);
+
+  if (related.length === 0) {
+    container.innerHTML = `<p style="color:#94a3b8; font-size:0.8rem;">Đang cập nhật sản phẩm liên quan...</p>`;
+    return;
+  }
+
+  container.innerHTML = related.map(p => `
+    <div class="related-item" onclick="openProductModal('${p.id}')" style="cursor:pointer;">
+      <img src="${p.img}" alt="${p.name}">
+      <h5>${p.name}</h5>
+      <p>${p.price.toLocaleString()}đ</p>
+    </div>
+  `).join('');
+}
+
 function openProductModal(id) {
   const product = products.find(p => p.id === id);
   if (!product) return;
@@ -679,73 +726,74 @@ function openProductModal(id) {
   }
 
   document.getElementById("modal-name").innerText = product.name;
+  const skuElem = document.getElementById("modal-sku");
+  if (skuElem) skuElem.innerText = product.id;
+
   const breadCat = document.getElementById("modal-breadcrumb-cat");
   if (breadCat) breadCat.innerText = (product.category || 'ÁO').toUpperCase();
-  document.getElementById("modal-description").innerText = product.description || '';
+  document.getElementById("modal-description").innerText = product.description || 'Sản phẩm kiểu dáng hiện đại, tôn dáng người mặc. Màu sắc trung tính, dễ phối đồ. Chất liệu cao cấp, mềm mát và bền màu.';
   document.getElementById("modal-price").innerText = `${product.price.toLocaleString()}đ`;
   quantity = 1;
   document.getElementById("modal-qty").innerText = quantity;
 
-  const featArea = document.getElementById("modal-features");
-  if (featArea) {
-      const featList = product.features && product.features.length > 0 ? product.features : [
-        "Chất liệu thoáng khí, phù hợp cả ngày",
-        "Thiết kế tối giản, dễ mix đồ phong cách",
-        "Giao hàng toàn quốc, đổi trả 7 ngày"
-      ];
-      featArea.innerHTML = featList.map(f => `<li>${f}</li>`).join("");
-  }
-
   // Render sizes dynamically
   const sizesBox = document.getElementById("modal-sizes-box");
-  const sizesRow = document.getElementById("modal-sizes-row");
   if (sizesBox) {
-    const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : [];
-    if (sizes.length > 0) {
-      if (sizesRow) sizesRow.style.display = '';
-      sizesBox.innerHTML = sizes.map(sz => `
-        <div class="size-box" onclick="selectSize(this, '${sz}')">${sz}</div>
-      `).join('');
-    } else {
-      if (sizesRow) sizesRow.style.display = 'none';
-      selectedSize = 'Free Size';
-    }
+    const sizes = product.sizes && product.sizes.length > 0 ? product.sizes : ['S', 'M', 'L', 'XL', '2XL'];
+    sizesBox.innerHTML = sizes.map(sz => `
+      <div class="size-box" onclick="selectSize(this, '${sz}')">${sz}</div>
+    `).join('');
   }
 
   // Render colors dynamically
   const colorsBox = document.getElementById("modal-colors-box");
-  const colorsRow = document.getElementById("modal-colors-row");
   if (colorsBox) {
-    const colors = product.colors && product.colors.length > 0 ? product.colors : [];
+    const colors = product.colors && product.colors.length > 0 ? product.colors : ['Đen'];
     selectedColor = null;
 
-    if (colors.length > 0) {
-      if (colorsRow) colorsRow.style.display = '';
-      colorsBox.innerHTML = colors.map(c => {
-        const hex = COLOR_MAP[c] || '#ddd';
-        const isWhite = c === 'Trang';
-        return `
-          <button class="color-pill" onclick="selectColor(this, '${c}')" title="${c}"
-            style="width:42px; height:42px; border-radius:50%; background:${hex}; border: 1px solid ${isWhite ? '#ccc' : hex}; cursor:pointer; transition:0.2s; position:relative; padding: 2px;">
-            <div class="color-inner" style="width:100%; height:100%; border-radius:50%; background:${hex}; border: 1px solid rgba(0,0,0,0.1);"></div>
-            <span class="check-mark" style="display:none; position:absolute; inset:0; align-items:center; justify-content:center; color:${isWhite?'#333':'#fff'}; font-size:1.1rem; font-weight: bold;">✓</span>
-          </button>
-        `;
-      }).join('');
-    } else {
-      if (colorsRow) colorsRow.style.display = 'none';
-      selectedColor = 'Default';
+    colorsBox.innerHTML = colors.map(c => {
+      const hex = COLOR_MAP[c] || '#111';
+      const isWhite = c === 'Trang';
+      return `
+        <button class="color-pill" onclick="selectColor(this, '${c}')" title="${c}"
+          style="width:38px; height:38px; border-radius:50%; background:${hex}; border: 1px solid ${isWhite ? '#ccc' : hex}; cursor:pointer; transition:0.2s; position:relative; padding: 2px;">
+          <div class="color-inner" style="width:100%; height:100%; border-radius:50%; background:${hex};"></div>
+          <span class="check-mark" style="display:none; position:absolute; inset:0; align-items:center; justify-content:center; color:${isWhite?'#333':'#fff'}; font-size:1rem; font-weight: bold;">✓</span>
+        </button>
+      `;
+    }).join('');
+    
+    // Auto select if only 1 color
+    if (colors.length === 1) {
+       const firstBtn = colorsBox.querySelector('.color-pill');
+       if (firstBtn) selectColor(firstBtn, colors[0]);
     }
   }
 
-  // Cập nhật Reviews (Đánh giá thật)
+  // Related Products
+  renderRelatedProducts(product.category, product.id);
+
+  // Reviews integration
   checkReviewEligibility(id, product.reviews || []);
 
   updateAddBtn();
   const modal = document.getElementById("product-modal");
   if (modal) {
     modal.hidden = false;
-    document.body.style.overflow = 'hidden'; // Chống cuộn trang khi mở modal
+    document.body.style.overflow = 'hidden'; 
+    
+    // Reset Accordion to default (Mô tả mở)
+    const accordions = modal.querySelectorAll('.accordion-item');
+    accordions.forEach((acc, idx) => {
+       if (idx === 0) acc.classList.add('active');
+       else acc.classList.remove('active');
+       
+       const ico = acc.querySelector('.accordion-header i');
+       if (ico) {
+         ico.classList.toggle('bi-dash', idx === 0);
+         ico.classList.toggle('bi-plus', idx !== 0);
+       }
+    });
   }
 }
 

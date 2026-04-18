@@ -887,25 +887,19 @@ img {
 }
 
 .modal-product-title {
-  font-size: 2rem;
-  font-weight: 900;
-  color: #0f172a;
-  margin-bottom: 15px;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 12px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .modal-price-val {
-  font-size: 2.2rem;
-  font-weight: 900;
-  color: var(--primary-pink);
-}
-
-.modal-product-desc {
-  font-size: 1rem;
-  color: #475569;
-  line-height: 1.8;
-  margin: 25px 0 35px;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #111;
 }
 
 .options-grid {
@@ -932,36 +926,36 @@ img {
   border-color: #111;
 }
 
-.modal-actions-sticky {
-  padding: 30px 60px;
-  background: #fff;
-  border-top: 1px solid #f1f5f9;
+/* SOLID BLACK STYLES */
+.modal-actions-sticky-owen {
+    padding: 0;
+    background: #000;
+    z-index: 200;
 }
 
-.actions-group {
-  display: flex;
-  gap: 20px;
+.btn-solid-black {
+    width: 100%;
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 24px 30px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-.btn-vibrant-cart, .btn-vibrant-buy {
-  flex: 1;
-  padding: 16px; /* Nhỏ gọn hơn */
-  border-radius: 20px;
-  font-weight: 900;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-  transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.btn-solid-black:hover {
+    background: #1a1a1a;
 }
 
-.btn-vibrant-cart {
-  background: #f1f5f9;
-  color: #1e293b;
-}
-
-.btn-vibrant-buy {
-  background: linear-gradient(135deg, #ff5c8d, #ef4444);
-  color: #fff;
-  box-shadow: 0 10px 25px rgba(255, 92, 141, 0.3);
+.btn-solid-black i {
+    font-size: 1.4rem;
 }
 
 /* --- RESPONSIVE FIX --- */
@@ -984,29 +978,114 @@ img {
   }
 
   .modal-content-scroll {
-    padding: 35px 24px;
+    padding: 35px 24px 120px; /* Thêm padding dưới cho nút sticky */
     overflow: visible;
   }
 
-  .modal-actions-sticky {
-    position: sticky;
+  .modal-actions-sticky-owen {
+    position: fixed;
     bottom: 0;
-    padding: 20px;
-    z-index: 100;
+    left: 0;
+    width: 100%;
   }
 
   .modal-product-title {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   .modal-price-val {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
   }
-  
-  .modal-trust-badges-desktop {
-    flex-direction: row;
-    display: none; /* Hide or simplify for mobile */
-  }
+}
+
+/* OWEN ACCORDIONS */
+.modal-accordions {
+    margin-top: 40px;
+}
+
+.accordion-item {
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.accordion-header {
+    padding: 18px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: #111;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+.accordion-header:hover {
+    color: var(--primary-pink);
+}
+
+.accordion-header i {
+    font-size: 1.2rem;
+    color: #999;
+}
+
+.accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.accordion-item.active .accordion-content {
+    max-height: 500px;
+    padding-bottom: 24px;
+}
+
+/* RELATED PRODUCTS GRID */
+.related-products-grid {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 15px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.related-products-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.related-item {
+    min-width: 160px;
+    border-radius: 12px;
+    background: #fff;
+    transition: 0.3s;
+}
+
+.related-item img {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 12px;
+}
+
+.related-item h5 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin: 0 0 5px;
+    color: #111;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.related-item p {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #111;
+    margin: 0;
+}
+
+.modal-sku-row span {
+    letter-spacing: 0.5px;
 }
 
 .footer-container {
