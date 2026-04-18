@@ -864,7 +864,8 @@ function selectSize(element, sz) {
   selectedSize = sz;
   document.querySelectorAll(".size-box").forEach(p => p.classList.remove('active'));
   element.classList.add('active');
-  document.getElementById("size-required-hint").style.display = 'none';
+  const hint = document.getElementById("size-required-hint");
+  if (hint) hint.style.display = 'none';
   updateAvailability();
   updateAddBtn();
 }
@@ -874,7 +875,8 @@ function selectColor(element, c) {
   selectedColor = c;
   document.querySelectorAll(".color-pill").forEach(p => p.classList.remove('active'));
   element.classList.add('active');
-  document.getElementById("color-required-hint").style.display = 'none';
+  const hint = document.getElementById("color-required-hint");
+  if (hint) hint.style.display = 'none';
   updateAvailability();
   updateAddBtn();
 }
@@ -950,12 +952,8 @@ function updateAddBtn() {
 }
 
 function addToCartWithSize(id, button) {
-  if (!selectedSize) {
-    document.getElementById("size-required-hint").style.display = 'block';
-    return;
-  }
-  if (!selectedColor) {
-    document.getElementById("color-required-hint").style.display = 'block';
+  if (!selectedSize || !selectedColor) {
+    showToast("Vui lòng chọn Size và Màu sắc trước!", "error");
     return;
   }
   
