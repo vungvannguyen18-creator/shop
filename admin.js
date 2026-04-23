@@ -895,7 +895,10 @@ async function addProduct() {
           },
           body: JSON.stringify(productData)
       });
-      if (!res.ok) throw new Error("Khong the them san pham.");
+      if (!res.ok) {
+          const errData = await res.json();
+          throw new Error(errData.error || errData.message || "Khong the them san pham.");
+      }
       
       alert('Them san pham thanh cong!');
       loadProductsAdmin();
@@ -1307,7 +1310,8 @@ async function saveProduct() {
       cancelEdit();
       loadProductsAdmin();
     } catch(err) { 
-      alert(err.message); 
+      const msg = err.response ? await err.response.text() : err.message;
+      alert("Lỗi: " + msg); 
     }
   } else {
     addProduct();

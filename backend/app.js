@@ -141,10 +141,14 @@ app.get("/", (req, res) => {
   res.send("ONEVORA Backend is running on MongoDB Mode");
 });
 
-// Xử lý lỗi tập trung
+// Xử lý lỗi tập trung - Hiện thị chi tiết để debug
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: "Đã xảy ra lỗi hệ thống!" });
+  res.status(500).json({ 
+    message: "Đã xảy ra lỗi hệ thống!", 
+    error: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined 
+  });
 });
 
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/fashion-shop")
