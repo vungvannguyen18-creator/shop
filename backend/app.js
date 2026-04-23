@@ -29,6 +29,17 @@ app.use(async (req, res, next) => {
   // Chỉ tính lượt truy cập vào các route chính, tránh track file tĩnh hoặc API phụ
   if (req.method === "GET" && (req.path === "/" || req.path.includes("/api/products"))) {
     try {
+      // Bỏ qua nếu là Admin hoặc Quản trị tối cao đang truy cập
+      const authHeader = req.headers["authorization"];
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        const token = authHeader.split(" ")[1];
+        const jwt = require("jsonwebtoken");
+        const decoded = jwt.decode(token);
+        if (decoded && (decoded.role === "admin" || decoded.role === "super_admin")) {
+          return next();
+        }
+      }
+
       const today = new Date().toISOString().split("T")[0];
       const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 

@@ -261,7 +261,10 @@ function renderSkeletons() {
 async function loadProducts(isSilent = false) {
   // --- KIỂM TRA CHẾ ĐỘ BẢO TRÌ & SETTINGS TOÀN CỤC ---
   try {
-    const sRes = await fetch(`${API_BASE}/settings`);
+    const token = typeof getAuthToken === 'function' ? getAuthToken() : localStorage.getItem("token");
+    const sRes = await fetch(`${API_BASE}/settings`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+    });
     const settings = await sRes.json();
     
     // Update global threshold & Announcement bar
@@ -280,7 +283,10 @@ async function loadProducts(isSilent = false) {
   if (!isSilent) renderSkeletons();
   try {
     const query = getQueryString();
-    const res = await fetch(`${API_BASE}/products${query ? `?${query}` : ""}`);
+    const token = typeof getAuthToken === 'function' ? getAuthToken() : localStorage.getItem("token");
+    const res = await fetch(`${API_BASE}/products${query ? `?${query}` : ""}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+    });
     if (!res.ok) throw new Error("API base returned error");
     const data = await res.json();
     
