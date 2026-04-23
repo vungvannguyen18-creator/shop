@@ -406,7 +406,7 @@ function applyFilters() {
   renderProducts();
 }
 
-function renderProducts() {
+async function renderProducts() {
   const list = document.getElementById("product-list");
   if (!list) return;
 
@@ -459,14 +459,20 @@ function renderProducts() {
     return;
   }
 
+  const wishlist = await loadWishlist();
+
   list.innerHTML = displayProducts
     .map(p => {
+        const isFav = wishlist.includes(p.id);
         return `
         <div class="product-card">
             <div class="img-wrapper">
                 <img src="${p.img}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+                <button class="wishlist-btn ${isFav ? 'active' : ''}" data-id="${p.id}" onclick="event.stopPropagation(); toggleWishlist('${p.id}')">
+                    <i class="bi ${isFav ? 'bi-heart-fill' : 'bi-heart'}"></i>
+                </button>
             </div>
-            <div class="card-info">
+            <div class="card-info" onclick="openProductModal('${p.id}')">
                 <h3>${p.name}</h3>
                 <p class="price">${p.price.toLocaleString()}đ</p>
             </div>
@@ -485,8 +491,57 @@ function openQuickSizes(productId) {
     openProductModal(productId);
 }
 
-function toggleWishlist(id) {
-    showToast("Thêm vào danh sách yêu thích!", "success");
+async function toggleWishlist(id) {
+    const user = getCurrentUser();
+    if (!user) {
+        showToast("Vui lòng đăng nhập để lưu sản phẩm yêu thích!", "info");
+        setTimeout(() => window.location.href = 'login.html', 1500);
+        return;
+    }
+
+    try {
+        const token = getAuthToken();
+        const res = await fetch(`${API_BASE}/wishlist/toggle`, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({ productId: id })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            showToast(data.message, "success");
+            // Cập nhật icon trên UI
+            const btn = document.querySelector(`.wishlist-btn[data-id="${id}"]`);
+            if (btn) {
+                if (data.status === 'added') {
+                    btn.classList.add('active');
+                    btn.innerHTML = '<i class="bi bi-heart-fill"></i>';
+                } else {
+                    btn.classList.remove('active');
+                    btn.innerHTML = '<i class="bi bi-heart"></i>';
+                }
+            }
+        }
+    } catch (e) {
+        showToast("Lỗi hệ thống khi xử lý yêu thích", "error");
+    }
+}
+
+async function loadWishlist() {
+    const user = getCurrentUser();
+    if (!user) return [];
+    try {
+        const res = await fetch(`${API_BASE}/wishlist`, {
+            headers: { Authorization: `Bearer ${getAuthToken()}` }
+        });
+        if (res.ok) {
+            const list = await res.json();
+            return list.map(p => p._id || p.id);
+        }
+    } catch (e) {}
+    return [];
 }
 
 function quickAdd(productId, size) {

@@ -238,6 +238,9 @@
 
         <section class="ugc-section">
             <h3 style="font-weight: 900; letter-spacing: -1px; font-size: 1.8rem;">Đánh giá của khách hàng (4.9⭐)</h3>
+            <div id="review-input-container" style="margin-top: 24px; padding: 24px; background: #fdfdfd; border: 1.5px dashed #eee; border-radius: 20px;">
+                <!-- Review input will be rendered by JS -->
+            </div>
             <div id="detail-reviews" style="margin-top: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;"></div>
         </section>
     </div>
@@ -394,18 +397,126 @@
             }).join('');
             
             // Render Reviews
+            renderReviewsListLocal(currentProduct.reviews || []);
+            checkReviewEligibilityLocal(currentProduct.id);
+        }
+
+        function renderReviewsListLocal(reviews) {
             const reviewList = document.getElementById('detail-reviews');
-            const reviews = currentProduct.reviews || [];
-            if (reviews.length > 0) {
-                reviewList.innerHTML = reviews.map(r => `
-                    <div style="padding: 20px; border-radius: 16px; background: #f9f9f9; border: 1px solid #eee;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            if (reviews.length === 0) {
+                reviewList.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding: 40px; color:#aaa;">Chưa có đánh giá nào cho sản phẩm này.</div>`;
+                return;
+            }
+            reviewList.innerHTML = reviews.map(r => `
+                <div style="padding: 20px; border-radius: 16px; background: #f9f9f9; border: 1px solid #eee; transition: 0.3s;" onmouseover="this.style.background='#fff'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.05)'" onmouseout="this.style.background='#f9f9f9'; this.style.boxShadow='none'">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <div>
                             <span style="font-weight:800;">${r.user}</span>
-                            <span style="color:#f59e0b;">${'⭐'.repeat(r.rating || 5)}</span>
+                            ${r.verified ? `<span style="background: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; margin-left: 6px;">✓ ĐÃ MUA HÀNG</span>` : ''}
                         </div>
-                        <p style="color:#555; font-size: 0.9rem; line-height: 1.5;">${r.text}</p>
+                        <span style="color:#f59e0b; font-size: 0.8rem;">${'⭐'.repeat(r.rating || 5)}</span>
                     </div>
-                `).join('');
+                    <p style="color:#555; font-size: 0.9rem; line-height: 1.6; margin: 0;">${r.text}</p>
+                    <div style="font-size:0.75rem; color:#aaa; margin-top:12px;">${new Date(r.date || Date.now()).toLocaleDateString('vi-VN')}</div>
+                </div>
+            `).join('');
+        }
+
+        async function checkReviewEligibilityLocal(productId) {
+            const container = document.getElementById("review-input-container");
+            const user = getCurrentUser();
+
+            const lockedHTML = (msg) => `
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🔒</div>
+                    <p style="font-weight: 700; color: #111;">${msg}</p>
+                    <p style="font-size: 0.8rem; color: #888; max-width: 300px; margin: 8px auto 0;">Chỉ khách hàng đã nhận hàng thành công mới có thể đánh giá sản phẩm.</p>
+                </div>
+            `;
+
+            if (!user) {
+                container.innerHTML = lockedHTML("Vui lòng đăng nhập để đánh giá");
+                return;
+            }
+
+            try {
+                const token = getAuthToken();
+                const res = await fetch(`${API_BASE}/orders/my`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const orders = await res.json();
+
+                const hasBought = orders.some(o => 
+                    (o.status === 'completed' || o.status === 'shipping' || o.status === 'delivered') &&
+                    o.items.some(i => i.productId === productId)
+                );
+
+                if (!hasBought) {
+                    container.innerHTML = lockedHTML("Hãy mua hàng để để lại đánh giá bạn nhé!");
+                    return;
+                }
+
+                container.innerHTML = `
+                    <h4 style="margin: 0 0 15px; font-weight: 800;">Viết đánh giá của bạn</h4>
+                    <div style="display:flex; gap: 5px; margin-bottom: 15px; font-size: 1.4rem; cursor: pointer;" id="rating-stars">
+                        <span data-val="1">⭐</span><span data-val="2">⭐</span><span data-val="3">⭐</span><span data-val="4">⭐</span><span data-val="5">⭐</span>
+                    </div>
+                    <textarea id="review-text-input" placeholder="Chia sẻ cảm nhận của bạn về sản phẩm này..." style="width: 100%; height: 100px; padding: 15px; border-radius: 12px; border: 1px solid #eee; background: #fff; color: #111; margin-bottom: 15px; resize: none; font-family: inherit; font-size: 0.95rem; box-sizing: border-box;"></textarea>
+                    <div style="display:flex; justify-content: flex-end;">
+                        <button id="btn-submit-review" onclick="submitReviewLocal('${productId}')" class="btn-yame-solid" style="padding: 12px 30px; border-radius: 12px; font-weight: 800; font-size: 0.9rem;">GỬI ĐÁNH GIÁ</button>
+                    </div>
+                `;
+                
+                // Rating stars logic
+                let currentRating = 5;
+                const stars = container.querySelectorAll('#rating-stars span');
+                stars.forEach(s => {
+                    s.addEventListener('click', () => {
+                        currentRating = parseInt(s.dataset.val);
+                        stars.forEach((st, idx) => {
+                            st.style.opacity = idx < currentRating ? '1' : '0.3';
+                        });
+                    });
+                });
+                window.currentRating = currentRating;
+
+            } catch (e) {
+                container.innerHTML = lockedHTML("Không thể kiểm tra điều kiện đánh giá");
+            }
+        }
+
+        async function submitReviewLocal(productId) {
+            const text = document.getElementById("review-text-input").value.trim();
+            if (!text) return alert("Vui lòng nhập nội dung!");
+
+            const btn = document.getElementById("btn-submit-review");
+            const originalText = btn.innerText;
+
+            try {
+                btn.disabled = true;
+                btn.innerText = "ĐANG GỬI...";
+
+                const res = await fetch(`${API_BASE}/products/${productId}/reviews`, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${getAuthToken()}`
+                    },
+                    body: JSON.stringify({ text, rating: window.currentRating || 5 })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    alert("Cảm ơn bạn đã đánh giá!");
+                    location.reload(); // Tải lại để xem đánh giá mới
+                } else {
+                    alert(data.message);
+                }
+            } catch (e) {
+                alert("Lỗi kết nối server");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
             }
         }
 

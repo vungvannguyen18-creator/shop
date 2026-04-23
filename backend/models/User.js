@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema({
   phone: { type: String },
   address: { type: String },
   isProfileComplete: { type: Boolean, default: false },
+  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });

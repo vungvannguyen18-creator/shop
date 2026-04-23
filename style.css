@@ -696,6 +696,42 @@ img {
   }
 }
 
+.wishlist-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #888;
+  font-size: 1.1rem;
+}
+
+.wishlist-btn:hover {
+  transform: scale(1.1);
+  background: #fff;
+  color: var(--primary-pink);
+}
+
+.wishlist-btn.active {
+  background: var(--primary-pink);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(226, 29, 38, 0.4);
+}
+
+.wishlist-btn i {
+  display: flex;
+}
+
 /* PRODUCT CARD ENHANCEMENTS *//* --- OWEN PRODUCT MODAL PHASE 2 --- */
 .product-modal-card {
   position: relative;

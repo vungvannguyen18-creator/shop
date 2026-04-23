@@ -91,4 +91,21 @@ router.post("/social-login", authLimiter, async (req, res) => {
   }
 });
 
+router.post("/forgot-password", authLimiter, async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Vui lòng nhập email" });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "Email không tồn tại trong hệ thống." });
+
+    // Luồng thực tế: Gửi email reset password.
+    // Demo: Trả về thông báo thành công.
+    res.json({ message: "Yêu cầu đã được gửi thành công! Vui lòng kiểm tra hòm thư của bạn để nhận hướng dẫn đặt lại mật khẩu." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi server" });
+  }
+});
+
 module.exports = router;

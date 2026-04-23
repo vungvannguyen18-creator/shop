@@ -256,10 +256,13 @@
         
         <div class="profile-hero">
             <div class="profile-avatar">👤</div>
-            <div class="profile-info">
+            <div class="profile-info" style="flex: 1;">
                 <h1 id="user-display-name">Loading...</h1>
                 <div class="rank-badge">★ Khách hàng thân thiết</div>
             </div>
+            <button class="btn-track" onclick="openEditProfile()" style="background: var(--primary); border-color: var(--primary);">
+                <i class="bi bi-pencil-square"></i> Sửa hồ sơ
+            </button>
         </div>
 
         <div class="tab-controls">
@@ -286,6 +289,33 @@
 
     </main>
 
+    <!-- Modal Chỉnh sửa hồ sơ -->
+    <div id="modal-edit-profile" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+        <div style="background: var(--bg-card); border-radius: 24px; padding: 32px; width: 90%; max-width: 450px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+            <h2 style="margin-bottom: 24px; font-weight: 800; font-size: 1.5rem;">Chỉnh sửa hồ sơ</h2>
+            
+            <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+                <div class="form-group">
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; font-weight: 700; letter-spacing: 1px;">Họ và Tên</label>
+                    <input id="edit-fullname" type="text" placeholder="Nhập họ tên của bạn" style="width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; outline: none; font-family: inherit;">
+                </div>
+                <div class="form-group">
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; font-weight: 700; letter-spacing: 1px;">Số điện thoại</label>
+                    <input id="edit-phone" type="tel" placeholder="Nhập số điện thoại" style="width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; outline: none; font-family: inherit;">
+                </div>
+                <div class="form-group">
+                    <label style="display: block; font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 8px; font-weight: 700; letter-spacing: 1px;">Địa chỉ mặc định</label>
+                    <input id="edit-address" type="text" placeholder="Số nhà, tên đường, quận/huyện..." style="width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #fff; outline: none; font-family: inherit;">
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+                <button onclick="closeEditProfile()" style="flex: 1; padding: 14px; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; font-weight: 700; cursor: pointer; font-family: inherit;">Hủy</button>
+                <button id="btn-save-profile" onclick="saveProfile()" style="flex: 1; padding: 14px; background: var(--primary); color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px var(--primary-glow); font-family: inherit;">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+
     <script src="auth.js"></script>
     <script>
         let myOrders = [];
@@ -299,7 +329,72 @@
 
             renderFilterChips();
             await loadData();
+            await fetchProfile(); // Tải thêm thông tin chi tiết
             startAutoRefresh();
+        }
+
+        async function fetchProfile() {
+            try {
+                const token = getAuthToken();
+                const res = await fetch(`${API_BASE}/auth/me`, { // Giả sử có endpoint này hoặc lấy từ User API
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('edit-fullname').value = data.fullName || '';
+                    document.getElementById('edit-phone').value = data.phone || '';
+                    document.getElementById('edit-address').value = data.address || '';
+                    if (data.fullName) {
+                        document.getElementById('user-display-name').innerText = data.fullName;
+                    }
+                }
+            } catch (e) { console.error("Fetch profile error", e); }
+        }
+
+        function openEditProfile() {
+            document.getElementById('modal-edit-profile').style.display = 'flex';
+        }
+
+        function closeEditProfile() {
+            document.getElementById('modal-edit-profile').style.display = 'none';
+        }
+
+        async function saveProfile() {
+            const fullName = document.getElementById('edit-fullname').value.trim();
+            const phone = document.getElementById('edit-phone').value.trim();
+            const address = document.getElementById('edit-address').value.trim();
+            
+            const btn = document.getElementById('btn-save-profile');
+            const originalText = btn.innerText;
+
+            try {
+                btn.disabled = true;
+                btn.innerText = "Đang lưu...";
+                
+                const token = getAuthToken();
+                const res = await fetch(`${API_BASE}/users/profile`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ fullName, phone, address })
+                });
+
+                if (res.ok) {
+                    alert("Cập nhật hồ sơ thành công!");
+                    closeEditProfile();
+                    if (fullName) document.getElementById('user-display-name').innerText = fullName;
+                } else {
+                    const data = await res.json();
+                    alert(data.message || "Lỗi cập nhật hồ sơ");
+                }
+            } catch (e) {
+                alert("Lỗi kết nối server");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
         }
 
         async function loadData() {

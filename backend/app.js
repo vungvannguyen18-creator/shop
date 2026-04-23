@@ -16,6 +16,7 @@ const uploadRoutes = require("./routes/upload");
 const orderRoutes = require("./routes/orders");
 const userRoutes = require("./routes/users");
 const voucherRoutes = require("./routes/vouchers");
+const wishlistRoutes = require("./routes/wishlist");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -65,6 +66,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/vouchers", voucherRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/wishlist", wishlistRoutes);
 
 // Mock Settings (Tạm thời dùng chung với logic cũ hoặc lưu DB sau)
 app.get("/api/settings", (req, res) => {
