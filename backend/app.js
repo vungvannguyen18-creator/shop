@@ -73,12 +73,12 @@ app.get("/api/settings", (req, res) => {
   res.json({
     freeShipThreshold: 500000,
     maintenanceMode: false,
-    announcement: "Chào mừng bạn đến với Fashion Modern!"
+    announcement: "Chào mừng bạn đến với ONEVORA!"
   });
 });
 
 app.get("/", (req, res) => {
-  res.send("Fashion Shop Backend is running on MongoDB Mode");
+  res.send("ONEVORA Backend is running on MongoDB Mode");
 });
 
 // Xử lý lỗi tập trung

@@ -4983,4 +4983,63 @@ button:disabled::after {
     width: 35px;
     height: 35px;
 }
+
+/* ==================================================== */
+/* ADMIN RESPONSIVE OVERRIDES                          */
+/* ==================================================== */
+@media (max-width: 900px) {
+  .admin-sidebar {
+    position: fixed !important;
+    left: -280px !important;
+    top: 0;
+    height: 100vh;
+    z-index: 4000;
+    transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .admin-sidebar.open {
+    left: 0 !important;
+  }
+  .admin-main {
+    margin-left: 0 !important;
+    padding: 15px !important;
+  }
+  .hamburger-admin {
+    display: block !important;
+  }
+  .admin-overlay.open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 3999;
+  }
+  .admin-stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .table-wrapper {
+    overflow-x: auto;
+  }
+  .product-form-layout {
+    grid-template-columns: 1fr !important;
+  }
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .mini-stats {
+    flex-direction: column !important;
+    gap: 15px;
+    text-align: left !important;
+  }
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 15px;
+  }
+}
 

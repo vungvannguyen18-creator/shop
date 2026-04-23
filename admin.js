@@ -430,7 +430,7 @@ function printInvoice(orderId) {
     });
 
     printArea.innerHTML = `
-        <h2>FASHION MODERN</h2>
+        <h2>ONEVORA</h2>
         <div style="text-align:center;font-size:11px;margin-bottom:10px;">Phiếu Giao Hàng (Bản sao)</div>
         <div>Mã đơn: <b>#${order._id.slice(-8).toUpperCase()}</b></div>
         <div>Ngày in: ${new Date().toLocaleString('vi-VN')}</div>
