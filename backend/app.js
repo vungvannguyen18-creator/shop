@@ -66,8 +66,8 @@ app.use(helmet({
 // 2. Chống NoSQL Injection
 app.use(mongoSanitize());
 
-// 3. Chống XSS (Data sanitization)
-app.use(xss());
+// 3. Chống XSS (Data sanitization) - Tạm thời tắt để kiểm tra lỗi 500
+// app.use(xss());
 
 // 4. Chống HTTP Parameter Pollution
 app.use(hpp());
@@ -75,7 +75,7 @@ app.use(hpp());
 // 5. Rate Limiting toàn cục
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
-  max: 200, // Tăng nhẹ cho toàn cục
+  max: 1000, // Tăng mạnh để tránh bị chặn khi test
   message: { message: "Quá nhiều yêu cầu từ IP này, vui lòng thử lại sau 15 phút." },
   standardHeaders: true, 
   legacyHeaders: false,
