@@ -1347,7 +1347,7 @@ window.setChartView = function(view) {
     renderDashboardStats();
 };
 
-function renderDashboardStats() {
+async function renderDashboardStats() {
     const user = getCurrentUser();
     const isSuper = user && user.role === 'super_admin';
 

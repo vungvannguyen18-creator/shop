@@ -17,6 +17,7 @@ const orderRoutes = require("./routes/orders");
 const userRoutes = require("./routes/users");
 const voucherRoutes = require("./routes/vouchers");
 const wishlistRoutes = require("./routes/wishlist");
+const categoryRoutes = require("./routes/categories");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -92,6 +93,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/vouchers", voucherRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/wishlist", wishlistRoutes);
+app.use("/api/categories", categoryRoutes);
 
 const { verifyToken, verifyAdmin } = require("./middleware/verifyToken");
 
