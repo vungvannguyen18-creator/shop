@@ -2792,32 +2792,32 @@ body[data-auth-mode='register'] .show-register {
 
 .admin-menu button {
   width: 100%;
-  text-align: left;
-  padding: 14px 18px;
-  background: transparent;
-  border: none;
-  color: #a0a0a0;
-  border-radius: 12px;
+  padding: 14px 20px;
   margin-bottom: 8px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+  background-color: transparent;
+  border: 1px solid transparent;
+  color: #9ca3af;
 }
 
 .admin-menu button:hover {
   background-color: rgba(255, 255, 255, 0.05);
-  transform: translateX(4px);
   color: #fff;
+  transform: translateX(5px);
 }
 
 .admin-menu button.active {
-  background-color: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: #fff;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .admin-main {
@@ -2832,12 +2832,38 @@ body[data-auth-mode='register'] .show-register {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 40px;
+  background: rgba(18, 18, 18, 0.8);
+  backdrop-filter: blur(20px);
+  padding: 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.btn-logout {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background: #ef4444;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
 }
 
 .admin-header h1 {
-  font-size: 2rem;
+  font-family: var(--font-premium);
+  font-size: 2.2rem;
+  font-weight: 800;
   margin: 0;
   color: #fff;
+  letter-spacing: -1px;
 }
 
 .admin-header p {
@@ -2853,19 +2879,33 @@ body[data-auth-mode='register'] .show-register {
 }
 
 .admin-card {
-  background-color: #1e1e1e;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(145deg, #1e1e1e 0%, #151515 100%);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 4px;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+  opacity: 0;
+  transition: 0.3s;
 }
 
 .admin-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.1);
-  background-color: #222;
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.admin-card:hover::before {
+  opacity: 1;
 }
 
 .admin-card .card-icon {
@@ -2939,10 +2979,14 @@ table {
 
 thead th {
   text-align: left;
-  padding: 16px;
+  padding: 18px 20px;
   border-bottom: 1px solid #333;
-  color: #a0a0a0;
-  font-weight: 500;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 tbody td {
@@ -5041,5 +5085,71 @@ button:disabled::after {
     align-items: flex-start !important;
     gap: 15px;
   }
+}
+
+/* ==================================================== */
+/* BADGE SYSTEM                                        */
+/* ==================================================== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+  gap: 6px;
+}
+
+.badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.badge-pending {
+  background: rgba(250, 204, 21, 0.1) !important;
+  color: #facc15 !important;
+  border-color: rgba(250, 204, 21, 0.2) !important;
+}
+
+.badge-processing {
+  background: rgba(168, 85, 247, 0.1) !important;
+  color: #a855f7 !important;
+  border-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+.badge-shipping {
+  background: rgba(59, 130, 246, 0.1) !important;
+  color: #3b82f6 !important;
+  border-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+.badge-completed {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+.badge-cancelled {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+.badge-active {
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: #10b981 !important;
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+.badge-locked {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
 }
 

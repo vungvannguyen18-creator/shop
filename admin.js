@@ -213,15 +213,15 @@ function getDisplayStatus(status) {
 }
 
 function getBadgeStyle(statusText) {
-  const styles = {
-    'Chờ xác nhận': 'background:rgba(250,204,21,0.15); color:#facc15; border:1px solid rgba(250,204,21,0.3);',
-    'Đang chuẩn bị':  'background:rgba(168,85,247,0.15); color:#a855f7; border:1px solid rgba(168,85,247,0.3);',
-    'Đang giao':    'background:rgba(59,130,246,0.15);  color:#3b82f6; border:1px solid rgba(59,130,246,0.3);',
-    'Hoàn thành':   'background:rgba(16,185,129,0.15);  color:#10b981; border:1px solid rgba(16,185,129,0.3);',
-    'Đã hủy':       'background:rgba(239,68,68,0.15);   color:#ef4444; border:1px solid rgba(239,68,68,0.3);',
+  // We now use CSS classes instead of inline styles for cleaner UI
+  const classMap = {
+    'Chờ xác nhận': 'badge badge-pending',
+    'Đang chuẩn bị':  'badge badge-processing',
+    'Đang giao':    'badge badge-shipping',
+    'Hoàn thành':   'badge badge-completed',
+    'Đã hủy':       'badge badge-cancelled',
   };
-  const base = 'padding:5px 11px; border-radius:99px; font-weight:700; font-size:0.75rem; white-space:nowrap;';
-  return (styles[statusText] || 'background:#333; color:#aaa; border:1px solid #444;') + base;
+  return classMap[statusText] || 'badge';
 }
 
 function renderOrderFilters() {
@@ -265,7 +265,7 @@ function renderOrderTable() {
             </td>
             <td style="color: #ffb74d; font-weight: 700;">${(order.total||0).toLocaleString()}<br><span style="font-size:0.72rem; color:#666; font-weight:400;">VND</span></td>
             <td>
-              <span style="${getBadgeStyle(d_status)}">${d_status}</span>
+              <span class="${getBadgeStyle(d_status)}">${d_status}</span>
             </td>
             <td>
               <div style="font-size:0.8rem; color:#a0a0a0;">💳 ${payMap[order.paymentMethod] || 'COD'}</div>
@@ -332,7 +332,7 @@ function viewOrder(orderId) {
             <div style="color:#555; font-size:0.75rem; margin-top:2px;">${dateStr}</div>
         </div>
         <div>
-            <span style="${getBadgeStyle(d_status)}; font-size: 0.85rem;">${d_status}</span>
+            <span class="${getBadgeStyle(d_status)}" style="font-size: 0.85rem;">${d_status}</span>
         </div>
     </div>
 
@@ -724,7 +724,7 @@ function renderVoucherTable() {
         </td>
         <td style="font-size: 0.9rem; color: #888;">${v.minOrder.toLocaleString()} VNĐ</td>
         <td>
-           <span style="${v.active ? 'background:rgba(16,185,129,0.1); color:#10b981; border:1px solid rgba(16,185,129,0.3);' : 'background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.3);'} padding:5px 12px; border-radius:99px; font-size:0.7rem; font-weight:700;">
+           <span class="badge ${v.active ? 'badge-active' : 'badge-locked'}">
              ${v.active ? 'ĐANG HOẠT ĐỘNG' : 'ĐÃ KHÓA'}
            </span>
         </td>
