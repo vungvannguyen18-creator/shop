@@ -56,6 +56,7 @@ router.get("/admin", verifyToken, verifyAdmin, async (req, res) => {
 
 // Admin: Thêm sản phẩm
 router.post("/", verifyToken, verifyAdmin, async (req, res) => {
+  console.log("Dữ liệu gửi lên để thêm sản phẩm:", JSON.stringify(req.body, null, 2));
   try {
     const product = new Product(req.body);
     await product.save();
@@ -68,6 +69,7 @@ router.post("/", verifyToken, verifyAdmin, async (req, res) => {
 
 // Admin: Cập nhật sản phẩm
 router.put("/:id", verifyToken, verifyAdmin, async (req, res) => {
+  console.log("Dữ liệu gửi lên để cập nhật sản phẩm:", JSON.stringify(req.body, null, 2));
   try {
     const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updated) return res.status(404).json({ message: "Sản phẩm không tồn tại" });

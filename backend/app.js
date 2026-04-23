@@ -134,7 +134,7 @@ app.get("/api/settings", (req, res) => {
 });
 
 app.get("/api/version", (req, res) => {
-  res.json({ version: "1.0.5", deployedAt: "2026-04-24T03:53:00" });
+  res.json({ version: "1.0.6", deployedAt: "2026-04-24T04:14:00" });
 });
 
 app.get("/", (req, res) => {
