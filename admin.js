@@ -1227,13 +1227,13 @@ async function saveProduct() {
     const category = document.getElementById('new-category').value;
     const description = document.getElementById('new-description').value.trim();
     const features = document.getElementById('new-features').value.trim().split('\n').filter(f => f.trim());
-    const sizes = [...selectedSizeValues];
-    const colors = [...selectedColorValues];
+    const sizes = [...selectedSizes];
+    const colors = [...selectedColors];
 
     // Thu thập variants từ matrix cho Update
     const variantsList = [];
-    selectedColorValues.forEach(c => {
-        selectedSizeValues.forEach(s => {
+    selectedColors.forEach(c => {
+        selectedSizes.forEach(s => {
             const sku = `${c}-${s}`;
             if (currentMatrixData[sku]) {
                 variantsList.push({ color: c, size: s, ...currentMatrixData[sku] });
@@ -1282,7 +1282,8 @@ async function saveProduct() {
           ugcUrlList = await uploadMultipleFiles(ugcInput.files);
       }
 
-      const cost = document.getElementById('new-cost') ? Number(document.getElementById('new-cost').value) : null;
+      const costEl = document.getElementById('new-cost');
+      const cost = costEl ? (Number(costEl.value) || Math.floor(price * 0.7)) : Math.floor(price * 0.7);
       const payload = { 
         name, price, cost, stock, category, description, features, 
         sizes, colors, variants: variantsList, 
