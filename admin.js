@@ -1230,6 +1230,17 @@ async function saveProduct() {
     const sizes = [...selectedSizeValues];
     const colors = [...selectedColorValues];
 
+    // Thu thập variants từ matrix cho Update
+    const variantsList = [];
+    selectedColorValues.forEach(c => {
+        selectedSizeValues.forEach(s => {
+            const sku = `${c}-${s}`;
+            if (currentMatrixData[sku]) {
+                variantsList.push({ color: c, size: s, ...currentMatrixData[sku] });
+            }
+        });
+    });
+
     // Thu thập Highlights
     const highlightItems = [];
     document.querySelectorAll('.highlight-input-group').forEach(group => {
@@ -1274,7 +1285,7 @@ async function saveProduct() {
       const cost = document.getElementById('new-cost') ? Number(document.getElementById('new-cost').value) : null;
       const payload = { 
         name, price, cost, stock, category, description, features, 
-        sizes, colors, variants, 
+        sizes, colors, variants: variantsList, 
         image: imgUrl,
         thumbnails: thumbnailUrlList,
         ugcPhotos: ugcUrlList,

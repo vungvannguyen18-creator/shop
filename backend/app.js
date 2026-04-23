@@ -72,7 +72,7 @@ const limiter = rateLimit({
 app.use("/api", limiter);
 
 // 6. Giới hạn kích thước Body (Body parser)
-app.use(express.json({ limit: "10kb" }));
+app.use(express.json({ limit: "1mb" }));
 
 app.use(cors({
   origin: "*",
