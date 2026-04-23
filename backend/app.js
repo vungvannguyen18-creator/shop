@@ -134,7 +134,11 @@ app.get("/api/settings", (req, res) => {
 });
 
 app.get("/api/version", (req, res) => {
-  res.json({ version: "1.0.6", deployedAt: "2026-04-24T04:14:00" });
+  res.json({ 
+    version: "1.0.6", 
+    deployedAt: "2026-04-24T04:14:00",
+    database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected"
+  });
 });
 
 app.get("/", (req, res) => {
