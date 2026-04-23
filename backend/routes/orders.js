@@ -7,7 +7,7 @@ const { verifyToken, verifyAdmin } = require("../middleware/verifyToken");
 const VIETQR_ACCOUNT = "100872584135";
 const VIETQR_BANK = "ICB";
 const VIETQR_NAME = "NGUYEN VAN VUNG";
-const SEPAY_API_KEY = process.env.SEPAY_API_KEY || "FASHION_MODERN_2026";
+const SEPAY_API_KEY = process.env.SEPAY_API_KEY || "ONEVORA_BRAND_2026";
 
 const getQRLink = (amount, readableId) => {
   return `https://img.vietqr.io/image/${VIETQR_BANK}-${VIETQR_ACCOUNT}-compact.png?amount=${amount}&addInfo=Thanh toan don hang ${readableId}&accountName=${encodeURIComponent(VIETQR_NAME)}`;
@@ -75,9 +75,9 @@ router.post("/", verifyToken, async (req, res) => {
       };
     }));
 
-    // Tạo readableId (FM + timestamp)
+    // Tạo readableId (OV + timestamp)
     const timestamp = Date.now();
-    const readableId = "FM" + (timestamp % 100000).toString().padStart(5, '0');
+    const readableId = "OV" + (timestamp % 100000).toString().padStart(5, '0');
 
     const order = new Order({ 
       readableId,
@@ -161,7 +161,7 @@ router.post("/webhook", async (req, res) => {
 
   if (!content) return res.status(400).json({ success: false, message: "Thiếu nội dung" });
 
-  const regex = /FM\d{5,}/;
+  const regex = /OV\d{5,}/;
   const matchCode = content.match(regex);
   const searchableId = matchCode ? matchCode[0] : null;
 

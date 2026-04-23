@@ -1393,6 +1393,23 @@ function renderDashboardStats() {
         document.getElementById('stat-profit').innerText = `${totalProfit.toLocaleString()} VNĐ`;
     }
 
+    // Fetch and update Visit Stats
+    try {
+        const visitRes = await fetch(`${API_BASE}/stats/visits`, {
+            headers: { Authorization: `Bearer ${getAuthToken()}` }
+        });
+        if (visitRes.ok) {
+            const vData = await visitRes.json();
+            document.getElementById('stat-visits').innerText = `${vData.today} lượt`;
+            const vTrend = document.getElementById('trend-visits');
+            if (vTrend) {
+                vTrend.innerText = `👤 ${vData.todayUnique} khách duy nhất`;
+            }
+        }
+    } catch (e) {
+        console.error("Lỗi tải stats truy cập:", e);
+    }
+
     // Giả lập xu hướng bằng màu sắc động
     const rTrend = document.getElementById('trend-revenue');
     const oTrend = document.getElementById('trend-orders');

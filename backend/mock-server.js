@@ -7,8 +7,8 @@ const jwt = require("jsonwebtoken");
 
 const app = express();
 const PORT = process.env.PORT || 5001;
-const JWT_SECRET = process.env.JWT_SECRET || "fashionmodern-secret";
-const SEPAY_API_KEY = "FASHION_MODERN_2026"; // Mã bảo mật để dán vào SePay
+const JWT_SECRET = process.env.JWT_SECRET || "onevora-secret-key-2026";
+const SEPAY_API_KEY = "ONEVORA_BRAND_2026"; // Mã bảo mật để dán vào SePay
 
 const DATA_DIR = path.join(__dirname, "data");
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
@@ -147,7 +147,7 @@ app.post("/api/auth/register", async (req, res) => {
   const newUser = {
     id: users.length + 1,
     username,
-    email: email || `${username}@fashionmodern.vn`,
+    email: email || `${username}@onevora.vn`,
     password: hashedPassword,
     role: getUserRole(username),
     isProfileComplete: getUserRole(username) !== "user" // Admins/Super are auto-complete
@@ -310,7 +310,7 @@ app.post("/api/orders", verifyToken, (req, res) => {
   });
 
   const timestamp = Date.now();
-  const readableId = "FM" + (timestamp % 100000).toString().padStart(5, '0');
+  const readableId = "OV" + (timestamp % 100000).toString().padStart(5, '0');
 
   const order = {
     _id: `o${timestamp}`,
@@ -469,8 +469,8 @@ app.post(["/api/payment/webhook", "/api/webhooks/payment"], (req, res) => {
   if (!content) return res.status(400).json({ success: false, message: "Thiếu nội dung giao dịch" });
 
   const orders = readData("orders.json");
-  // Cải tiến Regex: Tìm chuỗi có dạng FM + 5 chữ số (VD: FM10005)
-  const regex = /FM\d{5,}/;
+  // Cải tiến Regex: Tìm chuỗi có dạng OV + 5 chữ số (VD: OV10005)
+  const regex = /OV\d{5,}/;
   const matchCode = content.match(regex);
   const searchableId = matchCode ? matchCode[0] : content;
 

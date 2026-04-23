@@ -21,6 +21,31 @@ const wishlistRoutes = require("./routes/wishlist");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const Visit = require("./models/Visit");
+
+// 0. Middleware Theo dõi lượt truy cập (Visits Tracker)
+app.use(async (req, res, next) => {
+  // Chỉ tính lượt truy cập vào các route chính, tránh track file tĩnh hoặc API phụ
+  if (req.method === "GET" && (req.path === "/" || req.path.includes("/api/products"))) {
+    try {
+      const today = new Date().toISOString().split("T")[0];
+      const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
+      await Visit.findOneAndUpdate(
+        { date: today },
+        { 
+          $inc: { count: 1 },
+          $addToSet: { uniqueIps: ip } 
+        },
+        { upsert: true, new: true }
+      );
+    } catch (err) {
+      console.error("Lỗi track lượt truy cập:", err);
+    }
+  }
+  next();
+});
+
 // 1. Middleware Bảo mật (Headers)
 app.use(helmet({
   crossOriginResourcePolicy: false,
@@ -67,6 +92,24 @@ app.use("/api/users", userRoutes);
 app.use("/api/vouchers", voucherRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/wishlist", wishlistRoutes);
+
+const { verifyToken, verifyAdmin } = require("./middleware/verifyToken");
+
+app.get("/api/stats/visits", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const today = new Date().toISOString().split("T")[0];
+    const stats = await Visit.findOne({ date: today });
+    const allStats = await Visit.find().sort({ date: -1 }).limit(7);
+    
+    res.json({
+      today: stats ? stats.count : 0,
+      todayUnique: stats ? stats.uniqueIps.length : 0,
+      history: allStats
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi tải thống kê" });
+  }
+});
 
 // Mock Settings (Tạm thời dùng chung với logic cũ hoặc lưu DB sau)
 app.get("/api/settings", (req, res) => {
