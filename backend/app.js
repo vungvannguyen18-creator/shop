@@ -133,6 +133,10 @@ app.get("/api/settings", (req, res) => {
   });
 });
 
+app.get("/api/version", (req, res) => {
+  res.json({ version: "1.0.5", deployedAt: "2026-04-24T03:53:00" });
+});
+
 app.get("/", (req, res) => {
   res.send("ONEVORA Backend is running on MongoDB Mode");
 });
