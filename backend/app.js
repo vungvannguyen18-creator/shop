@@ -133,6 +133,25 @@ app.get("/api/settings", (req, res) => {
   });
 });
 
+app.get("/api/test-cloudinary", async (req, res) => {
+  const cloudinary = require("cloudinary").v2;
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  });
+  try {
+    const result = await cloudinary.api.ping();
+    res.json({ status: "Success", result });
+  } catch (err) {
+    res.status(500).json({ status: "Failed", error: err.message, config: {
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY ? "Present" : "Missing",
+      api_secret: process.env.CLOUDINARY_API_SECRET ? "Present" : "Missing"
+    }});
+  }
+});
+
 app.get("/api/version", (req, res) => {
   res.json({ 
     version: "1.0.7", 
