@@ -531,24 +531,24 @@
         }
 
         function selectSizeLocal(el, sz) {
-            selectedSize = sz; 
+            window.selectedSize = sz; 
             document.querySelectorAll('.size-box').forEach(b => b.style.borderColor = '#ddd');
             el.style.borderColor = '#111';
         }
 
         function selectColorLocal(el, c) {
-            selectedColor = c;
+            window.selectedColor = c;
             document.querySelectorAll('.color-pill').forEach(b => b.style.boxShadow = 'none');
             el.style.boxShadow = '0 0 0 2px #111';
         }
 
         function addToCartDetailed() {
-            if (!selectedSize || !selectedColor) return alert("Chọn size và màu!");
+            if (!window.selectedSize || !window.selectedColor) return alert("Chọn size và màu!");
             addToCartWithSize(currentProduct.id);
         }
 
         function buyNowDetailed() {
-            if (!selectedSize || !selectedColor) return alert("Chọn size và màu!");
+            if (!window.selectedSize || !window.selectedColor) return alert("Chọn size và màu!");
             buyNowFromModal(currentProduct.id);
         }
 

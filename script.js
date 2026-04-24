@@ -4,8 +4,8 @@ let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let activeCategory = "Tất cả";
 let currentSearch = "";
 let currentModalProductId = null;
-let selectedSize = null;
-let selectedColor = null;
+window.selectedSize = null;
+window.selectedColor = null;
 
 // Sandbox Filter States
 let activeColorFilter = "";
@@ -924,7 +924,7 @@ async function submitReview(productId) {
 
 function selectSize(element, sz) {
   if (element.classList.contains('out-of-stock')) return;
-  selectedSize = sz;
+  window.selectedSize = sz;
   document.querySelectorAll(".size-box").forEach(p => p.classList.remove('active'));
   element.classList.add('active');
   const hint = document.getElementById("size-required-hint");
@@ -935,7 +935,7 @@ function selectSize(element, sz) {
 
 function selectColor(element, c) {
   if (element.classList.contains('out-of-stock')) return;
-  selectedColor = c;
+  window.selectedColor = c;
   document.querySelectorAll(".color-pill").forEach(p => p.classList.remove('active'));
   element.classList.add('active');
   const hint = document.getElementById("color-required-hint");
@@ -952,10 +952,10 @@ function updateAvailability() {
   const variants = currentProduct.variants;
 
   // 1. If color is selected, update size buttons
-  if (selectedColor) {
+  if (window.selectedColor) {
     document.querySelectorAll('.size-box').forEach(btn => {
       const sz = btn.innerText.trim();
-      const variant = variants.find(v => v.color === selectedColor && v.size === sz);
+      const variant = variants.find(v => v.color === window.selectedColor && v.size === sz);
       if (variant && !variant.inStock) {
         btn.classList.add('out-of-stock');
       } else {
@@ -967,10 +967,10 @@ function updateAvailability() {
   }
 
   // 2. If size is selected, update color buttons
-  if (selectedSize) {
+  if (window.selectedSize) {
     document.querySelectorAll('.color-pill').forEach(btn => {
       const c = btn.getAttribute('title');
-      const variant = variants.find(v => v.color === c && v.size === selectedSize);
+      const variant = variants.find(v => v.color === c && v.size === window.selectedSize);
       if (variant && !variant.inStock) {
         btn.classList.add('out-of-stock');
       } else {
@@ -987,7 +987,7 @@ function updateAddBtn() {
   const buyBtn = document.getElementById("modal-buy-btn");
   if (!addBtn || !buyBtn) return;
   
-  const isReady = selectedSize && selectedColor;
+  const isReady = window.selectedSize && window.selectedColor;
   if (isReady) {
     addBtn.disabled = false;
     addBtn.style.opacity = '1';
@@ -1011,7 +1011,7 @@ function updateAddBtn() {
 }
 
 function addToCartWithSize(id, button) {
-  if (!selectedSize || !selectedColor) {
+  if (!window.selectedSize || !window.selectedColor) {
     showToast("Vui lòng chọn Size và Màu sắc trước!", "error");
     return;
   }
@@ -1020,13 +1020,13 @@ function addToCartWithSize(id, button) {
   if (!product) return;
 
   let finalName = product.name;
-  if (selectedSize !== 'Free Size') finalName += ` (${selectedSize})`;
-  if (selectedColor !== 'Default') finalName += ` [${selectedColor}]`;
+  if (window.selectedSize !== 'Free Size') finalName += ` (${window.selectedSize})`;
+  if (window.selectedColor !== 'Default') finalName += ` [${window.selectedColor}]`;
 
   // Create cart items based on quantity
   // VERIFY SKU IN MATRIX
   if (product.variants && product.variants.length > 0) {
-    const sku = product.variants.find(v => v.color === selectedColor && v.size === selectedSize);
+    const sku = product.variants.find(v => v.color === window.selectedColor && v.size === window.selectedSize);
     if (sku && !sku.inStock) {
       alert("Rất tiếc, biến thể này đã hết hàng!");
       return;
@@ -1035,8 +1035,8 @@ function addToCartWithSize(id, button) {
 
   const cartItem = { 
     ...product, 
-    selectedSize, 
-    selectedColor, 
+    selectedSize: window.selectedSize, 
+    selectedColor: window.selectedColor, 
     name: finalName,
     qty: quantity,
     totalPrice: product.price * quantity
@@ -1053,12 +1053,12 @@ function addToCartWithSize(id, button) {
         price: product.price,
         item_category: product.category,
         quantity: quantity,
-        item_variant: `${selectedColor} - ${selectedSize}`
+        item_variant: `${window.selectedColor} - ${window.selectedSize}`
       }]
     });
   }
 
-  const existing = cart.find(item => item.id === product.id && item.selectedSize === selectedSize && item.selectedColor === selectedColor);
+  const existing = cart.find(item => item.id === product.id && item.selectedSize === window.selectedSize && item.selectedColor === window.selectedColor);
   if (existing) {
     existing.qty = (existing.qty || 1) + quantity;
     existing.totalPrice = existing.qty * existing.price;
@@ -1087,8 +1087,8 @@ function buyNowFromModal(id) {
 function closeProductModal() {
   const modal = document.getElementById("product-modal");
   if (modal) modal.hidden = true;
-  selectedSize = null;
-  selectedColor = null;
+  window.selectedSize = null;
+  window.selectedColor = null;
   buyNowMode = false;
   // Reset add button
   const addBtn = document.getElementById("modal-add-btn");
