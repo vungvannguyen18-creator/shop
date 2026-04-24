@@ -74,4 +74,15 @@ router.patch("/:code/toggle", verifyToken, verifyAdmin, async (req, res) => {
   }
 });
 
+// Admin: Xóa voucher
+router.delete("/:code", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const deleted = await Voucher.findOneAndDelete({ code: req.params.code });
+    if (!deleted) return res.status(404).json({ message: "Không tìm thấy mã để xóa" });
+    res.json({ message: "Đã xóa voucher thành công" });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi xóa voucher" });
+  }
+});
+
 module.exports = router;
