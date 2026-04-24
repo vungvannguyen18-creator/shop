@@ -317,6 +317,10 @@
 <script src="auth.js"></script>
     <script src="script.js"></script>
     <script>
+        // Explicitly initialize in this scope to ensure availability
+        window.selectedSize = null;
+        window.selectedColor = null;
+
         let currentProduct = null;
         const pId = new URLSearchParams(window.location.search).get('id');
 
@@ -387,7 +391,7 @@
 
             const sizes = currentProduct.sizes || ['S','M','L'];
             document.getElementById('detail-sizes').innerHTML = sizes.map(sz => `
-                <div class="size-box" id="size-${sz}" style="padding: 10px 20px; border: 1px solid #ddd; border-radius: 8px; cursor:pointer; font-weight:700;" onclick="selectSizeLocal(this, '${sz}')">${sz}</div>
+                <div class="size-box" id="size-${sz}" onclick="selectSizeLocal(this, '${sz}')">${sz}</div>
             `).join('');
 
             const colors = currentProduct.colors || ['Đen'];
@@ -532,23 +536,25 @@
 
         function selectSizeLocal(el, sz) {
             window.selectedSize = sz; 
-            document.querySelectorAll('.size-box').forEach(b => b.style.borderColor = '#ddd');
-            el.style.borderColor = '#111';
+            // Visual feedback using .active class from style.css
+            document.querySelectorAll('.size-box').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
         }
 
         function selectColorLocal(el, c) {
             window.selectedColor = c;
-            document.querySelectorAll('.color-pill').forEach(b => b.style.boxShadow = 'none');
-            el.style.boxShadow = '0 0 0 2px #111';
+            // Visual feedback using .active class from style.css
+            document.querySelectorAll('.color-pill').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
         }
 
         function addToCartDetailed() {
-            if (!window.selectedSize || !window.selectedColor) return alert("Chọn size và màu!");
+            if (!window.selectedSize || !window.selectedColor) return alert("Vui lòng chọn Kích cỡ và Màu sắc trước khi thêm vào giỏ!");
             addToCartWithSize(currentProduct.id);
         }
 
         function buyNowDetailed() {
-            if (!window.selectedSize || !window.selectedColor) return alert("Chọn size và màu!");
+            if (!window.selectedSize || !window.selectedColor) return alert("Vui lòng chọn Kích cỡ và Màu sắc trước khi mua!");
             buyNowFromModal(currentProduct.id);
         }
 
