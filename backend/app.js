@@ -165,8 +165,9 @@ app.get("/api/version", (req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.send("ONEVORA Backend is running on MongoDB Mode");
+// Xử lý 404 - Trả về JSON thay vì HTML
+app.use((req, res) => {
+  res.status(404).json({ message: `Không tìm thấy route: ${req.method} ${req.originalUrl}` });
 });
 
 // Xử lý lỗi tập trung - Hiện thị chi tiết để debug
