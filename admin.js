@@ -406,11 +406,17 @@ function viewOrder(orderId) {
         <button class="order-detail-btn btn-status-complete" onclick="updateOrderStatus('${orderId}', 'completed')">⭐ Giao hàng thành công</button>
         <button class="order-detail-btn btn-status-cancel" onclick="updateOrderStatus('${orderId}', 'cancelled')">🔙 Khách không nhận / Hoàn hàng</button>
       `;
-  } else if (state === 'completed' || state === 'cancelled') {
-      actionDiv.innerHTML = `
-        <div style="text-align:center; color:#888; padding:10px;">Đơn hàng đã khép vòng đời.</div>
-        ${state === 'completed' ? `<button class="order-detail-btn btn-status-print" onclick="printInvoice('${orderId}')" style="margin-top:10px;">🖨️ In lại hóa đơn</button>` : ''}
-      `;
+  }
+  
+  // Nút XÓA ĐƠN HÀNG (Chỉ dành cho Super Admin)
+  const currentUser = getCurrentUser();
+  if (currentUser && currentUser.role === 'super_admin') {
+    actionDiv.innerHTML += `
+      <button class="order-detail-btn" onclick="deleteOrderAdmin('${orderId}')" 
+        style="margin-top:20px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; font-size:0.8rem; height:34px;">
+        🗑️ XÓA VĨNH VIỄN ĐƠN HÀNG
+      </button>
+    `;
   }
 }
 
@@ -432,31 +438,45 @@ function printInvoice(orderId) {
         `;
     });
 
+    const subtotal = order.total - (order.shippingFee || 0);
     printArea.innerHTML = `
-        <h2>ONEVORA</h2>
-        <div style="text-align:center;font-size:11px;margin-bottom:10px;">Phiếu Giao Hàng (Bản sao)</div>
-        <div>Mã đơn: <b>#${order._id.slice(-8).toUpperCase()}</b></div>
-        <div>Ngày in: ${new Date().toLocaleString('vi-VN')}</div>
-        <div class="print-divider"></div>
-        <div>Khách hàng: <b>${order.customerName}</b></div>
-        <div>SĐT: <b>${order.customerPhone}</b></div>
-        <div>Đ/c: ${order.address}</div>
-        ${order.note ? `<div>* Ghi chú: ${order.note}</div>` : ''}
-        <div class="print-divider"></div>
-        <div><b>SẢN PHẨM:</b></div>
+        <div class="print-header">ONEVORA SHOP</div>
+        <div class="print-sub">Thoi trang Nam Streetwear</div>
+        <hr>
+        <div class="print-info">Ma don: #${order.readableId || order._id.slice(-6).toUpperCase()}</div>
+        <div class="print-info">Ngay: ${new Date(order.createdAt).toLocaleString()}</div>
+        <div class="print-info">Khach: ${order.customerName}</div>
+        <div class="print-info">SĐT: ${order.customerPhone}</div>
+        <hr>
         ${itemsStr}
-        <div class="print-divider"></div>
-        <div class="print-item-row">
-            <div><b>TỔNG THANH TOÁN:</b></div>
-            <div><b>${(order.total||0).toLocaleString()} VND</b></div>
-        </div>
-        <div style="margin-top:8px; font-weight:bold; font-size:14px;">(${order.paymentMethod === 'cod' ? 'THU TIỀN MẶT' : 'ĐÃ CHUYỂN KHOẢN'})</div>
-        <div class="print-divider"></div>
-        <div style="text-align:center;font-size:11px;margin-top:14px;">Cảm ơn bạn đã đồng hành mang sản phẩm đến khách hàng!</div>
+        <hr>
+        <div class="print-total-row"><span>Tong cong:</span> <span>${(order.total||0).toLocaleString()} VND</span></div>
+        <div style="margin-top:20px; font-size:0.7rem; text-align:center;">Cam on quy khach da tin tuong Onevora!</div>
     `;
-
-    // Gọi lệnh in trình duyệt
     window.print();
+}
+
+async function deleteOrderAdmin(orderId) {
+    if (!confirm("Bạn có chắc chắn muốn XÓA VĨNH VIỄN đơn hàng này không? Dữ liệu doanh thu sẽ bị ảnh hưởng!")) return;
+
+    try {
+        const res = await fetch(`${API_BASE}/orders/${orderId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${getAuthToken()}`
+            }
+        });
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.message);
+            document.getElementById('master-detail-panel').style.display = 'none';
+            loadOrdersAdmin();
+        } else {
+            alert(data.message);
+        }
+    } catch (e) {
+        alert("Lỗi: " + e.message);
+    }
 }
 
 async function updateOrderStatus(orderId, newStatus) {

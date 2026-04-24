@@ -191,4 +191,21 @@ router.post("/webhook", async (req, res) => {
   }
 });
 
+// Admin: Xóa đơn hàng (Chỉ Super Admin)
+router.delete("/:id", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    if (req.user.role !== 'super_admin') {
+      return res.status(403).json({ message: "Hành động này yêu cầu quyền Super Admin" });
+    }
+
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+
+    await Order.findByIdAndDelete(req.params.id);
+    res.json({ message: "Đã xóa đơn hàng thành công" });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi xóa đơn hàng" });
+  }
+});
+
 module.exports = router;
