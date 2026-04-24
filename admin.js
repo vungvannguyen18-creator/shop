@@ -628,13 +628,13 @@ function renderUserTable() {
     } else {
         // Super Admin đang xem Admin hoặc User
         if (isTargetAdmin) {
-            actionBtn = `<button class="btn-action" onclick="changeUserRole('${user.id}', 'user')">Ha quyen</button>`;
+            actionBtn = `<button class="btn-action" onclick="changeUserRole('${user._id}', 'user')">Ha quyen</button>`;
         } else {
-            actionBtn = `<button class="btn-action" onclick="changeUserRole('${user.id}', 'admin')">Nang quyen</button>`;
+            actionBtn = `<button class="btn-action" onclick="changeUserRole('${user._id}', 'admin')">Nang quyen</button>`;
         }
         
         // Thêm nút xóa cho Super Admin
-        actionBtn += ` <button class="btn-action delete" style="background:#451a1a; color:#ef4444;" onclick="deleteUser('${user.id}', '${user.username}')">Xóa</button>`;
+        actionBtn += ` <button class="btn-action delete" style="background:#451a1a; color:#ef4444;" onclick="deleteUser('${user._id}', '${user.username}')">Xóa</button>`;
     }
 
     return `
