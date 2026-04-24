@@ -60,4 +60,29 @@ router.patch("/:id/role", verifyToken, verifyAdmin, async (req, res) => {
   }
 });
 
+// Admin: Xóa người dùng (Chỉ Super Admin)
+router.delete("/:id", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    if (req.user.role !== 'super_admin') {
+      return res.status(403).json({ message: "Chỉ Super Admin mới có quyền xóa người dùng" });
+    }
+
+    const targetUser = await User.findById(req.params.id);
+    if (!targetUser) return res.status(404).json({ message: "Người dùng không tồn tại" });
+
+    // Không cho phép tự xóa mình hoặc xóa admin tối cao
+    if (targetUser.username.toLowerCase() === 'vung1602') {
+      return res.status(400).json({ message: "Không thể xóa quản trị viên tối cao" });
+    }
+    if (targetUser._id.toString() === req.user.id) {
+      return res.status(400).json({ message: "Bạn không thể tự xóa chính mình" });
+    }
+
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "Đã xóa người dùng thành công" });
+  } catch (error) {
+    res.status(500).json({ message: "Lỗi khi xóa người dùng" });
+  }
+});
+
 module.exports = router;

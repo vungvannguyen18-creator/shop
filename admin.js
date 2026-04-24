@@ -612,6 +612,9 @@ function renderUserTable() {
         } else {
             actionBtn = `<button class="btn-action" onclick="changeUserRole('${user.id}', 'admin')">Nang quyen</button>`;
         }
+        
+        // Thêm nút xóa cho Super Admin
+        actionBtn += ` <button class="btn-action delete" style="background:#451a1a; color:#ef4444;" onclick="deleteUser('${user.id}', '${user.username}')">Xóa</button>`;
     }
 
     return `
@@ -648,6 +651,27 @@ async function changeUserRole(userId, newRole) {
 
     alert(data.message);
     loadUsersAdmin(); // Reload list
+  } catch (err) {
+    alert("Lỗi: " + err.message);
+  }
+}
+
+async function deleteUser(userId, username) {
+  if (!confirm(`Bạn có chắc chắn muốn xóa vĩnh viễn người dùng "${username}" không? Hành động này không thể hoàn tác!`)) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/users/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`
+      }
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Lỗi khi xóa người dùng");
+
+    alert(data.message);
+    loadUsersAdmin(); // Tải lại danh sách
   } catch (err) {
     alert("Lỗi: " + err.message);
   }
