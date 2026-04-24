@@ -395,10 +395,9 @@
             `).join('');
 
             const colors = currentProduct.colors || ['Đen'];
-            document.getElementById('detail-colors').innerHTML = colors.map(c => {
-                const hex = COLOR_MAP[c] || '#111';
-                return `<button class="color-pill" onclick="selectColorLocal(this, '${c}')" style="width:40px; height:40px; border-radius:50%; background:${hex}; border:1px solid #eee; cursor:pointer; padding:2px;"><div style="width:100%; height:100%; border-radius:50%; background:${hex};"></div></button>`;
-            }).join('');
+            document.getElementById('detail-colors').innerHTML = colors.map(c => `
+                <div class="color-pill-text" onclick="selectColorLocal(this, '${c}')" style="padding: 10px 20px; border: 1px solid #ddd; border-radius: 8px; cursor:pointer; font-weight:700;">${c.toUpperCase()}</div>
+            `).join('');
             
             // Render Reviews
             renderReviewsListLocal(currentProduct.reviews || []);
@@ -543,9 +542,15 @@
 
         function selectColorLocal(el, c) {
             window.selectedColor = c;
-            // Visual feedback using .active class from style.css
-            document.querySelectorAll('.color-pill').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
+            // Visual feedback: black background, white text
+            document.querySelectorAll('.color-pill-text').forEach(b => {
+                b.style.background = '#fff';
+                b.style.color = '#111';
+                b.style.borderColor = '#ddd';
+            });
+            el.style.background = '#111';
+            el.style.color = '#fff';
+            el.style.borderColor = '#111';
         }
 
         function addToCartDetailed() {
