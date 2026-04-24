@@ -146,8 +146,11 @@ async function uploadMultipleFiles(files) {
         headers: { Authorization: `Bearer ${getAuthToken()}` },
         body: formData
     });
-    if (!res.ok) throw new Error("Lỗi tải lên nhiều ảnh");
     const data = await res.json();
+    if (!res.ok) {
+        const errMsg = data.error ? `${data.message}: ${data.error}` : (data.message || "Lỗi tải lên nhiều ảnh");
+        throw new Error(errMsg);
+    }
     return data.urls || [];
 }
 
@@ -852,7 +855,10 @@ async function addProduct() {
               body: formData
           });
           const uploadData = await uploadRes.json();
-          if (!uploadRes.ok) throw new Error(uploadData.message || "Khong the upload anh.");
+          if (!uploadRes.ok) {
+              const errMsg = uploadData.error ? `${uploadData.message}: ${uploadData.error}` : (uploadData.message || "Khong the upload anh.");
+              throw new Error(errMsg);
+          }
           imageUrl = uploadData.url;
       }
 

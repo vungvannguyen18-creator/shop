@@ -135,9 +135,14 @@ app.get("/api/settings", (req, res) => {
 
 app.get("/api/version", (req, res) => {
   res.json({ 
-    version: "1.0.6", 
-    deployedAt: "2026-04-24T04:14:00",
-    database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected"
+    version: "1.0.7", 
+    deployedAt: "2026-04-24T22:55:00",
+    database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected",
+    cloudinary: {
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME ? "Configured" : "Missing",
+      api_key: process.env.CLOUDINARY_API_KEY ? "Configured" : "Missing",
+      api_secret: process.env.CLOUDINARY_API_SECRET ? "Configured" : "Missing"
+    }
   });
 });
 
