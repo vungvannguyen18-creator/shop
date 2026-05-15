@@ -724,6 +724,7 @@ function switchSection(section, btn) {
   if (section === 'categories') loadCategoriesAdmin();
   if (section === 'dashboard') renderDashboardStats();
   if (section === 'vouchers') loadVouchersAdmin();
+  if (section === 'reports') loadReportsAdmin();
   if (section === 'settings') loadSettingsAdmin();
 }
 
@@ -1690,6 +1691,134 @@ async function simulateWebhook(readableId, amount) {
     } catch(err) {
         alert("Lỗi kết nối: " + err.message);
     }
+}
+
+
+// --- ADVANCED REPORTING LOGIC ---
+let revenueProfitChart = null;
+let categoryChart = null;
+let userGrowthChart = null;
+
+async function loadReportsAdmin() {
+    try {
+        const data = await apiCall(`${API_BASE}/admin/reports`, {
+            headers: { Authorization: `Bearer ${getAuthToken()}` }
+        });
+        if (!data) return;
+
+        renderFinancialCharts(data);
+        updateReportStats(data);
+    } catch (err) {
+        console.error("Lỗi tải báo cáo:", err);
+    }
+}
+
+function renderFinancialCharts(data) {
+    const ctxRP = document.getElementById('revenueProfitChart')?.getContext('2d');
+    const ctxCat = document.getElementById('categoryDistributionChart')?.getContext('2d');
+    const ctxUG = document.getElementById('userGrowthChart')?.getContext('2d');
+
+    if (!ctxRP || !ctxCat || !ctxUG) return;
+
+    // Monthly Data
+    const months = Object.keys(data.monthly).sort();
+    const revenues = months.map(m => data.monthly[m].revenue);
+    const profits = months.map(m => data.monthly[m].profit);
+
+    if (revenueProfitChart) revenueProfitChart.destroy();
+    revenueProfitChart = new Chart(ctxRP, {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [
+                {
+                    label: 'Doanh thu (VND)',
+                    data: revenues,
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59,130,246,0.1)',
+                    fill: true,
+                    tension: 0.4
+                },
+                {
+                    label: 'Lợi nhuận (VND)',
+                    data: profits,
+                    borderColor: '#10b981',
+                    backgroundColor: 'transparent',
+                    borderDash: [5, 5],
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { grid: { color: '#222' } },
+                x: { grid: { color: '#222' } }
+            }
+        }
+    });
+
+    // Category Distribution
+    const catLabels = Object.keys(data.categories);
+    const catValues = Object.values(data.categories);
+
+    if (categoryChart) categoryChart.destroy();
+    categoryChart = new Chart(ctxCat, {
+        type: 'doughnut',
+        data: {
+            labels: catLabels,
+            datasets: [{
+                data: catValues,
+                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    // User Growth
+    const ugMonths = Object.keys(data.userGrowth).sort();
+    const ugValues = ugMonths.map(m => data.userGrowth[m]);
+
+    if (userGrowthChart) userGrowthChart.destroy();
+    userGrowthChart = new Chart(ctxUG, {
+        type: 'bar',
+        data: {
+            labels: ugMonths,
+            datasets: [{
+                label: 'Người dùng mới',
+                data: ugValues,
+                backgroundColor: '#8b5cf6',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { grid: { color: '#222' } },
+                x: { grid: { color: '#222' } }
+            }
+        }
+    });
+}
+
+function updateReportStats(data) {
+    const totalProfit = Object.values(data.monthly).reduce((sum, m) => sum + m.profit, 0);
+    const aov = data.stats.totalOrders > 0 ? (data.stats.totalRevenue / data.stats.totalOrders) : 0;
+
+    const elProfit = document.getElementById('rep-stat-profit');
+    const elAOV = document.getElementById('rep-stat-aov');
+
+    if (elProfit) elProfit.innerText = totalProfit.toLocaleString() + ' VND';
+    if (elAOV) elAOV.innerText = aov.toLocaleString() + ' VND';
 }
 
 document.addEventListener('DOMContentLoaded', () => {

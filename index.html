@@ -7,7 +7,8 @@
     <meta name="description" content="Onevora chuyên cung cấp các sản phẩm thời trang nam nữ cao cấp, phong cách tối giản và hiện đại. Miễn phí giao hàng toàn quốc từ 300K. Khám phá ngay bộ sưu tập 2026!">
     <meta name="keywords" content="thời trang, quần áo, shop quần áo, onevora, thời trang nam, thời trang nữ, áo thun cao cấp, quần jean đẹp, thời trang streetwear, onevora fashion">
     
-    <meta name="theme-color" content="#1a1a1a">
+    <meta name="theme-color" content="#111111">
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="favicon.png">
     
     <!-- Open Graph / Facebook -->
@@ -781,7 +782,27 @@
     </div>
 </div>
 
-<script src="auth.js"></script>
+    <div class="mobile-bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <i class="bi bi-house-door"></i>
+            <span>Trang chủ</span>
+        </a>
+        <a href="javascript:void(0)" onclick="toggleSearch()" class="nav-item">
+            <i class="bi bi-search"></i>
+            <span>Tìm kiếm</span>
+        </a>
+        <a href="javascript:void(0)" onclick="toggleCart()" class="nav-item">
+            <i class="bi bi-bag"></i>
+            <span class="cart-count-badge" id="mobile-cart-badge">0</span>
+            <span>Giỏ hàng</span>
+        </a>
+        <a href="javascript:void(0)" onclick="toggleProfile()" class="nav-item">
+            <i class="bi bi-person"></i>
+            <span>Tài khoản</span>
+        </a>
+    </div>
+
+    <script src="auth.js"></script>
     <script src="script.js"></script>
     <script src="ai-assistant.js"></script>
 
@@ -893,7 +914,12 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', initializePage);
+    document.addEventListener('DOMContentLoaded', () => {
+        initializePage();
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+        }
+    });
 </script>
 </body>
 </html>

@@ -427,10 +427,23 @@ app.post("/api/orders", verifyToken, (req, res) => {
     total,
     status: "pending",
     shippingMethod: null,
+    pointsUsed: req.body.pointsUsed || 0,
+    pointsEarned: Math.floor(total * 0.01),
     createdAt: new Date().toISOString()
   };
   orders.push(order);
   writeData("orders.json", orders);
+
+  if (req.body.pointsUsed > 0) {
+    const users = readData("users.json");
+    const userIndex = users.findIndex(u => u.id === req.user.id);
+    if (userIndex !== -1) {
+      users[userIndex].points = (users[userIndex].points || 0) - req.body.pointsUsed;
+      if (users[userIndex].points < 0) users[userIndex].points = 0;
+      writeData("users.json", users);
+    }
+  }
+
   res.json(order);
 });
 
@@ -500,6 +513,18 @@ app.put("/api/orders/:id/status", verifyToken, (req, res) => {
 
   order.status = status;
   order.updatedAt = new Date().toISOString();
+
+  if (status === 'completed' && !order.pointsCredited) {
+    const users = readData("users.json");
+    const userIndex = users.findIndex(u => u.id === order.userId);
+    if (userIndex !== -1) {
+      const earned = order.pointsEarned || Math.floor(order.total * 0.01);
+      users[userIndex].points = (users[userIndex].points || 0) + earned;
+      order.pointsCredited = true;
+      writeData("users.json", users);
+    }
+  }
+
   writeData("orders.json", orders);
   res.json(order);
 });
@@ -1056,6 +1081,75 @@ app.post("/api/ai/chat", (req, res) => {
 
 app.get("/", (req, res) => {
   res.send("Mock Fashion Modern API is running");
+});
+
+
+// --- ADVANCED REPORTS API ---
+app.get("/api/admin/reports", verifyToken, (req, res) => {
+  if (req.user.role !== 'admin' && req.user.role !== 'super_admin') {
+    return res.status(403).json({ message: "Forbidden" });
+  }
+
+  const orders = readData("orders.json");
+  const products = readData("products.json");
+  const users = readData("users.json");
+
+  const completedOrders = orders.filter(o => o.status === 'completed');
+  
+  // 1. Revenue & Profit by month
+  const monthlyData = {};
+  completedOrders.forEach(o => {
+    const month = new Date(o.createdAt).toISOString().slice(0, 7); // YYYY-MM
+    if (!monthlyData[month]) monthlyData[month] = { revenue: 0, profit: 0, count: 0 };
+    
+    monthlyData[month].revenue += (o.total || 0);
+    monthlyData[month].count += 1;
+    
+    // Profit = Total - Cost of items
+    let cost = 0;
+    (o.items || []).forEach(item => {
+      cost += (item.cost || Math.floor(item.price * 0.7)) * (item.quantity || 1);
+    });
+    monthlyData[month].profit += ((o.total || 0) - cost);
+  });
+
+  // 2. Revenue by Category
+  const categoryData = {};
+  completedOrders.forEach(o => {
+    (o.items || []).forEach(item => {
+      const p = products.find(prod => prod.id === item.id || prod._id === item.id);
+      const cat = p ? p.category : "Khác";
+      if (!categoryData[cat]) categoryData[cat] = 0;
+      categoryData[cat] += ((item.price || 0) * (item.quantity || 1));
+    });
+  });
+
+  // 3. User Growth (Mocked by registration month)
+  const userGrowth = {};
+  users.forEach(u => {
+    const date = u.createdAt ? new Date(u.createdAt).toISOString().slice(0, 7) : "2026-04";
+    if (!userGrowth[date]) userGrowth[date] = 0;
+    userGrowth[date] += 1;
+  });
+
+  res.json({
+    monthly: monthlyData,
+    categories: categoryData,
+    userGrowth: userGrowth,
+    stats: {
+      totalRevenue: completedOrders.reduce((sum, o) => sum + (o.total || 0), 0),
+      totalOrders: orders.length,
+      totalUsers: users.length,
+      totalProducts: products.length
+    }
+  });
+});
+
+app.get("/api/users/me/points", verifyToken, (req, res) => {
+  const users = readData("users.json");
+  const user = users.find(u => u.id === req.user.id);
+  if (!user) return res.status(404).json({ message: "User not found" });
+  res.json({ points: user.points || 0 });
 });
 
 app.listen(PORT, () => {

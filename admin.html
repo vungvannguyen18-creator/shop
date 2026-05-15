@@ -14,6 +14,7 @@
       gtag('js', new Date());
       gtag('config', 'G-XXXXXXXXXX');
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <div class="admin-page">
@@ -30,6 +31,7 @@
             <button data-section="orders" onclick="switchSection('orders', this)">📦 Đơn hàng</button>
             <button data-section="users" onclick="switchSection('users', this)">👤 Người dùng</button>
             <button data-section="vouchers" onclick="switchSection('vouchers', this)">🎟️ Voucher</button>
+            <button data-section="reports" onclick="switchSection('reports', this)">📈 Báo cáo</button>
             <button data-section="settings" onclick="switchSection('settings', this)">⚙ Cài đặt</button>
         </div>
     </aside>
@@ -469,6 +471,53 @@
                             <!-- Injected by JS -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="reports" class="admin-section" style="display:none;">
+            <div class="admin-header-inline" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <div>
+                    <h2>Báo cáo & Phân tích chuyên sâu</h2>
+                    <p class="subtitle" style="color:#a0a0a0; font-size:0.9rem; margin-top:4px;">Theo dõi doanh thu, lợi nhuận và tăng trưởng người dùng.</p>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-outline" onclick="loadReportsAdmin()">🔄 Làm mới</button>
+                    <button class="btn-primary" onclick="alert('Tính năng xuất Excel đang được phát triển')">📥 Xuất báo cáo</button>
+                </div>
+            </div>
+
+            <div class="reports-dashboard-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:24px;">
+                <!-- Biểu đồ doanh thu & lợi nhuận -->
+                <div class="table-card" style="padding:20px; height:400px;">
+                    <h3 style="font-size:1rem; margin-bottom:20px;">Doanh thu & Lợi nhuận hàng tháng</h3>
+                    <canvas id="revenueProfitChart"></canvas>
+                </div>
+
+                <!-- Phân bổ danh mục -->
+                <div class="table-card" style="padding:20px; height:400px;">
+                    <h3 style="font-size:1rem; margin-bottom:20px;">Tỷ trọng doanh thu theo Danh mục</h3>
+                    <div style="height:300px; display:flex; justify-content:center;">
+                        <canvas id="categoryDistributionChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Tăng trưởng người dùng -->
+                <div class="table-card" style="padding:20px; height:400px;">
+                    <h3 style="font-size:1rem; margin-bottom:20px;">Tăng trưởng người dùng mới</h3>
+                    <canvas id="userGrowthChart"></canvas>
+                </div>
+
+                <!-- Stats Summary -->
+                <div class="reports-stats-card" style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                    <div class="stat-mini-box" style="background:#111; padding:20px; border-radius:12px; border:1px solid #222;">
+                        <div style="color:#888; font-size:0.8rem; text-transform:uppercase;">Tổng lợi nhuận (Ước tính)</div>
+                        <div id="rep-stat-profit" style="color:#10b981; font-size:1.5rem; font-weight:800; margin-top:8px;">0 VND</div>
+                    </div>
+                    <div class="stat-mini-box" style="background:#111; padding:20px; border-radius:12px; border:1px solid #222;">
+                        <div style="color:#888; font-size:0.8rem; text-transform:uppercase;">Giá trị đơn bình quân (AOV)</div>
+                        <div id="rep-stat-aov" style="color:#3b82f6; font-size:1.5rem; font-weight:800; margin-top:8px;">0 VND</div>
+                    </div>
                 </div>
             </div>
         </section>
