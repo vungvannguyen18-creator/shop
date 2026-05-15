@@ -119,36 +119,118 @@
         </div>
     </section>
 
-    <section class="hero-banner">
-        <div class="hero-copy">
-            <p class="eyebrow">NEW COLLECTION 2026</p>
-            <h1>Thời trang tối giản, sang trọng và hiện đại</h1>
-            <p>Khám phá bộ sưu tập mới nhất với chất liệu cao cấp và phong cách trường tồn theo thời gian.</p>
-            <button class="btn-primary-premium" style="margin-top:32px;" onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">Khám phá ngay</button>
+    <!-- PREMIUM HERO SECTION -->
+    <section class="hero-premium">
+        <div class="hero-overlay"></div>
+        <div class="hero-content-v2">
+            <div class="hero-labels" data-reveal="up">
+                <span class="label-new">FALL / WINTER 2026</span>
+                <span class="label-limited">LIMITED EDITION</span>
+            </div>
+            <h1 class="hero-title-v2" data-reveal="up" data-delay="0.2">
+                DEFINING <br> 
+                <span class="text-gradient">NEW MODERN</span>
+            </h1>
+            <p class="hero-desc-v2" data-reveal="up" data-delay="0.4">
+                Khám phá bản sắc thời trang tối giản qua những thiết kế <br> 
+                độc bản, chất liệu cao cấp và sự tinh tế trong từng đường kim mũi chỉ.
+            </p>
+            <div class="hero-actions" data-reveal="up" data-delay="0.6">
+                <button class="btn-hero-primary" onclick="document.querySelector('.products-section').scrollIntoView({behavior: 'smooth'})">
+                    MUA NGAY <i class="bi bi-arrow-right-short"></i>
+                </button>
+                <button class="btn-hero-outline" onclick="location.href='collections.html'">
+                    BỘ SƯU TẬP
+                </button>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator">
+            <span>SCROLL</span>
+            <div class="mouse-icon">
+                <div class="wheel"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW: FEATURED COLLECTIONS GRID -->
+    <section class="featured-collections-v2">
+        <div class="container-v2">
+            <div class="collection-grid-v2">
+                <div class="collection-item large" data-reveal="fade">
+                    <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1200&q=80" alt="New Arrival">
+                    <div class="collection-overlay-v2">
+                        <h3>THỜI TRANG NỮ</h3>
+                        <p>Sự kết hợp hoàn hảo giữa nét nữ tính và phong cách hiện đại.</p>
+                        <a href="#" class="btn-collection-v2">KHÁM PHÁ</a>
+                    </div>
+                </div>
+                <div class="collection-item" data-reveal="fade">
+                    <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=80" alt="Men Streetwear">
+                    <div class="collection-overlay-v2">
+                        <h3>STREETWEAR NAM</h3>
+                        <p>Định nghĩa lại phong cách đường phố cao cấp.</p>
+                        <a href="#" class="btn-collection-v2">XEM NGAY</a>
+                    </div>
+                </div>
+                <div class="collection-item" data-reveal="fade">
+                    <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=800&q=80" alt="Minimalist">
+                    <div class="collection-overlay-v2">
+                        <h3>PHỤ KIỆN</h3>
+                        <p>Những điểm nhấn tinh tế cho bộ trang phục.</p>
+                        <a href="#" class="btn-collection-v2">XEM NGAY</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BENEFITS SECTION -->
+    <section class="onevora-benefits">
+        <div class="benefit-item" data-reveal="up">
+            <div class="benefit-icon">
+                <i class="bi bi-truck"></i>
+            </div>
+            <h5>Miễn Phí Giao Hàng</h5>
+            <p>Cho mọi đơn hàng từ 300K trên toàn quốc.</p>
+        </div>
+        <div class="benefit-item" data-reveal="up" data-delay="0.1">
+            <div class="benefit-icon">
+                <i class="bi bi-arrow-repeat"></i>
+            </div>
+            <h5>Đổi Trả 7 Ngày</h5>
+            <p>Đổi hàng tận nơi nếu không vừa size hoặc lỗi.</p>
+        </div>
+        <div class="benefit-item" data-reveal="up" data-delay="0.2">
+            <div class="benefit-icon">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <h5>Chất Lượng Cao Cấp</h5>
+            <p>Tuyển chọn chất liệu và kiểm soát kỹ thuật tỉ mỉ.</p>
+        </div>
+        <div class="benefit-item" data-reveal="up" data-delay="0.3">
+            <div class="benefit-icon">
+                <i class="bi bi-headset"></i>
+            </div>
+            <h5>Hỗ Trợ 24/7</h5>
+            <p>Đội ngũ tư vấn luôn sẵn sàng giải đáp thắc mắc.</p>
         </div>
     </section>
 
     <section class="categories-section">
-        <p class="section-title">Danh mục</p>
+        <p class="section-title">Danh mục sản phẩm</p>
         <div class="categories" id="category-list"></div>
     </section>
 
     <section class="products-section">
-    <div class="filter-count-bar">
-        <h2 class="section-title" style="margin: 0;">Sản phẩm nổi bật</h2>
-        <button class="btn-filter-trigger" onclick="toggleFilterDrawer()">
-            <i class="bi bi-sliders2"></i> BỘ LỌC
-        </button>
-        <span id="product-count" class="product-total-label">0 sản phẩm</span>
-    </div>
-
-
-        <div class="active-filters-bar" id="active-filters-display" style="display: none; margin-bottom: 20px;">
-            <!-- Active filter chips will appear here -->
+        <div class="filter-count-bar">
+            <h2 class="section-title" style="margin: 0;">Sản phẩm nổi bật</h2>
+            <button class="btn-filter-trigger" onclick="toggleFilterDrawer()">
+                <i class="bi bi-sliders2"></i> BỘ LỌC
+            </button>
+            <span id="product-count" class="product-total-label">0 sản phẩm</span>
         </div>
 
         <div id="product-list-container">
-
             <div class="product-grid" id="product-list"></div>
         </div>
     </section>
@@ -177,16 +259,6 @@
                     <div class="color-chip" style="background:#fff; border:1px solid #ddd;" data-type="color" data-value="Trắng" onclick="selectFilterChip(this)" title="Trắng"></div>
                     <div class="color-chip" style="background:#3b82f6;" data-type="color" data-value="Xanh Dương" onclick="selectFilterChip(this)" title="Xanh Dương"></div>
                     <div class="color-chip" style="background:#9ca3af;" data-type="color" data-value="Xám" onclick="selectFilterChip(this)" title="Xám"></div>
-                    <div class="color-chip" style="background: linear-gradient(45deg, red, yellow, green, blue);" data-type="color" data-value="" onclick="selectFilterChip(this)" title="Tất cả màu"></div>
-                </div>
-            </div>
-
-            <div class="filter-section">
-                <h4>Khoảng giá (VNĐ)</h4>
-                <div class="price-range-inputs">
-                    <input type="number" id="drawer-min-price" placeholder="Từ giá">
-                    <span>-</span>
-                    <input type="number" id="drawer-max-price" placeholder="Đến giá">
                 </div>
             </div>
 
@@ -206,18 +278,29 @@
     </div>
 
     <!-- BRAND STORY SECTION -->
-    <section class="brand-story-homepage" style="padding: 100px 24px; background: #fff; border-top: 1px solid #f2f2f2;">
-        <div class="container" style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
-            <div class="story-image">
-                <img src="premium_shop_lifestyle_1776503761936.png" alt="Lifestyle" style="width: 100%; border-radius: 32px; box-shadow: 0 40px 80px rgba(0,0,0,0.1);">
+    <section class="brand-story-v2">
+        <div class="container-v2 grid-2">
+            <div class="story-image-v2" data-reveal="fade">
+                <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1200&q=80" alt="Brand Lifestyle">
+                <div class="since-badge">EST. 2026</div>
             </div>
-            <div class="story-content">
-                <p style="text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: var(--primary-pink); margin-bottom: 20px; font-size: 0.85rem;">Câu chuyện thương hiệu</p>
-                <h2 style="font-size: 2.8rem; font-weight: 900; line-height: 1.1; margin-bottom: 30px; color: #111;">Thời trang phục vụ cuộc sống thật.</h2>
-                <p style="font-size: 1.1rem; line-height: 1.8; color: #555; margin-bottom: 32px;">
-                    Chúng tôi xây dựng thương hiệu để tạo nên phong cách sống tối giản, hiện đại và phù hợp với người trẻ đang phát triển bản thân. Một bộ trang phục đúng sẽ thay đổi cách bạn xuất hiện trước thế giới.
+            <div class="story-content-v2" data-reveal="up">
+                <span class="eyebrow">CÂU CHUYỆN THƯƠNG HIỆU</span>
+                <h2>Thời trang cho <br> bản sắc riêng bạn.</h2>
+                <p>
+                    Tại Onevora, chúng tôi tin rằng trang phục không chỉ là vải vóc, mà là ngôn ngữ của sự tự tin. Mỗi thiết kế đều được tính toán kỹ lưỡng về phom dáng và chất liệu để tôn vinh cái tôi cá nhân của người mặc.
                 </p>
-                <button class="btn-outline-premium" onclick="location.href='about.html'" style="padding: 16px 32px; border: 2px solid #111; background: transparent; font-weight: 800; cursor: pointer; transition: 0.3s;">Tìm hiểu thêm</button>
+                <div class="story-stats">
+                    <div class="stat-item">
+                        <span class="stat-num">50K+</span>
+                        <span class="stat-label">Khách hàng</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-num">12+</span>
+                        <span class="stat-label">Cửa hàng</span>
+                    </div>
+                </div>
+                <button class="btn-outline-v2" onclick="location.href='about.html'">TÌM HIỂU THÊM</button>
             </div>
         </div>
     </section>

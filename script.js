@@ -1334,7 +1334,36 @@ async function saveVoucher(code, btn) {
     }
 }
 
+});
+
+// --- REVEAL ON SCROLL ANIMATIONS ---
+function initRevealAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                const delay = entry.target.getAttribute('data-delay');
+                if (delay) {
+                    entry.target.style.transitionDelay = delay + 's';
+                }
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('[data-reveal]');
+    revealElements.forEach(el => observer.observe(el));
+}
+
+// Ensure it runs after dynamic content is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    loadProducts();
+    loadProducts().then(() => {
+        initRevealAnimations();
+    });
     loadVoucherBanner();
 });
