@@ -1334,8 +1334,6 @@ async function saveVoucher(code, btn) {
     }
 }
 
-});
-
 // --- REVEAL ON SCROLL ANIMATIONS ---
 function initRevealAnimations() {
     const observerOptions = {
