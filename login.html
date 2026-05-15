@@ -50,10 +50,38 @@
                 <button class="btn-black-long ripple" id="submit-button" onclick="login()">TIẾP TỤC</button>
             </div>
 
+            <div class="form-group register-form" style="display: none; flex-direction: column; gap: 16px;">
+                <div class="input-field">
+                    <label>Email hoặc Số điện thoại <span class="required">*</span></label>
+                    <input id="register-user" type="text" placeholder="Nhập email hoặc SĐT" autocomplete="username">
+                </div>
+
+                <div class="input-field">
+                    <label>Mật khẩu <span class="required">*</span></label>
+                    <div class="password-input-wrapper">
+                        <input id="register-pass" type="password" placeholder="Tạo mật khẩu">
+                        <button type="button" class="toggle-pass-btn" onclick="togglePassword('register-pass')">Hiện</button>
+                    </div>
+                </div>
+
+                <div class="input-field">
+                    <label>Xác nhận mật khẩu <span class="required">*</span></label>
+                    <div class="password-input-wrapper">
+                        <input id="confirm-pass" type="password" placeholder="Nhập lại mật khẩu">
+                        <button type="button" class="toggle-pass-btn" onclick="togglePassword('confirm-pass')">Hiện</button>
+                    </div>
+                </div>
+
+                <button class="btn-black-long ripple" id="submit-register" onclick="register()">TẠO TÀI KHOẢN</button>
+            </div>
+
             <div class="divider-text">Hoặc</div>
 
-            <div class="alternative-actions">
-                <button class="btn-outline-long ripple" onclick="switchAuthMode('register')">TẠO TÀI KHOẢN</button>
+            <div class="alternative-actions show-login">
+                <button class="btn-outline-long ripple" onclick="switchAuthMode('register')">TẠO TÀI KHOẢN MỚI</button>
+            </div>
+            <div class="alternative-actions show-register" style="display: none;">
+                <button class="btn-outline-long ripple" onclick="switchAuthMode('login')">QUAY LẠI ĐĂNG NHẬP</button>
             </div>
             
             <div class="social-login-grid">
@@ -64,20 +92,55 @@
     </div>
 </div>
 
-<!-- Modal Quên mật khẩu -->
+<!-- Modal Quên mật khẩu 3 bước -->
 <div id="modal-forgot-password" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
-    <div style="background: #fff; border-radius: 24px; padding: 32px; width: 90%; max-width: 400px; color: #111;">
-        <h2 style="margin-bottom: 12px; font-weight: 800; font-size: 1.4rem;">Khôi phục mật khẩu</h2>
-        <p style="color: #666; font-size: 0.9rem; margin-bottom: 24px;">Nhập email của bạn để nhận hướng dẫn đặt lại mật khẩu mới.</p>
-        
-        <div class="input-field" style="margin-bottom: 24px;">
-            <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Email của bạn</label>
-            <input id="forgot-email" type="email" placeholder="example@gmail.com" style="width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 12px; outline: none; font-family: inherit;">
+    <div style="background: #fff; border-radius: 24px; padding: 32px; width: 90%; max-width: 400px; color: #111; position: relative;">
+        <!-- Bước 1: Nhập Email/SĐT -->
+        <div id="forgot-step-1">
+            <h2 style="margin-bottom: 12px; font-weight: 800; font-size: 1.4rem;">Khôi phục mật khẩu</h2>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 24px;">Nhập số điện thoại hoặc email đã đăng ký để nhận mã OTP.</p>
+            
+            <div class="input-field" style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Số điện thoại / Email</label>
+                <input id="forgot-email" type="text" placeholder="Nhập SĐT hoặc Email" style="width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 12px; outline: none; font-family: inherit;">
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button id="btn-submit-forgot" onclick="submitForgot()" style="width: 100%; padding: 14px; background: #111; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: inherit;">GỬI MÃ OTP</button>
+                <button onclick="closeForgotModal()" style="width: 100%; padding: 14px; background: transparent; color: #888; border: none; font-weight: 600; cursor: pointer; font-family: inherit;">Hủy</button>
+            </div>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-            <button id="btn-submit-forgot" onclick="submitForgot()" style="width: 100%; padding: 14px; background: #111; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: inherit;">GỬI YÊU CẦU</button>
-            <button onclick="closeForgotModal()" style="width: 100%; padding: 14px; background: transparent; color: #888; border: none; font-weight: 600; cursor: pointer; font-family: inherit;">Quay lại đăng nhập</button>
+        <!-- Bước 2: Nhập OTP -->
+        <div id="forgot-step-2" style="display: none;">
+            <h2 style="margin-bottom: 12px; font-weight: 800; font-size: 1.4rem;">Nhập mã OTP</h2>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 24px;">Mã OTP đã được hiển thị trên hệ thống. Vui lòng nhập vào bên dưới.</p>
+            
+            <div class="input-field" style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Mã xác thực (6 số)</label>
+                <input id="forgot-otp" type="text" placeholder="123456" maxlength="6" style="width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 12px; outline: none; font-family: inherit; text-align: center; font-size: 1.2rem; letter-spacing: 5px; font-weight: bold;">
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button id="btn-verify-otp" onclick="verifyOTP()" style="width: 100%; padding: 14px; background: #111; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: inherit;">XÁC NHẬN</button>
+            </div>
+        </div>
+
+        <!-- Bước 3: Tạo mật khẩu mới -->
+        <div id="forgot-step-3" style="display: none;">
+            <h2 style="margin-bottom: 12px; font-weight: 800; font-size: 1.4rem;">Tạo mật khẩu mới</h2>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 24px;">Mã OTP hợp lệ. Hãy tạo mật khẩu mới cho tài khoản của bạn.</p>
+            
+            <div class="input-field" style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px;">Mật khẩu mới</label>
+                <div class="password-input-wrapper">
+                    <input id="new-password" type="password" placeholder="Nhập mật khẩu mới" style="width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 12px; outline: none; font-family: inherit;">
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px;">
+                <button id="btn-reset-password" onclick="submitNewPassword()" style="width: 100%; padding: 14px; background: #111; color: #fff; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; font-family: inherit;">ĐỔI MẬT KHẨU</button>
+            </div>
         </div>
     </div>
 </div>
@@ -103,9 +166,24 @@
     function switchAuthMode(mode) {
         const body = document.body;
         body.dataset.authMode = mode;
-        document.querySelectorAll('.auth-tab').forEach(tab => {
-            tab.classList.toggle('active', tab.dataset.mode === mode);
-        });
+        
+        const loginForm = document.querySelector('.login-form');
+        const registerForm = document.querySelector('.register-form');
+        const showLogin = document.querySelector('.show-login');
+        const showRegister = document.querySelector('.show-register');
+        
+        if (mode === 'register') {
+            if (loginForm) loginForm.style.display = 'none';
+            if (registerForm) registerForm.style.display = 'flex';
+            if (showLogin) showLogin.style.display = 'none';
+            if (showRegister) showRegister.style.display = 'block';
+        } else {
+            if (loginForm) loginForm.style.display = 'block';
+            if (registerForm) registerForm.style.display = 'none';
+            if (showLogin) showLogin.style.display = 'block';
+            if (showRegister) showRegister.style.display = 'none';
+        }
+
         const title = document.querySelector('.auth-title');
         const subtitle = document.querySelector('.subtitle');
         if (mode === 'register') {
@@ -121,14 +199,20 @@
         document.getElementById('modal-forgot-password').style.display = 'flex';
     }
 
+    // Biến tạm lưu email đang lấy lại mật khẩu
+    let resetEmail = "";
+
     function closeForgotModal() {
         document.getElementById('modal-forgot-password').style.display = 'none';
+        document.getElementById('forgot-step-1').style.display = 'block';
+        document.getElementById('forgot-step-2').style.display = 'none';
+        document.getElementById('forgot-step-3').style.display = 'none';
     }
 
     async function submitForgot() {
         const email = document.getElementById('forgot-email').value.trim();
         if (!email) {
-            alert("Vui lòng nhập email của bạn.");
+            alert("Vui lòng nhập email hoặc số điện thoại của bạn.");
             return;
         }
 
@@ -147,7 +231,62 @@
 
             const data = await res.json();
             alert(data.message);
-            if (res.ok) closeForgotModal();
+            if (res.ok) {
+                resetEmail = email; // Lưu lại để dùng ở bước sau
+                document.getElementById('forgot-step-1').style.display = 'none';
+                document.getElementById('forgot-step-2').style.display = 'block';
+            }
+        } catch (e) {
+            alert("Lỗi kết nối máy chủ.");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    }
+
+    // Vì đây là giả lập nên OTP thực chất được xác thực gộp với đổi mật khẩu ở bước 3 trên API.
+    // Bước 2 ở frontend chỉ chuyển giao diện sang bước 3 để nhập mật khẩu.
+    function verifyOTP() {
+        const otp = document.getElementById('forgot-otp').value.trim();
+        if (otp.length !== 6) {
+            alert("Vui lòng nhập đủ 6 số OTP.");
+            return;
+        }
+        document.getElementById('forgot-step-2').style.display = 'none';
+        document.getElementById('forgot-step-3').style.display = 'block';
+    }
+
+    async function submitNewPassword() {
+        const otp = document.getElementById('forgot-otp').value.trim();
+        const newPassword = document.getElementById('new-password').value;
+
+        if (!newPassword || newPassword.length < 6) {
+            alert("Mật khẩu mới phải có ít nhất 6 ký tự.");
+            return;
+        }
+
+        const btn = document.getElementById('btn-reset-password');
+        const originalText = btn.innerText;
+
+        try {
+            btn.disabled = true;
+            btn.innerText = "Đang cập nhật...";
+
+            const res = await fetch(`${API_BASE}/auth/reset-password`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: resetEmail, otp, newPassword })
+            });
+
+            const data = await res.json();
+            alert(data.message);
+            if (res.ok) {
+                closeForgotModal();
+            } else {
+                // Nếu OTP sai thì quay lại bước 2
+                document.getElementById('forgot-step-3').style.display = 'none';
+                document.getElementById('forgot-step-2').style.display = 'block';
+            }
         } catch (e) {
             alert("Lỗi kết nối máy chủ.");
         } finally {

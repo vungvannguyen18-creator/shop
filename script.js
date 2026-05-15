@@ -383,8 +383,17 @@ async function loadCategories() {
 }
 
 function renderCategories() {
-  // Navigation is now hardcoded in index.html for specific Owen/Onevora style
-  return;
+  const container = document.getElementById("category-list");
+  if (!container) return;
+
+  const categories = ["Tất cả", ...new Set(products.map(p => p.category))];
+  
+  container.innerHTML = categories.map(cat => `
+    <button class="category-pill ${activeCategory === cat ? 'active' : ''}" 
+            onclick="filterCategory('${cat}')">
+      ${cat.toUpperCase()}
+    </button>
+  `).join('');
 }
 
 

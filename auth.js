@@ -1,4 +1,4 @@
-const API_BASE = "https://fashion-modern-backend.onrender.com/api";
+const API_BASE = "http://localhost:5001/api";
 
 async function register() {
     const mode = document.body.dataset.authMode || 'login';

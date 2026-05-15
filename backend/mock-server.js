@@ -10,6 +10,9 @@ const PORT = process.env.PORT || 5001;
 const JWT_SECRET = process.env.JWT_SECRET || "onevora-secret-key-2026";
 const SEPAY_API_KEY = "ONEVORA_BRAND_2026"; // Mã bảo mật để dán vào SePay
 
+// Bộ nhớ tạm lưu trữ OTP (Chỉ dùng cho môi trường giả lập/Dev)
+const otpStore = {};
+
 const DATA_DIR = path.join(__dirname, "data");
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
 
@@ -216,6 +219,80 @@ app.post("/api/auth/social-login", async (req, res) => {
     { expiresIn: "24h" }
   );
   res.json({ token, role: user.role, username: user.username, isProfileComplete: !!user.isProfileComplete });
+});
+
+app.post("/api/auth/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Vui lòng nhập số điện thoại hoặc email." });
+
+    const users = readData("users.json");
+    const user = users.find(u => u.email === email || u.username === email || u.phone === email);
+    
+    if (!user) return res.status(404).json({ message: "Tài khoản không tồn tại trong hệ thống." });
+
+    // Tạo mã OTP 6 số
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    otpStore[email] = {
+      otp: otp,
+      expiresAt: Date.now() + 5 * 60 * 1000 // Hết hạn sau 5 phút
+    };
+
+    console.log(`[OTP GENERATED] Mã OTP cho ${email} là: ${otp}`);
+
+    // Gửi OTP về client để dễ test (Trong thực tế sẽ gửi qua SMS/Email và không trả về qua API)
+    res.json({ 
+      message: `Gửi mã thành công! (Mã OTP Demo: ${otp})`, 
+      otp: otp // Trả về để tự điền tự động hoặc hiển thị thông báo
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi server" });
+  }
+});
+
+app.post("/api/auth/reset-password", async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    
+    if (!email || !otp || !newPassword) {
+      return res.status(400).json({ message: "Vui lòng nhập đầy đủ thông tin" });
+    }
+
+    const record = otpStore[email];
+    if (!record) {
+      return res.status(400).json({ message: "Mã OTP không hợp lệ hoặc chưa được yêu cầu." });
+    }
+
+    if (Date.now() > record.expiresAt) {
+      delete otpStore[email];
+      return res.status(400).json({ message: "Mã OTP đã hết hạn." });
+    }
+
+    if (record.otp !== otp) {
+      return res.status(400).json({ message: "Mã OTP không chính xác." });
+    }
+
+    // OTP đúng, tiến hành đổi mật khẩu
+    const users = readData("users.json");
+    const userIndex = users.findIndex(u => u.email === email || u.username === email || u.phone === email);
+    
+    if (userIndex === -1) {
+      return res.status(404).json({ message: "Người dùng không còn tồn tại." });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    users[userIndex].password = hashed;
+    writeData("users.json", users);
+
+    // Xóa OTP sau khi dùng xong
+    delete otpStore[email];
+
+    res.json({ message: "Đổi mật khẩu thành công! Bạn có thể đăng nhập ngay." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Lỗi server" });
+  }
 });
 
 // Route: Update profile (Onboarding)

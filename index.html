@@ -148,7 +148,7 @@
         </div>
 
         <div id="product-list-container">
-            <p id="product-count" style="margin-bottom: 20px; color: #888; font-size: 0.9rem;">Đang tải sản phẩm...</p>
+
             <div class="product-grid" id="product-list"></div>
         </div>
     </section>
@@ -226,7 +226,6 @@
     <div class="footer-top">
         <div class="footer-column brand-info">
             <h2 class="footer-logo">ONEVORA</h2>
-            <p class="company-name" style="font-weight: 700; margin-bottom: 20px;">CÔNG TY CỔ PHẦN THỜI TRANG KOWIL VIỆT NAM</p>
             
             <div class="contact-details">
                 <div class="contact-item">
@@ -237,16 +236,6 @@
                     <i class="bi bi-clock"></i>
                     <span>8:30 - 19:00 tất cả các ngày trong tuần</span>
                 </div>
-                
-                <div class="office-location mt-4">
-                    <p style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 8px;">VP Phía Bắc</p>
-                    <p style="font-size: 0.85rem; color: #666; line-height: 1.5;">Tầng 17 tòa nhà Viwaseen, 48 Phố Tố Hữu, Đại Mỗ, Hà Nội.</p>
-                </div>
-                
-                <div class="office-location mt-3">
-                    <p style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 8px;">VP Phía Nam</p>
-                    <p style="font-size: 0.85rem; color: #666; line-height: 1.5;">186A Nam Kỳ Khởi Nghĩa, Phường Võ Thị Sáu, Quận 3, TP.HCM</p>
-                </div>
             </div>
         </div>
         
@@ -254,8 +243,8 @@
             <h4>GIỚI THIỆU ONEVORA</h4>
             <ul>
                 <li><a href="about.html">Giới thiệu</a></li>
-                <li><a href="#">Blog</a></li>
-                <li><a href="#">Hệ thống cửa hàng</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="stores.html">Hệ thống cửa hàng</a></li>
                 <li><a href="contact.html">Liên hệ với Onevora</a></li>
                 <li><a href="policy.html">Chính sách bảo mật</a></li>
             </ul>
@@ -264,12 +253,12 @@
         <div class="footer-column">
             <h4>HỖ TRỢ KHÁCH HÀNG</h4>
             <ul>
-                <li><a href="#">Hỏi đáp</a></li>
+                <li><a href="faq.html">Hỏi đáp</a></li>
                 <li><a href="member-policy.html">Chính sách khách hàng thân thiết</a></li>
-                <li><a href="#">Chính sách vận chuyển</a></li>
+                <li><a href="shipping.html">Chính sách vận chuyển</a></li>
                 <li><a href="size-guide.html">Hướng dẫn chọn kích cỡ</a></li>
-                <li><a href="#">Hướng dẫn thanh toán</a></li>
-                <li><a href="#">Quy định đổi hàng</a></li>
+                <li><a href="payment.html">Hướng dẫn thanh toán</a></li>
+                <li><a href="exchange-policy.html">Quy định đổi hàng</a></li>
                 <li><a href="shopping-guide.html">Hướng dẫn mua hàng</a></li>
             </ul>
         </div>
@@ -637,7 +626,12 @@
     }
 
     function toggleProfile() {
-        document.getElementById('profile-panel').classList.toggle('panel-open');
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser) {
+            document.getElementById('profile-panel').classList.toggle('panel-open');
+        } else {
+            window.location.href = 'login.html';
+        }
     }
 
     document.addEventListener('DOMContentLoaded', initializePage);
