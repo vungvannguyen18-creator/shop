@@ -983,6 +983,60 @@ app.post("/api/settings", verifyToken, (req, res) => {
   res.json({ message: "Đã lưu cài đặt hệ thống thành công", settings: newSettings });
 });
 
+// --- AI ASSISTANT API ---
+app.post("/api/ai/chat", (req, res) => {
+  const { message } = req.body;
+  const products = readData("products.json");
+  const vouchers = readData("vouchers.json", []);
+  
+  const query = message.toLowerCase();
+  let response = "";
+  let suggestedProducts = [];
+
+  // 1. Logic tìm sản phẩm
+  if (query.includes("tìm") || query.includes("mua") || query.includes("có") || query.includes("áo") || query.includes("quần")) {
+    suggestedProducts = products.filter(p => {
+      const name = p.name.toLowerCase();
+      const cat = p.category.toLowerCase();
+      return query.split(" ").some(word => word.length > 2 && (name.includes(word) || cat.includes(word)));
+    }).slice(0, 3);
+
+    if (suggestedProducts.length > 0) {
+      response = `Dựa trên yêu cầu của bạn, Onevora AI gợi ý các sản phẩm tuyệt vời sau đây:`;
+    } else {
+      response = "Rất tiếc, tôi chưa tìm thấy sản phẩm chính xác như ý bạn. Bạn có muốn xem bộ sưu tập mới nhất không?";
+      suggestedProducts = products.slice(0, 3);
+    }
+  } 
+  // 2. Logic hỏi về Voucher
+  else if (query.includes("mã") || query.includes("giảm giá") || query.includes("voucher") || query.includes("khuyến mãi")) {
+    const activeVouchers = vouchers.filter(v => v.active);
+    if (activeVouchers.length > 0) {
+      response = `Hiện tại Onevora đang có các mã giảm giá cực hot: ${activeVouchers.map(v => v.code).join(", ")}. Hãy lưu ngay trong kho Voucher nhé!`;
+    } else {
+      response = "Hiện tại chưa có mã giảm giá mới, nhưng đừng lo, Onevora luôn có giá tốt nhất cho bạn!";
+    }
+  }
+  // 3. Logic hỏi về Size
+  else if (query.includes("size") || query.includes("kích thước") || query.includes("cao") || query.includes("nặng")) {
+    response = "Để tư vấn size chuẩn nhất, bạn hãy cho tôi biết chiều cao và cân nặng nhé. Thông thường, size L dành cho các bạn từ 65-75kg đấy!";
+  }
+  // 4. Mặc định
+  else {
+    response = "Xin chào! Tôi là trợ lý ảo Onevora AI. Tôi có thể giúp bạn tìm sản phẩm, tư vấn size hoặc kiểm tra các ưu đãi mới nhất. Bạn cần giúp gì ạ?";
+  }
+
+  res.json({
+    reply: response,
+    products: suggestedProducts.map(p => ({
+      id: p._id || p.id,
+      name: p.name,
+      price: p.price,
+      image: p.image || p.img
+    }))
+  });
+});
+
 app.get("/", (req, res) => {
   res.send("Mock Fashion Modern API is running");
 });
