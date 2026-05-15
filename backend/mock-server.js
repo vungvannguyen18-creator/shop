@@ -993,37 +993,54 @@ app.post("/api/ai/chat", (req, res) => {
   let response = "";
   let suggestedProducts = [];
 
-  // 1. Logic tìm sản phẩm
-  if (query.includes("tìm") || query.includes("mua") || query.includes("có") || query.includes("áo") || query.includes("quần")) {
+  // 1. Phối đồ (Style Advice)
+  if (query.includes("phối đồ") || query.includes("mặc gì") || query.includes("mix match")) {
+    response = "Để phối đồ thật 'cháy', tôi gợi ý bạn nên kết hợp một chiếc áo Hoodie Oversize với quần Jean Baggy. Đừng quên thêm một đôi Sneaker trắng để hoàn thiện set đồ nhé!";
+    suggestedProducts = products.filter(p => p.category.includes("Áo") || p.category.includes("Quần")).slice(0, 3);
+  }
+  // 2. Tra cứu đơn hàng (Order Tracking)
+  else if (query.includes("đơn hàng") || query.includes("giao hàng") || query.includes("đâu rồi")) {
+    response = "Bạn vui lòng cung cấp Mã đơn hàng hoặc Số điện thoại đặt hàng để tôi kiểm tra trạng thái vận chuyển ngay cho bạn nhé!";
+  }
+  // 3. Chính sách đổi trả (Policy)
+  else if (query.includes("đổi trả") || query.includes("hoàn tiền") || query.includes("lỗi")) {
+    response = "Onevora cam kết hỗ trợ đổi trả trong vòng 7 ngày kể từ khi nhận hàng nếu có lỗi từ nhà sản xuất hoặc không vừa size. Bạn giữ lại hóa đơn và tag nhé!";
+  }
+  // 4. Chào hỏi Admin (Secret Easter Egg)
+  else if (query.includes("vung1602") || query.includes("admin")) {
+    response = "Xin chào Sếp Vững! Hệ thống Onevora đang hoạt động ổn định. Hôm nay chúng ta có 12 đơn hàng mới và doanh thu tăng 15%. Sếp cần tôi xuất báo cáo không ạ?";
+  }
+  // 5. Logic tìm sản phẩm (Cải tiến)
+  else if (query.includes("tìm") || query.includes("mua") || query.includes("có") || query.includes("áo") || query.includes("quần") || query.includes("giày")) {
     suggestedProducts = products.filter(p => {
       const name = p.name.toLowerCase();
       const cat = p.category.toLowerCase();
       return query.split(" ").some(word => word.length > 2 && (name.includes(word) || cat.includes(word)));
-    }).slice(0, 3);
+    }).slice(0, 4);
 
     if (suggestedProducts.length > 0) {
-      response = `Dựa trên yêu cầu của bạn, Onevora AI gợi ý các sản phẩm tuyệt vời sau đây:`;
+      response = `Tôi đã tìm thấy những món đồ cực phẩm này dành cho bạn:`;
     } else {
-      response = "Rất tiếc, tôi chưa tìm thấy sản phẩm chính xác như ý bạn. Bạn có muốn xem bộ sưu tập mới nhất không?";
-      suggestedProducts = products.slice(0, 3);
+      response = "Rất tiếc, mẫu này hiện đang 'cháy hàng' hoặc tôi chưa tìm thấy. Bạn xem thử các mẫu Best Seller này nhé!";
+      suggestedProducts = products.filter(p => p.rating >= 4.8).slice(0, 3);
     }
   } 
-  // 2. Logic hỏi về Voucher
+  // 6. Voucher
   else if (query.includes("mã") || query.includes("giảm giá") || query.includes("voucher") || query.includes("khuyến mãi")) {
     const activeVouchers = vouchers.filter(v => v.active);
     if (activeVouchers.length > 0) {
-      response = `Hiện tại Onevora đang có các mã giảm giá cực hot: ${activeVouchers.map(v => v.code).join(", ")}. Hãy lưu ngay trong kho Voucher nhé!`;
+      response = `Tuyệt vời! Onevora đang có ưu đãi lớn với các mã: ${activeVouchers.map(v => v.code).join(", ")}. Đừng bỏ lỡ nhé!`;
     } else {
-      response = "Hiện tại chưa có mã giảm giá mới, nhưng đừng lo, Onevora luôn có giá tốt nhất cho bạn!";
+      response = "Hiện tại chưa có mã mới, nhưng bạn sẽ được giảm thêm 5% nếu là thành viên Vàng đấy!";
     }
   }
-  // 3. Logic hỏi về Size
+  // 7. Size
   else if (query.includes("size") || query.includes("kích thước") || query.includes("cao") || query.includes("nặng")) {
-    response = "Để tư vấn size chuẩn nhất, bạn hãy cho tôi biết chiều cao và cân nặng nhé. Thông thường, size L dành cho các bạn từ 65-75kg đấy!";
+    response = "Bạn hãy cho tôi biết chiều cao và cân nặng, tôi sẽ tính toán size chuẩn nhất theo phom dáng Regular hay Slim-fit cho bạn ngay!";
   }
-  // 4. Mặc định
+  // 8. Mặc định
   else {
-    response = "Xin chào! Tôi là trợ lý ảo Onevora AI. Tôi có thể giúp bạn tìm sản phẩm, tư vấn size hoặc kiểm tra các ưu đãi mới nhất. Bạn cần giúp gì ạ?";
+    response = "Xin chào! Tôi là Onevora AI - Chuyên gia tư vấn thời trang của bạn. Tôi có thể giúp bạn chọn đồ, phối đồ, kiểm tra đơn hàng hoặc săn Voucher. Bạn muốn bắt đầu từ đâu?";
   }
 
   res.json({
