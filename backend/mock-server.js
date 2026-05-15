@@ -295,6 +295,30 @@ app.post("/api/auth/reset-password", async (req, res) => {
   }
 });
 
+// Route: Get current user profile
+app.get("/api/users/profile", verifyToken, (req, res) => {
+  const users = readData("users.json");
+  const user = users.find(u => u.id === req.user.id);
+  
+  if (!user) return res.status(404).json({ message: "Không tìm thấy người dùng" });
+
+  // Bổ sung dữ liệu thành viên giả lập nếu chưa có
+  const profileData = {
+    username: user.username,
+    role: user.role,
+    fullName: user.fullName || user.username,
+    email: user.email || "",
+    phone: user.phone || "",
+    address: user.address || "",
+    points: user.points || 1250, // Mock points
+    tier: user.tier || "Bạc",     // Mock tier
+    avatar: user.avatar || null,
+    isProfileComplete: !!user.isProfileComplete
+  };
+
+  res.json(profileData);
+});
+
 // Route: Update profile (Onboarding)
 app.put("/api/users/profile", verifyToken, (req, res) => {
   const users = readData("users.json");

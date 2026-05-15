@@ -448,19 +448,94 @@
 
 <div class="profile-panel" id="profile-panel">
     <div class="panel-header">
-        <h3>Thông tin khách hàng</h3>
-        <button onclick="toggleProfile()">×</button>
+        <h3>Tài khoản</h3>
+        <button onclick="toggleProfile()"><i class="bi bi-x-lg"></i></button>
     </div>
-    <div class="profile-card">
-        <div class="avatar">👤</div>
-        <h3 id="profile-name">Khách</h3>
-        <p>Khách hàng thân thiết</p>
-    </div>
-    <div class="profile-list">
-        <a id="admin-link" class="panel-item" href="admin.html" style="display:none; color: #6b21a8; font-weight: bold;">📊 Dashboard Quản trị</a>
-        <a class="panel-item" href="history.html">Đơn hàng</a>
-        <button class="panel-item">Địa chỉ</button>
-        <button class="panel-item btn-logout" onclick="logout()">Đăng xuất</button>
+    
+    <div class="profile-scroll-content">
+        <!-- Membership Card Section -->
+        <div class="membership-card-v2">
+            <div class="card-header-v2">
+                <div class="avatar-v2">
+                    <span id="profile-initials">👤</span>
+                </div>
+                <div class="user-main-info">
+                    <h3 id="profile-full-name">Đang tải...</h3>
+                    <span class="tier-badge" id="profile-tier-badge">Thành viên</span>
+                </div>
+            </div>
+            <div class="tier-progress-section">
+                <div class="progress-labels">
+                    <span id="profile-points">0 điểm</span>
+                    <span id="next-tier">Cần 750 điểm để lên Vàng</span>
+                </div>
+                <div class="progress-bar-v2">
+                    <div class="progress-fill-v2" style="width: 65%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personal Info List -->
+        <div class="profile-info-group">
+            <h4 class="group-title">Thông tin cá nhân</h4>
+            <div class="info-row">
+                <i class="bi bi-person-badge"></i>
+                <div class="info-content">
+                    <label>Tên tài khoản</label>
+                    <span id="profile-username">...</span>
+                </div>
+            </div>
+            <div class="info-row">
+                <i class="bi bi-telephone"></i>
+                <div class="info-content">
+                    <label>Số điện thoại</label>
+                    <span id="profile-phone">...</span>
+                </div>
+            </div>
+            <div class="info-row">
+                <i class="bi bi-envelope"></i>
+                <div class="info-content">
+                    <label>Email</label>
+                    <span id="profile-email">...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions List -->
+        <div class="profile-actions-group">
+            <h4 class="group-title">Tiện ích</h4>
+            <a id="admin-link-v2" class="action-item staff-only" href="admin.html" style="display:none;">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard Quản trị</span>
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            <a class="action-item" href="history.html">
+                <i class="bi bi-clock-history"></i>
+                <span>Lịch sử đơn hàng</span>
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            <a class="action-item" href="#">
+                <i class="bi bi-geo-alt"></i>
+                <span>Sổ địa chỉ</span>
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            <a class="action-item" href="#">
+                <i class="bi bi-ticket-perforated"></i>
+                <span>Kho voucher</span>
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            <a class="action-item" href="#">
+                <i class="bi bi-gear"></i>
+                <span>Cài đặt tài khoản</span>
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
+
+        <div class="logout-container">
+            <button class="btn-logout-premium" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i> Đăng xuất
+            </button>
+        </div>
     </div>
 </div>
 
@@ -608,27 +683,91 @@
         }
     }
 
-    function initializePage() {
+    async function initializePage() {
         const currentUser = getCurrentUser();
         const isStaff = currentUser && (currentUser.role === 'admin' || currentUser.role === 'super_admin');
         
         if (isStaff) {
-            const adminLink = document.getElementById('admin-link');
-            if (adminLink) adminLink.style.display = 'block';
+            const adminLink = document.getElementById('admin-link-v2');
+            if (adminLink) adminLink.style.display = 'flex';
         }
 
-        document.getElementById('user-name').innerText = currentUser?.username || 'Khách';
-        document.getElementById('profile-name').innerText = currentUser?.username || 'Khách hàng';
+        // Cập nhật tên nhanh trên Header/Bottom Nav nếu có
+        const headerName = document.getElementById('user-name');
+        if (headerName) headerName.innerText = currentUser?.username || 'Khách';
+        
+        // Nếu đã đăng nhập, tải dữ liệu profile ngầm để sẵn sàng hiển thị
+        if (currentUser) {
+            fetchUserProfile();
+        }
+    }
+
+    async function fetchUserProfile() {
+        try {
+            const token = getAuthToken();
+            if (!token) return;
+
+            const res = await fetch(`${API_BASE}/users/profile`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const profileData = await res.json();
+                renderProfileDetails(profileData);
+            }
+        } catch (e) {
+            console.error("Lỗi tải thông tin cá nhân:", e);
+        }
+    }
+
+    function renderProfileDetails(user) {
+        // Cập nhật thẻ thành viên
+        const fullNameEl = document.getElementById('profile-full-name');
+        if (fullNameEl) fullNameEl.innerText = user.fullName || user.username;
+        
+        const tierEl = document.getElementById('profile-tier-badge');
+        if (tierEl) tierEl.innerText = user.tier || "Thành viên";
+        
+        const pointsEl = document.getElementById('profile-points');
+        if (pointsEl) pointsEl.innerText = `${user.points || 0} điểm`;
+
+        const initialsEl = document.getElementById('profile-initials');
+        if (initialsEl && user.fullName) {
+            const names = user.fullName.split(' ');
+            const initials = names.length > 1 ? (names[0][0] + names[names.length-1][0]) : names[0][0];
+            initialsEl.innerText = initials.toUpperCase();
+        }
+
+        // Cập nhật thanh tiến trình (Giả lập logic)
+        const progressFill = document.querySelector('.progress-fill-v2');
+        if (progressFill) {
+            const percent = Math.min(((user.points || 0) / 2000) * 100, 100);
+            progressFill.style.width = `${percent}%`;
+        }
+
+        // Cập nhật thông tin chi tiết
+        const usernameEl = document.getElementById('profile-username');
+        if (usernameEl) usernameEl.innerText = user.username;
+
+        const phoneEl = document.getElementById('profile-phone');
+        if (phoneEl) phoneEl.innerText = user.phone || "Chưa cập nhật";
+
+        const emailEl = document.getElementById('profile-email');
+        if (emailEl) emailEl.innerText = user.email || "Chưa cập nhật";
     }
 
     function toggleCart() {
         document.getElementById('cart-panel').classList.toggle('panel-open');
     }
 
-    function toggleProfile() {
+    async function toggleProfile() {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (currentUser) {
-            document.getElementById('profile-panel').classList.toggle('panel-open');
+            const panel = document.getElementById('profile-panel');
+            const isOpen = panel.classList.toggle('panel-open');
+            if (isOpen) {
+                // Tải dữ liệu mới nhất mỗi khi mở
+                fetchUserProfile();
+            }
         } else {
             window.location.href = 'login.html';
         }
