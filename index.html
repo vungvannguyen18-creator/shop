@@ -75,27 +75,34 @@
 </head>
 <body>
 <div class="page-wrapper">
-    <header class="main-header">
+    <div class="top-bar" id="announcement-bar">
+        <div class="top-bar-content" id="announcement-text">
+            MIỄN PHÍ GIAO HÀNG CHO ĐƠN TỪ 300K — KHÁM PHÁ NGAY
+        </div>
+        <button class="top-bar-close" onclick="closeAnnouncement()">&times;</button>
+    </div>
+
+    <header class="main-header" id="main-header">
         <div class="header-container">
-            <div class="logo-area" style="display: flex; align-items: center; gap: 15px;">
-                <button class="menu-hamburger-btn" onclick="toggleMobileMenu()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; display: none; padding: 5px;">
+            <div class="logo-area">
+                <button class="menu-hamburger-btn" onclick="toggleMobileMenu()">
                     <i class="bi bi-list"></i>
                 </button>
                 <a href="index.html" class="brand-link">
-                    <img src="assets/onevora_logo.png" alt="Onevora" style="height: 38px; filter: invert(1);">
+                    <img src="assets/onevora_logo.png" alt="Onevora" id="header-logo-img">
                 </a>
             </div>
             
-            <div class="header-nav-pills" id="desktop-nav">
+            <nav class="header-nav-pills" id="desktop-nav">
                 <!-- Dynamic categories injected here -->
-            </div>
+            </nav>
 
             <div class="header-tools">
-                <button class="tool-btn" onclick="toggleSearch()"><i class="bi bi-search"></i></button>
+                <button class="tool-btn" onclick="toggleSearch()" title="Tìm kiếm"><i class="bi bi-search"></i></button>
                 <div class="profile-trigger" onclick="toggleProfile()">
-                    <button class="tool-btn"><i class="bi bi-person"></i></button>
+                    <button class="tool-btn" title="Tài khoản"><i class="bi bi-person"></i></button>
                 </div>
-                <button class="tool-btn cart-trigger" onclick="toggleCart()">
+                <button class="tool-btn cart-trigger" onclick="toggleCart()" title="Giỏ hàng">
                     <i class="bi bi-bag"></i>
                     <span class="cart-badge" id="cart-count-badge">0</span>
                 </button>

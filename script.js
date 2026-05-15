@@ -1364,4 +1364,57 @@ document.addEventListener('DOMContentLoaded', () => {
         initRevealAnimations();
     });
     loadVoucherBanner();
+    syncHeaderSettings(); // Đồng bộ dữ liệu từ Quản trị tối cao
+    
+    // Hiệu ứng Glassmorphism khi cuộn trang
+    window.addEventListener('scroll', () => {
+        const header = document.getElementById('main-header');
+        if (header) {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        }
+    });
 });
+
+async function syncHeaderSettings() {
+    try {
+        const res = await fetch(`${API_BASE}/settings`);
+        if (!res.ok) return;
+        const settings = await res.json();
+
+        // 1. Cập nhật Announcement Bar
+        const annBar = document.getElementById('announcement-bar');
+        const annText = document.getElementById('announcement-text');
+        if (annBar && annText) {
+            if (settings.announcement && settings.announcement.enabled) {
+                annBar.style.display = 'flex';
+                annText.innerText = settings.announcement.text;
+                if (settings.announcement.bgColor) annBar.style.backgroundColor = settings.announcement.bgColor;
+                if (settings.announcement.textColor) annBar.style.color = settings.announcement.textColor;
+            } else if (settings.announcement && settings.announcement.enabled === false) {
+                annBar.style.display = 'none';
+            }
+        }
+
+        // 2. Cập nhật Logo
+        const logoImg = document.getElementById('header-logo-img');
+        if (logoImg && settings.logoUrl) {
+            logoImg.src = settings.logoUrl;
+        }
+
+        // 3. Cập nhật tiêu đề trang (nếu có trong settings)
+        if (settings.storeName) {
+            document.title = `${settings.storeName} — Fashion Online`;
+        }
+    } catch (err) {
+        console.error("Lỗi đồng bộ header:", err);
+    }
+}
+
+function closeAnnouncement() {
+    const annBar = document.getElementById('announcement-bar');
+    if (annBar) annBar.style.display = 'none';
+}

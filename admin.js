@@ -1563,6 +1563,16 @@ async function loadSettingsAdmin() {
         adminSettings = settings;
         
         document.getElementById('set-store-name').value = settings.storeName || '';
+        document.getElementById('set-logo-url').value = settings.logoUrl || '';
+        
+        // Announcement Settings
+        if (settings.announcement) {
+            document.getElementById('set-ann-enabled').checked = settings.announcement.enabled || false;
+            document.getElementById('set-ann-text').value = settings.announcement.text || '';
+            document.getElementById('set-ann-bg').value = settings.announcement.bgColor || '#111111';
+            document.getElementById('set-ann-color').value = settings.announcement.textColor || '#ffffff';
+        }
+
         document.getElementById('set-hotline').value = settings.hotline || '';
         document.getElementById('set-address').value = settings.address || '';
         document.getElementById('set-freeship').value = settings.freeShipThreshold || 0;
@@ -1608,6 +1618,13 @@ function toggleMaintenanceText(checkbox) {
 async function saveSettingsAdmin() {
     const settings = {
         storeName: document.getElementById('set-store-name').value.trim(),
+        logoUrl: document.getElementById('set-logo-url').value.trim(),
+        announcement: {
+            enabled: document.getElementById('set-ann-enabled').checked,
+            text: document.getElementById('set-ann-text').value.trim(),
+            bgColor: document.getElementById('set-ann-bg').value,
+            textColor: document.getElementById('set-ann-color').value
+        },
         hotline: document.getElementById('set-hotline').value.trim(),
         address: document.getElementById('set-address').value.trim(),
         freeShipThreshold: parseInt(document.getElementById('set-freeship').value),
