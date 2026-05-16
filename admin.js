@@ -136,22 +136,24 @@ function addHighlightRow(data = { icon: '', title: '', text: '' }) {
 }
 
 async function uploadMultipleFiles(files) {
-    if (!files || files.length === 0) return [];
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
         formData.append('images', files[i]);
     }
-    const res = await fetch(`${API_BASE}/upload/multiple`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${getAuthToken()}` },
-        body: formData
-    });
-    const data = await res.json();
-    if (!res.ok) {
-        const errMsg = data.error ? `${data.message}: ${data.error}` : (data.message || "Lỗi tải lên nhiều ảnh");
-        throw new Error(errMsg);
+
+    try {
+        const data = await apiCall(`${API_BASE}/upload/multiple`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${getAuthToken()}`
+            },
+            body: formData
+        });
+        return data.urls || [];
+    } catch (err) {
+        if (err.message !== "SERVER_STARTING") alert("Lỗi tải ảnh: " + err.message);
+        return [];
     }
-    return data.urls || [];
 }
 
 function renderProductTable() {
@@ -460,29 +462,24 @@ async function deleteOrderAdmin(orderId) {
     if (!confirm("Bạn có chắc chắn muốn XÓA VĨNH VIỄN đơn hàng này không? Dữ liệu doanh thu sẽ bị ảnh hưởng!")) return;
 
     try {
-        const res = await fetch(`${API_BASE}/orders/${orderId}`, {
+        const data = await apiCall(`${API_BASE}/orders/${orderId}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${getAuthToken()}`
             }
         });
-        const data = await res.json();
-        if (res.ok) {
-            alert(data.message);
-            document.getElementById('master-detail-panel').style.display = 'none';
-            loadOrdersAdmin();
-        } else {
-            alert(data.message);
-        }
+        alert(data.message);
+        document.getElementById('master-detail-panel').style.display = 'none';
+        loadOrdersAdmin();
     } catch (e) {
-        alert("Lỗi: " + e.message);
+        if (e.message !== "SERVER_STARTING") alert("Lỗi: " + e.message);
     }
 }
 
 async function updateOrderStatus(orderId, newStatus) {
   if (!newStatus) return;
   try {
-    const res = await fetch(`${API_BASE}/orders/${orderId}/status`, {
+    await apiCall(`${API_BASE}/orders/${orderId}/status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -491,20 +488,11 @@ async function updateOrderStatus(orderId, newStatus) {
       body: JSON.stringify({ status: newStatus })
     });
 
-    if (!res.ok) {
-      let errMsg = `HTTP ${res.status}`;
-      try {
-        const errBody = await res.json();
-        errMsg = errBody.message || errMsg;
-      } catch(_) {}
-      throw new Error(errMsg);
-    }
-
     // Tự động tải lại và cập nhật panel
     await loadOrdersAdmin();
     viewOrder(orderId);
   } catch(e) {
-    alert('Loi cap nhat trang thai: ' + e.message);
+    if (e.message !== "SERVER_STARTING") alert('Lỗi cập nhật trạng thái: ' + e.message);
   }
 }
 
@@ -514,9 +502,7 @@ async function updateOrderStatus(orderId, newStatus) {
 // -----------------------
 async function loadCategoriesAdmin() {
   try {
-    const res = await fetch(`${API_BASE}/categories`);
-    if (!res.ok) throw new Error("API error");
-    categoriesAdmin = await res.json();
+    categoriesAdmin = await apiCall(`${API_BASE}/categories`);
     renderCategoryTable();
     updateCategorySelects();
   } catch(e) {
@@ -562,7 +548,7 @@ async function addCategory() {
   const subArr = subs ? subs.split(',').map(s=>s.trim()).filter(s=>s) : [];
   
   try {
-    const res = await fetch(`${API_BASE}/categories`, {
+    await apiCall(`${API_BASE}/categories`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -570,26 +556,24 @@ async function addCategory() {
         },
         body: JSON.stringify({ name, subcategories: subArr })
     });
-    if(!res.ok) throw new Error("Chưa lưu được danh mục");
     document.getElementById('new-cat-name').value = '';
     document.getElementById('new-cat-subs').value = '';
     loadCategoriesAdmin();
   } catch(e) {
-    alert("Lỗi: " + e.message);
+    if (e.message !== "SERVER_STARTING") alert("Lỗi: " + e.message);
   }
 }
 
 async function deleteCategory(id) {
   if(!confirm("Bạn có chắc muốn xóa danh mục này?")) return;
   try {
-    const res = await fetch(`${API_BASE}/categories/${id}`, {
+    await apiCall(`${API_BASE}/categories/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${getAuthToken()}` }
     });
-    if(!res.ok) throw new Error("Không thể xóa");
     loadCategoriesAdmin();
   } catch(e) {
-    alert(e.message);
+    if (e.message !== "SERVER_STARTING") alert(e.message);
   }
 }
 
@@ -628,13 +612,13 @@ function renderUserTable() {
     } else {
         // Super Admin đang xem Admin hoặc User
         if (isTargetAdmin) {
-            actionBtn = `<button class="btn-action" onclick="changeUserRole('${user._id}', 'user')">Ha quyen</button>`;
+            actionBtn = `<button class="btn-action" onclick="changeUserRole('${user.id || user._id}', 'user')">Ha quyen</button>`;
         } else {
-            actionBtn = `<button class="btn-action" onclick="changeUserRole('${user._id}', 'admin')">Nang quyen</button>`;
+            actionBtn = `<button class="btn-action" onclick="changeUserRole('${user.id || user._id}', 'admin')">Nang quyen</button>`;
         }
         
         // Thêm nút xóa cho Super Admin
-        actionBtn += ` <button class="btn-action delete" style="background:#451a1a; color:#ef4444;" onclick="deleteUser('${user._id}', '${user.username}')">Xóa</button>`;
+        actionBtn += ` <button class="btn-action delete" style="background:#451a1a; color:#ef4444;" onclick="deleteUser('${user.id || user._id}', '${user.username}')">Xóa</button>`;
     }
 
     return `
@@ -657,7 +641,7 @@ async function changeUserRole(userId, newRole) {
   if (!confirm(`Bạn có chắc muốn đổi quyền của người dùng này thành ${newRole}?`)) return;
 
   try {
-    const res = await fetch(`${API_BASE}/users/${userId}/role`, {
+    const data = await apiCall(`${API_BASE}/users/${userId}/role`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -666,13 +650,10 @@ async function changeUserRole(userId, newRole) {
       body: JSON.stringify({ role: newRole })
     });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Lỗi cập nhật quyền");
-
     alert(data.message);
     loadUsersAdmin(); // Reload list
   } catch (err) {
-    alert("Lỗi: " + err.message);
+    if (err.message !== "SERVER_STARTING") alert("Lỗi: " + err.message);
   }
 }
 
@@ -680,20 +661,17 @@ async function deleteUser(userId, username) {
   if (!confirm(`Bạn có chắc chắn muốn xóa vĩnh viễn người dùng "${username}" không? Hành động này không thể hoàn tác!`)) return;
 
   try {
-    const res = await fetch(`${API_BASE}/users/${userId}`, {
+    const data = await apiCall(`${API_BASE}/users/${userId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${getAuthToken()}`
       }
     });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Lỗi khi xóa người dùng");
-
     alert(data.message);
     loadUsersAdmin(); // Tải lại danh sách
   } catch (err) {
-    alert("Lỗi: " + err.message);
+    if (err.message !== "SERVER_STARTING") alert("Lỗi: " + err.message);
   }
 }
 
@@ -821,29 +799,27 @@ async function saveVoucherAdmin(e) {
 
 async function toggleVoucherAdmin(code) {
   try {
-    const res = await fetch(`${API_BASE}/vouchers/${code}/toggle`, {
+    await apiCall(`${API_BASE}/vouchers/${code}/toggle`, {
       method: 'PATCH',
       headers: { Authorization: `Bearer ${getAuthToken()}` }
     });
-    if (!res.ok) throw new Error("Không thể cập nhật trạng thái");
     loadVouchersAdmin();
   } catch(e) {
-    alert("Lỗi: " + e.message);
+    if (e.message !== "SERVER_STARTING") alert("Lỗi: " + e.message);
   }
 }
 
 async function deleteVoucherAdmin(code) {
   if (!confirm(`Bạn có chắc chắn muốn XÓA VĨNH VIỄN mã ${code}? Hành động này không thể hoàn tác.`)) return;
   try {
-    const res = await fetch(`${API_BASE}/vouchers/${code}`, {
+    const data = await apiCall(`${API_BASE}/vouchers/${code}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${getAuthToken()}` }
     });
-    const data = await res.json();
     alert(data.message);
     loadVouchersAdmin();
   } catch(e) {
-    alert("Lỗi: " + e.message);
+    if (e.message !== "SERVER_STARTING") alert("Lỗi: " + e.message);
   }
 }
 
@@ -894,16 +870,11 @@ async function addProduct() {
       if (imageFile) {
           const formData = new FormData();
           formData.append('image', imageFile);
-          const uploadRes = await fetch(`${API_BASE}/upload`, {
+          const uploadData = await apiCall(`${API_BASE}/upload`, {
               method: 'POST',
               headers: { Authorization: `Bearer ${getAuthToken()}` },
               body: formData
           });
-          const uploadData = await uploadRes.json();
-          if (!uploadRes.ok) {
-              const errMsg = uploadData.error ? `${uploadData.message}: ${uploadData.error}` : (uploadData.message || "Khong the upload anh.");
-              throw new Error(errMsg);
-          }
           imageUrl = uploadData.url;
       }
 
@@ -938,7 +909,7 @@ async function addProduct() {
         variants 
       };
 
-      const res = await fetch(`${API_BASE}/products`, {
+      await apiCall(`${API_BASE}/products`, {
           method: 'POST',
           headers: { 
               'Content-Type': 'application/json',
@@ -946,10 +917,6 @@ async function addProduct() {
           },
           body: JSON.stringify(productData)
       });
-      if (!res.ok) {
-          const errData = await res.json();
-          throw new Error(errData.error || errData.message || "Khong the them san pham.");
-      }
       
       alert('Them san pham thanh cong!');
       loadProductsAdmin();
@@ -967,8 +934,10 @@ async function addProduct() {
       editingProductId = null;
       document.querySelector('.banner-title').innerText = "Thêm sản phẩm mới";
   } catch (err) {
-      console.error(err);
-      alert('Loi: ' + err.message);
+      if (err.message !== "SERVER_STARTING") {
+          console.error(err);
+          alert('Loi: ' + err.message);
+      }
   }
 }
 
@@ -1313,12 +1282,11 @@ async function saveProduct() {
       if (fileInput.files.length > 0) {
         const formData = new FormData();
         formData.append('image', fileInput.files[0]);
-        const upRes = await fetch(`${API_BASE}/upload`, { 
+        const upData = await apiCall(`${API_BASE}/upload`, { 
             method: 'POST', 
             headers: { Authorization: `Bearer ${getAuthToken()}` },
             body: formData 
         });
-        const upData = await upRes.json();
         imgUrl = upData.url;
       }
 
@@ -1389,17 +1357,16 @@ function cancelEdit() {
 async function deleteProduct(id) {
   if (!confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
   try {
-      const res = await fetch(`${API_BASE}/products/${id}`, {
+      await apiCall(`${API_BASE}/products/${id}`, {
           method: 'DELETE',
           headers: {
               Authorization: `Bearer ${getAuthToken()}`
           }
       });
-      if (!res.ok) throw new Error("Xóa thất bại");
       alert("Đã xóa sản phẩm.");
       loadProductsAdmin();
   } catch (err) {
-      alert("Lỗi: " + err.message);
+      if (err.message !== "SERVER_STARTING") alert("Lỗi: " + err.message);
   }
 }
 
@@ -1462,11 +1429,10 @@ async function renderDashboardStats() {
 
     // Fetch and update Visit Stats
     try {
-        const visitRes = await fetch(`${API_BASE}/stats/visits`, {
+        const vData = await apiCall(`${API_BASE}/stats/visits`, {
             headers: { Authorization: `Bearer ${getAuthToken()}` }
         });
-        if (visitRes.ok) {
-            const vData = await visitRes.json();
+        if (vData) {
             document.getElementById('stat-visits').innerText = `${vData.today} lượt`;
             const vTrend = document.getElementById('trend-visits');
             if (vTrend) {
@@ -1558,8 +1524,8 @@ loadSettingsAdmin();
 // --- SETTINGS LOGIC ---
 async function loadSettingsAdmin() {
     try {
-        const res = await fetch(`${API_BASE}/settings`);
-        const settings = await res.json();
+        const settings = await apiCall(`${API_BASE}/settings`);
+        if (!settings) return;
         adminSettings = settings;
         
         document.getElementById('set-store-name').value = settings.storeName || '';
@@ -1652,7 +1618,7 @@ async function saveSettingsAdmin() {
     };
 
     try {
-        const res = await fetch(`${API_BASE}/settings`, {
+        const data = await apiCall(`${API_BASE}/settings`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1661,12 +1627,9 @@ async function saveSettingsAdmin() {
             body: JSON.stringify(settings)
         });
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || "Lỗi lưu cài đặt");
-
         alert("Thành công: " + data.message);
     } catch (err) {
-        alert("Lỗi: " + err.message);
+        if (err.message !== "SERVER_STARTING") alert("Lỗi: " + err.message);
     }
 }
 
@@ -1689,7 +1652,7 @@ async function simulateWebhook(readableId, amount) {
     if (!confirm(`Bạn muốn giả lập tín hiệu ngân hàng báo có tiền cho đơn ${readableId}?`)) return;
     
     try {
-        const res = await fetch(`${API_BASE}/payment/webhook`, {
+        const data = await apiCall(`${API_BASE}/payment/webhook`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -1697,16 +1660,11 @@ async function simulateWebhook(readableId, amount) {
                 amount: amount
             })
         });
-        const data = await res.json();
-        if (res.ok) {
-            alert("🚀 [Simulation] " + data.message);
-            loadOrdersAdmin();
-            if (typeof viewOrder === 'function') viewOrder(activeOrderId);
-        } else {
-            alert("❌ " + data.message);
-        }
+        alert("🚀 [Simulation] " + data.message);
+        loadOrdersAdmin();
+        if (typeof viewOrder === 'function') viewOrder(activeOrderId);
     } catch(err) {
-        alert("Lỗi kết nối: " + err.message);
+        if (err.message !== "SERVER_STARTING") alert("Lỗi kết nối: " + err.message);
     }
 }
 
