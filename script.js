@@ -1242,24 +1242,26 @@ async function loadVoucherBanner() {
         const vouchers = await res.json();
 
         if (!vouchers || vouchers.length === 0) {
-            // Hiển thị Voucher mẫu (Dummy) nếu chưa có mã thực tế
+            // Hiển thị Voucher mẫu (Dummy Premium) nếu chưa có mã thực tế
             list.innerHTML = `
-                <div class="voucher-ticket dummy">
-                    <div class="v-content">
+                <div class="voucher-card-premium">
+                    <div class="v-left">
+                        <span class="v-badge">Độc quyền</span>
                         <h4>GIẢM 50K</h4>
-                        <p>Cho đơn hàng đầu tiên từ 500k</p>
+                        <p>Cho đơn hàng đầu tiên từ 500k. <br>Áp dụng toàn quốc.</p>
                     </div>
-                    <div class="v-action">
-                        <button class="btn-save-voucher" onclick="location.href='#products'">Mua ngay</button>
+                    <div class="v-right">
+                        <button class="btn-collect" onclick="location.href='#products'">Mua ngay</button>
                     </div>
                 </div>
-                <div class="voucher-ticket dummy">
-                    <div class="v-content">
+                <div class="voucher-card-premium">
+                    <div class="v-left">
+                        <span class="v-badge">Vận chuyển</span>
                         <h4>FREESHIP 0đ</h4>
-                        <p>Đặc quyền nội ô Quận Ninh Kiều</p>
+                        <p>Đặc quyền khu vực nội ô. <br>Ưu tiên giao nhanh 2h.</p>
                     </div>
-                    <div class="v-action">
-                        <button class="btn-save-voucher" onclick="location.href='#products'">Mua ngay</button>
+                    <div class="v-right">
+                        <button class="btn-collect" onclick="location.href='#products'">Mua ngay</button>
                     </div>
                 </div>
             `;
@@ -1270,26 +1272,31 @@ async function loadVoucherBanner() {
         let savedCodes = [];
         const user = getCurrentUser();
         if (user) {
-            const myRes = await fetch(`${API_BASE}/vouchers/my`, {
-                headers: { Authorization: `Bearer ${getAuthToken()}` }
-            });
-            const myVouchers = await myRes.json();
-            savedCodes = myVouchers.map(v => v.code);
+            try {
+                const myRes = await fetch(`${API_BASE}/vouchers/my`, {
+                    headers: { Authorization: `Bearer ${getAuthToken()}` }
+                });
+                if (myRes.ok) {
+                    const myVouchers = await myRes.json();
+                    savedCodes = myVouchers.map(v => v.code);
+                }
+            } catch(e) { console.warn("My vouchers fetch error", e); }
         }
 
         list.innerHTML = vouchers.map((v, index) => {
             const isSaved = savedCodes.includes(v.code);
+            const discountText = v.type === 'percent' ? `Giảm ${v.value}%` : `Giảm ${(v.value/1000).toFixed(0)}K`;
             return `
-                <div class="voucher-ticket" style="animation: slideInUp 0.6s ease forwards ${index * 0.15}s; opacity:0; transform:translateY(30px);">
-                    <div class="v-content">
+                <div class="voucher-card-premium" style="animation: slideInUp 0.6s ease forwards ${index * 0.15}s; opacity:0;">
+                    <div class="v-left">
+                        <span class="v-badge">${discountText}</span>
                         <h4>${v.code}</h4>
-                        <p>${v.description}</p>
+                        <p>${v.description || `Đơn từ ${(v.minOrder/1000).toFixed(0)}K.`}</p>
                     </div>
-                    <div class="v-action">
-                        <button class="btn-save-voucher ${isSaved ? 'saved' : ''}" 
-                                onclick="saveVoucher('${v.code}', this)"
-                                ${isSaved ? 'disabled' : ''}>
-                            ${isSaved ? 'Đã lưu' : 'Lưu mã'}
+                    <div class="v-right">
+                        <button class="btn-collect ${isSaved ? 'saved' : ''}" 
+                                onclick="${isSaved ? "location.href='#products'" : `saveVoucher('${v.code}', this)`}">
+                            ${isSaved ? 'Dùng ngay' : 'Lưu mã'}
                         </button>
                     </div>
                 </div>
